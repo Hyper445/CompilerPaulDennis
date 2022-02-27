@@ -37,8 +37,11 @@ static int yyerror( char *errname);
 %token <cflt> FLOAT
 %token <id> ID
 
-%type <node> intval floatval boolval constant expr
-%type <node> stmts stmt assign varlet program
+%type <node> intval floatval boolval constant expr 
+%type <node> stmts stmt assign var varlet program
+
+%type <node> exprs
+
 %type <cbinop> binop
 
 %start program
@@ -72,9 +75,15 @@ assign: varlet LET expr SEMICOLON
         }
         ;
 
-varlet: ID
+var: ID exprs 
         {
-          $$ = TBmakeVarlet( STRcpy( $1));
+          $$ = TBmakeVar( STRcpy( $1), $2, NULL);
+        }
+        ;
+
+varlet: ID exprs
+        {
+          $$ = TBmakeVarlet( STRcpy( $1), $2, NULL);
         }
         ;
 
@@ -83,15 +92,28 @@ expr: constant
       {
         $$ = $1;
       }
-    | ID
+    | ID exprs
       {
-        $$ = TBmakeVar( STRcpy( $1));
+        $$ = TBmakeVar( STRcpy( $1), $2, NULL);
       }
     | BRACKET_L expr binop expr BRACKET_R
       {
         $$ = TBmakeBinop( $3, $2, $4);
       }
     ;
+
+exprs: expr 
+        {
+
+          $$ = TBmakeExprs($1, NULL);
+
+        }
+      | expr exprs
+        {
+
+          $$ = TBmakeExprs($1, $2);
+
+        }
 
 constant: floatval
           {

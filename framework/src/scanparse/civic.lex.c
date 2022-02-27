@@ -707,7 +707,7 @@ YY_DECL
 		}
 
 	{
-#line 33 "src/scanparse/civic.l"
+#line 34 "src/scanparse/civic.l"
 
 
 #line 713 "lex.yy.c"
@@ -769,114 +769,114 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 35 "src/scanparse/civic.l"
+#line 36 "src/scanparse/civic.l"
 { FILTER( BRACKET_L); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 36 "src/scanparse/civic.l"
+#line 37 "src/scanparse/civic.l"
 { FILTER( BRACKET_R); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 37 "src/scanparse/civic.l"
+#line 38 "src/scanparse/civic.l"
 { FILTER( COMMA); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 38 "src/scanparse/civic.l"
+#line 39 "src/scanparse/civic.l"
 { FILTER( SEMICOLON); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 40 "src/scanparse/civic.l"
+#line 41 "src/scanparse/civic.l"
 { FILTER( MINUS); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 41 "src/scanparse/civic.l"
+#line 42 "src/scanparse/civic.l"
 { FILTER( PLUS);  }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 42 "src/scanparse/civic.l"
+#line 43 "src/scanparse/civic.l"
 { FILTER( STAR);  } 
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 43 "src/scanparse/civic.l"
+#line 44 "src/scanparse/civic.l"
 { FILTER( SLASH);  } 
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 44 "src/scanparse/civic.l"
+#line 45 "src/scanparse/civic.l"
 { FILTER( PERCENT);  } 
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 46 "src/scanparse/civic.l"
+#line 47 "src/scanparse/civic.l"
 { FILTER( LE);    }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 47 "src/scanparse/civic.l"
+#line 48 "src/scanparse/civic.l"
 { FILTER( LT);    } 
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 48 "src/scanparse/civic.l"
+#line 49 "src/scanparse/civic.l"
 { FILTER( GE);    }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 49 "src/scanparse/civic.l"
+#line 50 "src/scanparse/civic.l"
 { FILTER( GT);    }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 50 "src/scanparse/civic.l"
+#line 51 "src/scanparse/civic.l"
 { FILTER( EQ);    }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 51 "src/scanparse/civic.l"
+#line 52 "src/scanparse/civic.l"
 { FILTER( NE);    }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 52 "src/scanparse/civic.l"
+#line 53 "src/scanparse/civic.l"
 { FILTER( AND);    }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 53 "src/scanparse/civic.l"
+#line 54 "src/scanparse/civic.l"
 { FILTER( OR);    }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 55 "src/scanparse/civic.l"
+#line 56 "src/scanparse/civic.l"
 { FILTER( LET);    }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 57 "src/scanparse/civic.l"
+#line 58 "src/scanparse/civic.l"
 { FILTER( TRUEVAL); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 58 "src/scanparse/civic.l"
+#line 59 "src/scanparse/civic.l"
 { FILTER( FALSEVAL); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 60 "src/scanparse/civic.l"
+#line 61 "src/scanparse/civic.l"
 { yylval.id = STRcpy(yytext);
                              FILTER( ID);
                            }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 64 "src/scanparse/civic.l"
+#line 65 "src/scanparse/civic.l"
 { yylval.cint=atoi(yytext);
                              FILTER( NUM);
                            }
@@ -884,7 +884,7 @@ YY_RULE_SETUP
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
-#line 68 "src/scanparse/civic.l"
+#line 69 "src/scanparse/civic.l"
 { global.line += 1;
                              global.col = 0;
                              yyless(1);
@@ -892,13 +892,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 73 "src/scanparse/civic.l"
+#line 74 "src/scanparse/civic.l"
 { global.col += yyleng;
                            } 
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 75 "src/scanparse/civic.l"
+#line 76 "src/scanparse/civic.l"
 ECHO;
 	YY_BREAK
 #line 904 "lex.yy.c"
@@ -1869,4 +1869,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 75 "src/scanparse/civic.l"
+#line 76 "src/scanparse/civic.l"
