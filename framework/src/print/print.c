@@ -88,7 +88,7 @@ extern node *PRTglobdecl (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTglobdef (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTglobdef");
 
-  printf("%s %s", GLOBDEF_TYPE(arg_node), GLOBDEF_NAME(arg_node));
+  printf("%u %s", GLOBDEF_TYPE(arg_node), GLOBDEF_NAME(arg_node));
 
   GLOBDEF_INIT( arg_node) = TRAVdo( GLOBDEF_INIT( arg_node), arg_info);
 

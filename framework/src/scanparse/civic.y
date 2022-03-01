@@ -31,6 +31,7 @@ static int yyerror( char *errname);
  type                ctype;
 }
 
+%token INT_TYPE FLOAT_TYPE BOOL_TYPE
 %token BRACKET_L BRACKET_R COMMA SEMICOLON
 %token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND
 %token TRUEVAL FALSEVAL LET INTTYPE FLOATTYPE BOOLTYPE 
@@ -57,23 +58,27 @@ program: decls
         }
         ;
 
-decls: decl decls
+decls: decl
+  {
+    TBmakeDecls($1, NULL);
+  }
+  | decl decls
   {
     $$ = TBmakeDecls($1, $2);
   }
   ;
 
-  globdef: type ID SEMICOLON
+globdef: type ID SEMICOLON
   {
-    $$ = TBmakeGlobdef($1, $2, NULL, NULL)
+    $$ = TBmakeGlobdef($1, $2, NULL, NULL);
   }
-         | type ID LET expr SEMICOLON
+  | type ID LET expr SEMICOLON
   {
-    $$ = TBmakeGlobdef($1, $2, $4, NULL)
+    $$ = TBmakeGlobdef($1, $2, $4, NULL);
   }
-         | type ID LET expr exprs SEMICOLON
+          | type ID LET expr exprs SEMICOLON
   {
-    $$ = TBmakeGlobdef($1, $2, $4, $5)
+    $$ = TBmakeGlobdef($1, $2, $4, $5);
   }
   ;
 
@@ -189,10 +194,11 @@ binop: PLUS      { $$ = BO_add; }
      | AND       { $$ = BO_and; }
      ;
 
+decl: globdef { $$ = $1; }
 
-type: INT { $$ = T_int}
-    | FLOAT { $$ = T_float}
-    | BOOL { $$ = T_bool}
+type: INT_TYPE { $$ = T_int;}
+    | FLOAT_TYPE { $$ = T_float;}
+    | BOOL_TYPE { $$ = T_bool;}
 
 
 %%

@@ -53,25 +53,25 @@ SUBPHASE( os,
           pet)  
 
 /* My traversal */
-SUBPHASE( rs, 
-          "Reduce Strength",
-          RSdoReduceStrength, 
-          ALWAYS,
-          pet) 
+// SUBPHASE( rs, 
+//           "Reduce Strength",
+//           RSdoReduceStrength, 
+//           ALWAYS,
+//           pet) 
 
-/*My traversal */
-SUBPHASE( so, 
-        "Store operators", 
-        SOdoStoreOperators, 
-        ALWAYS, 
-        pet) 
+// /*My traversal */
+// SUBPHASE( so, 
+//         "Store operators", 
+//         SOdoStoreOperators, 
+//         ALWAYS, 
+//         pet) 
 
-/*My traversal */
-SUBPHASE( IS, 
-        "Identifiers storer", 
-        ISdoIdentifiersStorer, 
-        ALWAYS, 
-        pet) 
+// /*My traversal */
+// SUBPHASE( IS, 
+//         "Identifiers storer", 
+//         ISdoIdentifiersStorer, 
+//         ALWAYS, 
+//         pet) 
 
       
 ENDPHASE( pet) 

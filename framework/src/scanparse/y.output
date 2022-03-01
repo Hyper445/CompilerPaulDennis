@@ -1,0 +1,595 @@
+Useless nonterminals
+
+   stmts
+   stmt
+   assign
+   var
+   varlet
+
+
+Terminals which are not used
+
+   COMMA
+   NE
+   INTTYPE
+   FLOATTYPE
+   BOOLTYPE
+
+
+Useless rules
+
+   35 stmts: stmt stmts
+   36      | stmt
+
+   37 stmt: assign
+
+   38 assign: varlet LET expr SEMICOLON
+
+   39 var: ID exprs
+
+   40 varlet: ID exprs
+
+
+State 26 conflicts: 6 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: decls
+
+    2 decls: decl
+    3      | decl decls
+
+    4 globdef: type ID SEMICOLON
+    5        | type ID LET expr SEMICOLON
+    6        | type ID LET expr exprs SEMICOLON
+
+    7 expr: constant
+    8     | ID exprs
+    9     | BRACKET_L expr binop expr BRACKET_R
+
+   10 exprs: expr
+   11      | expr exprs
+
+   12 constant: floatval
+   13         | intval
+   14         | boolval
+
+   15 floatval: FLOAT
+
+   16 intval: NUM
+
+   17 boolval: TRUEVAL
+   18        | FALSEVAL
+
+   19 binop: PLUS
+   20      | MINUS
+   21      | STAR
+   22      | SLASH
+   23      | PERCENT
+   24      | LE
+   25      | LT
+   26      | GE
+   27      | GT
+   28      | EQ
+   29      | OR
+   30      | AND
+
+   31 decl: globdef
+
+   32 type: INT_TYPE
+   33     | FLOAT_TYPE
+   34     | BOOL_TYPE
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+INT_TYPE (258) 32
+FLOAT_TYPE (259) 33
+BOOL_TYPE (260) 34
+BRACKET_L (261) 9
+BRACKET_R (262) 9
+COMMA (263)
+SEMICOLON (264) 4 5 6
+MINUS (265) 20
+PLUS (266) 19
+STAR (267) 21
+SLASH (268) 22
+PERCENT (269) 23
+LE (270) 24
+LT (271) 25
+GE (272) 26
+GT (273) 27
+EQ (274) 28
+NE (275)
+OR (276) 29
+AND (277) 30
+TRUEVAL (278) 17
+FALSEVAL (279) 18
+LET (280) 5 6
+INTTYPE (281)
+FLOATTYPE (282)
+BOOLTYPE (283)
+NUM (284) 16
+FLOAT (285) 15
+ID (286) 4 5 6 8
+
+
+Nonterminals, with rules where they appear
+
+$accept (32)
+    on left: 0
+program (33)
+    on left: 1, on right: 0
+decls (34)
+    on left: 2 3, on right: 1 3
+globdef (35)
+    on left: 4 5 6, on right: 31
+expr (36)
+    on left: 7 8 9, on right: 5 6 9 10 11
+exprs (37)
+    on left: 10 11, on right: 6 8 11
+constant (38)
+    on left: 12 13 14, on right: 7
+floatval (39)
+    on left: 15, on right: 12
+intval (40)
+    on left: 16, on right: 13
+boolval (41)
+    on left: 17 18, on right: 14
+binop (42)
+    on left: 19 20 21 22 23 24 25 26 27 28 29 30, on right: 9
+decl (43)
+    on left: 31, on right: 2 3
+type (44)
+    on left: 32 33 34, on right: 4 5 6
+
+
+state 0
+
+    0 $accept: . program $end
+
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    BOOL_TYPE   shift, and go to state 3
+
+    program  go to state 4
+    decls    go to state 5
+    globdef  go to state 6
+    decl     go to state 7
+    type     go to state 8
+
+
+state 1
+
+   32 type: INT_TYPE .
+
+    $default  reduce using rule 32 (type)
+
+
+state 2
+
+   33 type: FLOAT_TYPE .
+
+    $default  reduce using rule 33 (type)
+
+
+state 3
+
+   34 type: BOOL_TYPE .
+
+    $default  reduce using rule 34 (type)
+
+
+state 4
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 9
+
+
+state 5
+
+    1 program: decls .
+
+    $default  reduce using rule 1 (program)
+
+
+state 6
+
+   31 decl: globdef .
+
+    $default  reduce using rule 31 (decl)
+
+
+state 7
+
+    2 decls: decl .
+    3      | decl . decls
+
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    BOOL_TYPE   shift, and go to state 3
+
+    $default  reduce using rule 2 (decls)
+
+    decls    go to state 10
+    globdef  go to state 6
+    decl     go to state 7
+    type     go to state 8
+
+
+state 8
+
+    4 globdef: type . ID SEMICOLON
+    5        | type . ID LET expr SEMICOLON
+    6        | type . ID LET expr exprs SEMICOLON
+
+    ID  shift, and go to state 11
+
+
+state 9
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+state 10
+
+    3 decls: decl decls .
+
+    $default  reduce using rule 3 (decls)
+
+
+state 11
+
+    4 globdef: type ID . SEMICOLON
+    5        | type ID . LET expr SEMICOLON
+    6        | type ID . LET expr exprs SEMICOLON
+
+    SEMICOLON  shift, and go to state 12
+    LET        shift, and go to state 13
+
+
+state 12
+
+    4 globdef: type ID SEMICOLON .
+
+    $default  reduce using rule 4 (globdef)
+
+
+state 13
+
+    5 globdef: type ID LET . expr SEMICOLON
+    6        | type ID LET . expr exprs SEMICOLON
+
+    BRACKET_L  shift, and go to state 14
+    TRUEVAL    shift, and go to state 15
+    FALSEVAL   shift, and go to state 16
+    NUM        shift, and go to state 17
+    FLOAT      shift, and go to state 18
+    ID         shift, and go to state 19
+
+    expr      go to state 20
+    constant  go to state 21
+    floatval  go to state 22
+    intval    go to state 23
+    boolval   go to state 24
+
+
+state 14
+
+    9 expr: BRACKET_L . expr binop expr BRACKET_R
+
+    BRACKET_L  shift, and go to state 14
+    TRUEVAL    shift, and go to state 15
+    FALSEVAL   shift, and go to state 16
+    NUM        shift, and go to state 17
+    FLOAT      shift, and go to state 18
+    ID         shift, and go to state 19
+
+    expr      go to state 25
+    constant  go to state 21
+    floatval  go to state 22
+    intval    go to state 23
+    boolval   go to state 24
+
+
+state 15
+
+   17 boolval: TRUEVAL .
+
+    $default  reduce using rule 17 (boolval)
+
+
+state 16
+
+   18 boolval: FALSEVAL .
+
+    $default  reduce using rule 18 (boolval)
+
+
+state 17
+
+   16 intval: NUM .
+
+    $default  reduce using rule 16 (intval)
+
+
+state 18
+
+   15 floatval: FLOAT .
+
+    $default  reduce using rule 15 (floatval)
+
+
+state 19
+
+    8 expr: ID . exprs
+
+    BRACKET_L  shift, and go to state 14
+    TRUEVAL    shift, and go to state 15
+    FALSEVAL   shift, and go to state 16
+    NUM        shift, and go to state 17
+    FLOAT      shift, and go to state 18
+    ID         shift, and go to state 19
+
+    expr      go to state 26
+    exprs     go to state 27
+    constant  go to state 21
+    floatval  go to state 22
+    intval    go to state 23
+    boolval   go to state 24
+
+
+state 20
+
+    5 globdef: type ID LET expr . SEMICOLON
+    6        | type ID LET expr . exprs SEMICOLON
+
+    BRACKET_L  shift, and go to state 14
+    SEMICOLON  shift, and go to state 28
+    TRUEVAL    shift, and go to state 15
+    FALSEVAL   shift, and go to state 16
+    NUM        shift, and go to state 17
+    FLOAT      shift, and go to state 18
+    ID         shift, and go to state 19
+
+    expr      go to state 26
+    exprs     go to state 29
+    constant  go to state 21
+    floatval  go to state 22
+    intval    go to state 23
+    boolval   go to state 24
+
+
+state 21
+
+    7 expr: constant .
+
+    $default  reduce using rule 7 (expr)
+
+
+state 22
+
+   12 constant: floatval .
+
+    $default  reduce using rule 12 (constant)
+
+
+state 23
+
+   13 constant: intval .
+
+    $default  reduce using rule 13 (constant)
+
+
+state 24
+
+   14 constant: boolval .
+
+    $default  reduce using rule 14 (constant)
+
+
+state 25
+
+    9 expr: BRACKET_L expr . binop expr BRACKET_R
+
+    MINUS    shift, and go to state 30
+    PLUS     shift, and go to state 31
+    STAR     shift, and go to state 32
+    SLASH    shift, and go to state 33
+    PERCENT  shift, and go to state 34
+    LE       shift, and go to state 35
+    LT       shift, and go to state 36
+    GE       shift, and go to state 37
+    GT       shift, and go to state 38
+    EQ       shift, and go to state 39
+    OR       shift, and go to state 40
+    AND      shift, and go to state 41
+
+    binop  go to state 42
+
+
+state 26
+
+   10 exprs: expr .
+   11      | expr . exprs
+
+    BRACKET_L  shift, and go to state 14
+    TRUEVAL    shift, and go to state 15
+    FALSEVAL   shift, and go to state 16
+    NUM        shift, and go to state 17
+    FLOAT      shift, and go to state 18
+    ID         shift, and go to state 19
+
+    BRACKET_L  [reduce using rule 10 (exprs)]
+    TRUEVAL    [reduce using rule 10 (exprs)]
+    FALSEVAL   [reduce using rule 10 (exprs)]
+    NUM        [reduce using rule 10 (exprs)]
+    FLOAT      [reduce using rule 10 (exprs)]
+    ID         [reduce using rule 10 (exprs)]
+    $default   reduce using rule 10 (exprs)
+
+    expr      go to state 26
+    exprs     go to state 43
+    constant  go to state 21
+    floatval  go to state 22
+    intval    go to state 23
+    boolval   go to state 24
+
+
+state 27
+
+    8 expr: ID exprs .
+
+    $default  reduce using rule 8 (expr)
+
+
+state 28
+
+    5 globdef: type ID LET expr SEMICOLON .
+
+    $default  reduce using rule 5 (globdef)
+
+
+state 29
+
+    6 globdef: type ID LET expr exprs . SEMICOLON
+
+    SEMICOLON  shift, and go to state 44
+
+
+state 30
+
+   20 binop: MINUS .
+
+    $default  reduce using rule 20 (binop)
+
+
+state 31
+
+   19 binop: PLUS .
+
+    $default  reduce using rule 19 (binop)
+
+
+state 32
+
+   21 binop: STAR .
+
+    $default  reduce using rule 21 (binop)
+
+
+state 33
+
+   22 binop: SLASH .
+
+    $default  reduce using rule 22 (binop)
+
+
+state 34
+
+   23 binop: PERCENT .
+
+    $default  reduce using rule 23 (binop)
+
+
+state 35
+
+   24 binop: LE .
+
+    $default  reduce using rule 24 (binop)
+
+
+state 36
+
+   25 binop: LT .
+
+    $default  reduce using rule 25 (binop)
+
+
+state 37
+
+   26 binop: GE .
+
+    $default  reduce using rule 26 (binop)
+
+
+state 38
+
+   27 binop: GT .
+
+    $default  reduce using rule 27 (binop)
+
+
+state 39
+
+   28 binop: EQ .
+
+    $default  reduce using rule 28 (binop)
+
+
+state 40
+
+   29 binop: OR .
+
+    $default  reduce using rule 29 (binop)
+
+
+state 41
+
+   30 binop: AND .
+
+    $default  reduce using rule 30 (binop)
+
+
+state 42
+
+    9 expr: BRACKET_L expr binop . expr BRACKET_R
+
+    BRACKET_L  shift, and go to state 14
+    TRUEVAL    shift, and go to state 15
+    FALSEVAL   shift, and go to state 16
+    NUM        shift, and go to state 17
+    FLOAT      shift, and go to state 18
+    ID         shift, and go to state 19
+
+    expr      go to state 45
+    constant  go to state 21
+    floatval  go to state 22
+    intval    go to state 23
+    boolval   go to state 24
+
+
+state 43
+
+   11 exprs: expr exprs .
+
+    $default  reduce using rule 11 (exprs)
+
+
+state 44
+
+    6 globdef: type ID LET expr exprs SEMICOLON .
+
+    $default  reduce using rule 6 (globdef)
+
+
+state 45
+
+    9 expr: BRACKET_L expr binop expr . BRACKET_R
+
+    BRACKET_R  shift, and go to state 46
+
+
+state 46
+
+    9 expr: BRACKET_L expr binop expr BRACKET_R .
+
+    $default  reduce using rule 9 (expr)
