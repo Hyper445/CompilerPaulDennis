@@ -27,11 +27,12 @@ static int yyerror( char *errname);
  float               cflt;
  binop               cbinop;
  node               *node;
+ type                ctype;
 }
 
 %token BRACKET_L BRACKET_R COMMA SEMICOLON
 %token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND
-%token TRUEVAL FALSEVAL LET
+%token TRUEVAL FALSEVAL LET INTTYPE FLOATTYPE BOOLTYPE 
 
 %token <cint> NUM
 %token <cflt> FLOAT
@@ -40,18 +41,40 @@ static int yyerror( char *errname);
 %type <node> intval floatval boolval constant expr 
 %type <node> stmts stmt assign var varlet program
 
-%type <node> exprs
+%type <node> exprs decls globdef decl
 
 %type <cbinop> binop
+%type <ctype> type
 
 %start program
 
 %%
 
-program: stmts
+program: decls
         {
-          parseresult = $1;        }
-         ;
+          parseresult = $1;        
+        }
+        ;
+
+decls: decl decls
+  {
+    $$ = TBmakeDecls($1, $2);
+  }
+  ;
+
+  globdef: type ID SEMICOLON
+  {
+    $$ = TBmakeGlobdef($1, $2, NULL, NULL)
+  }
+         | type ID LET expr SEMICOLON
+  {
+    $$ = TBmakeGlobdef($1, $2, $4, NULL)
+  }
+         | type ID LET expr exprs SEMICOLON
+  {
+    $$ = TBmakeGlobdef($1, $2, $4, $5)
+  }
+  ;
 
 stmts: stmt stmts
         {
@@ -164,7 +187,13 @@ binop: PLUS      { $$ = BO_add; }
      | OR        { $$ = BO_or; }
      | AND       { $$ = BO_and; }
      ;
-      
+
+
+type: INT { $$ = T_int}
+    | FLOAT { $$ = T_float}
+    | BOOL { $$ = T_bool}
+
+
 %%
 
 static int yyerror( char *error)

@@ -53,6 +53,58 @@ static info *FreeInfo( info *info)
 
 
 
+extern node *PRTprogram (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTprogram");
+  printf("test");
+
+  PROGRAM_DECLS( arg_node) = TRAVdo( PROGRAM_DECLS( arg_node), arg_info);
+  
+  DBUG_RETURN (arg_node);
+}
+extern node *PRTdeclarations (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTfundef (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTparam (node * arg_node, info * arg_info){return arg_node;}
+
+extern node *PRTdecls (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTdecls");
+
+  DECLS_DECL( arg_node) = TRAVdo( DECLS_DECL( arg_node), arg_info);
+  
+  DECLS_NEXT( arg_node) = TRAVopt( DECLS_NEXT( arg_node), arg_info);
+
+  DBUG_RETURN (arg_node);
+}
+
+extern node *PRTexprs (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTarrexpr (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTids (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTexprstmt (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTfuncall (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTcast (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTifelse (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTdowhile (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTglobdecl (node * arg_node, info * arg_info){return arg_node;}
+
+extern node *PRTglobdef (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTglobdef");
+
+  printf("%s %s", GLOBDEF_TYPE(arg_node), GLOBDEF_NAME(arg_node));
+
+  GLOBDEF_INIT( arg_node) = TRAVdo( GLOBDEF_INIT( arg_node), arg_info);
+
+  GLOBDEF_DIMS ( arg_node) = TRAVdo( GLOBDEF_DIMS( arg_node), arg_info);
+  
+  DBUG_RETURN (arg_node);
+}
+
+extern node *PRTvardecl (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTmonop (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTfundefs (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTwhile (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTfor (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTreturn (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTfunbody (node * arg_node, info * arg_info){return arg_node;}
+
 /** <!--******************************************************************-->
  *
  * @fn PRTstmts
