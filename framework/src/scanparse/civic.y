@@ -60,7 +60,7 @@ program: decls
 
 decls: decl
   {
-    TBmakeDecls($1, NULL);
+    $$ = TBmakeDecls($1, NULL);
   }
   | decl decls
   {
