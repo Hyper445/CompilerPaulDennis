@@ -18,6 +18,7 @@ static node *parseresult = NULL;
 extern int yylex();
 static int yyerror( char *errname);
 
+// this is a test comment for a test commit.
 %}
 
 %union {
