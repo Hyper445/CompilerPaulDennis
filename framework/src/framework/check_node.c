@@ -329,8 +329,8 @@ node           *CHKMfundef(node * arg_node, info * arg_info) {
 	DBUG_ENTER("CHKMfundef");
 	NODE_ERROR(arg_node) = CHKMTRAV(NODE_ERROR(arg_node), arg_info);
 	FUNDEF_NAME(arg_node) = CHKMattribString(FUNDEF_NAME(arg_node), arg_info);
-	FUNDEF_FUNBODY(arg_node) = CHKMTRAV(FUNDEF_FUNBODY(arg_node), arg_info);
 	FUNDEF_PARAMS(arg_node) = CHKMTRAV(FUNDEF_PARAMS(arg_node), arg_info);
+	FUNDEF_FUNBODY(arg_node) = CHKMTRAV(FUNDEF_FUNBODY(arg_node), arg_info);
 	DBUG_RETURN(arg_node);
 }
 /** <!--******************************************************************-->

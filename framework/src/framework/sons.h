@@ -73,8 +73,8 @@ struct SONS_N_FUNCALL {
 	node           *Args;
 };
 struct SONS_N_FUNDEF {
-	node           *FunBody;
 	node           *Params;
+	node           *FunBody;
 };
 struct SONS_N_FUNDEFS {
 	node           *Fundef;

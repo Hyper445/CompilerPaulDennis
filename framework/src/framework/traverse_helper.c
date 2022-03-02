@@ -72,8 +72,8 @@ TRAVsons(node * arg_node, info * arg_info)
 		TRAV(FUNDEFS_NEXT(arg_node), arg_info);
 		break;
 	case N_fundef:
-		TRAV(FUNDEF_FUNBODY(arg_node), arg_info);
 		TRAV(FUNDEF_PARAMS(arg_node), arg_info);
+		TRAV(FUNDEF_FUNBODY(arg_node), arg_info);
 		break;
 	case N_funbody:
 		TRAV(FUNBODY_VARDECLS(arg_node), arg_info);
@@ -371,10 +371,10 @@ TRAVgetSon(int no, node * parent)
 	case N_fundef:
 		switch (no) {
 		case 0:
-			result = FUNDEF_FUNBODY(parent);
+			result = FUNDEF_PARAMS(parent);
 			break;
 		case 1:
-			result = FUNDEF_PARAMS(parent);
+			result = FUNDEF_FUNBODY(parent);
 			break;
 		default:
 			DBUG_ASSERT((FALSE), "index out of range!");

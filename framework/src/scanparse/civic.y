@@ -71,13 +71,17 @@ decls: decl
 
 fundef: type ID BRACKET_L param BRACKET_R CURLY_BRACKET_L funbody CURLY_BRACKET_R
   {
-    $$ = TBmakeFundef($1, $2, $7, $4);
+    $$ = TBmakeFundef($1, $2, $4, $7);
   }
   | type ID BRACKET_L BRACKET_R CURLY_BRACKET_L funbody CURLY_BRACKET_R
   {
-    $$ = TBmakeFundef($1, $2, $6, NULL);
+    $$ = TBmakeFundef($1, $2, NULL, $6);
   }
-  | type ID BRACKET_L BRACKET_R
+  | type ID BRACKET_L param BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+  {
+    $$ = TBmakeFundef($1, $2, $4, NULL);
+  }
+  | type ID BRACKET_L BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
   {
     $$ = TBmakeFundef($1, $2, NULL, NULL);
   }

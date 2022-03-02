@@ -341,20 +341,20 @@
 
     <node name="FunDef">
         <sons>
-            <son name="FunBody">
+            <son name="Params">
                 <targets>
                     <target mandatory="no">
-                        <node name="FunBody"/>
+                        <node name="Param"/>
                         <phases>
                             <all/>
                         </phases>
                     </target>
                 </targets>
             </son>
-            <son name="Params">
+            <son name="FunBody">
                 <targets>
                     <target mandatory="no">
-                        <node name="Param"/>
+                        <node name="FunBody"/>
                         <phases>
                             <all/>
                         </phases>

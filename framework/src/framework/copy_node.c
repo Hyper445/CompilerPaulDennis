@@ -371,8 +371,8 @@ node           *COPYfundef(node * arg_node, info * arg_info) {
 	/* Copy flags */
 	FUNDEF_ISEXPORT(result) = FUNDEF_ISEXPORT(arg_node);
 	/* Copy sons */
-	FUNDEF_FUNBODY(result) = COPYTRAV(FUNDEF_FUNBODY(arg_node), arg_info);
 	FUNDEF_PARAMS(result) = COPYTRAV(FUNDEF_PARAMS(arg_node), arg_info);
+	FUNDEF_FUNBODY(result) = COPYTRAV(FUNDEF_FUNBODY(arg_node), arg_info);
 	/* Return value */
 	DBUG_RETURN(result);
 }
