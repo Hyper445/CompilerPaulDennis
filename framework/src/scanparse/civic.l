@@ -38,6 +38,9 @@
 ","                        { FILTER( COMMA); }
 ";"                        { FILTER( SEMICOLON); }
 
+"{"                        { FILTER( CURLY_BRACKET_L); }
+"}"                        { FILTER( CURLY_BRACKET_R); }
+
 "-"                        { FILTER( MINUS); }
 "+"                        { FILTER( PLUS);  }
 "*"                        { FILTER( STAR);  } 

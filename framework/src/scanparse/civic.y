@@ -35,15 +35,16 @@ static int yyerror( char *errname);
 %token BRACKET_L BRACKET_R COMMA SEMICOLON
 %token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND
 %token TRUEVAL FALSEVAL LET INTTYPE FLOATTYPE BOOLTYPE 
+%token CURLY_BRACKET_L CURLY_BRACKET_R
 
 %token <cint> NUM
 %token <cflt> FLOAT
 %token <id> ID
 
 %type <node> intval floatval boolval constant expr 
-%type <node> stmts stmt assign var varlet program
+%type <node> stmts stmt assign varlet program
 
-%type <node> exprs decls globdef decl
+%type <node> exprs decls fundef fundefs param decl funbody vardecl ids
 
 %type <cbinop> binop
 %type <ctype> type
@@ -53,10 +54,10 @@ static int yyerror( char *errname);
 %%
 
 program: decls
-        {
-          parseresult = $1;        
-        }
-        ;
+  {
+    parseresult = $1;        
+  }
+  ;
 
 decls: decl
   {
@@ -68,81 +69,156 @@ decls: decl
   }
   ;
 
-globdef: type ID SEMICOLON
+fundef: type ID BRACKET_L param BRACKET_R CURLY_BRACKET_L funbody CURLY_BRACKET_R
   {
-    $$ = TBmakeGlobdef($1, $2, NULL, NULL);
+    $$ = TBmakeFundef($1, $2, $7, $4);
   }
-  | type ID LET expr SEMICOLON
+  | type ID BRACKET_L BRACKET_R CURLY_BRACKET_L funbody CURLY_BRACKET_R
   {
-    $$ = TBmakeGlobdef($1, $2, $4, NULL);
+    $$ = TBmakeFundef($1, $2, $6, NULL);
   }
-          | type ID LET expr exprs SEMICOLON
+  | type ID BRACKET_L BRACKET_R
   {
-    $$ = TBmakeGlobdef($1, $2, $4, $5);
+    $$ = TBmakeFundef($1, $2, NULL, NULL);
   }
   ;
 
+funbody: vardecl fundefs stmts
+  {
+    $$ = TBmakeFunbody($1, $2, $3);
+  }
+  | vardecl fundefs
+  { 
+    $$ = TBmakeFunbody($1, $2, NULL);
+  }
+  | vardecl stmts
+  {
+    $$ = TBmakeFunbody($1, NULL, $2);
+  }
+  | fundefs stmts
+  {
+    $$ = TBmakeFunbody(NULL, $1, $2);
+  }
+  | vardecl
+  {
+    $$ = TBmakeFunbody($1, NULL, NULL);
+  }
+  | fundefs
+  {
+    $$ = TBmakeFunbody(NULL, $1, NULL);
+  }
+  | stmts
+  {
+    $$ = TBmakeFunbody(NULL, NULL, $1);
+  }
+  ;
+
+fundefs: fundef fundefs
+  {
+    $$ = TBmakeFundefs($1, $2);
+  }
+  | fundef
+  {
+    $$ = TBmakeFundefs($1, NULL);
+  }
+  ;
+
+vardecl: vardecl type ID exprs expr SEMICOLON
+  {
+    $$ = TBmakeVardecl($3, $2, $4, $5, $1);
+  }
+  | type ID exprs expr SEMICOLON
+  {
+    $$ = TBmakeVardecl($2, $1, $3, $4, NULL);
+  }
+  | type ID exprs SEMICOLON
+  {
+    $$ = TBmakeVardecl($2, $1, $3, NULL, NULL);
+  }
+  | type ID SEMICOLON
+  {
+    $$ = TBmakeVardecl($2, $1, NULL, NULL, NULL);
+  }
+  ;
+
+param: ID type ids COMMA param
+  {
+    $$ = TBmakeParam($1, $2, $3, $5);
+  }
+  | ID type ids
+  {
+    $$ = TBmakeParam($1, $2, $3, NULL);
+  }
+  | ID type
+  {
+    $$ = TBmakeParam($1, $2, NULL, NULL);
+  }
+  ;
+
+ids: ID ids
+  {
+    $$ = TBmakeIds($1, $2);
+  }
+  | ID
+  {
+    $$ = TBmakeIds($1, NULL);
+  }
+  ;
+
+
 stmts: stmt stmts
-        {
-          $$ = TBmakeStmts( $1, $2);
-        }
-      | stmt
-        {
-          $$ = TBmakeStmts( $1, NULL);
-        }
-        ;
+  {
+    $$ = TBmakeStmts( $1, $2);
+  }
+  | stmt
+  {
+    $$ = TBmakeStmts( $1, NULL);
+  }
+  ;
 
 stmt: assign
-       {
-         $$ = $1;
-       }
-       ;
+  {
+    $$ = $1;
+  }
+  ;
 
 assign: varlet LET expr SEMICOLON
-        {
-          $$ = TBmakeAssign( $1, $3);
-        }
-        ;
+  {
+    $$ = TBmakeAssign( $1, $3);
+  }
+  ;
 
-var: ID exprs 
-        {
-          $$ = TBmakeVar( STRcpy( $1), $2, NULL);
-        }
-        ;
 
 varlet: ID exprs
-        {
-          $$ = TBmakeVarlet( STRcpy( $1), $2, NULL);
-        }
-        ;
+  {
+    $$ = TBmakeVarlet( STRcpy( $1), $2, NULL);
+  }
+  ;
 
 
 expr: constant
-      {
-        $$ = $1;
-      }
-    | ID exprs
-      {
-        $$ = TBmakeVar( STRcpy( $1), $2, NULL);
-      }
-    | BRACKET_L expr binop expr BRACKET_R
-      {
-        $$ = TBmakeBinop( $3, $2, $4);
-      }
-    ;
+  {
+    $$ = $1;
+  }
+  | ID exprs
+  {
+    $$ = TBmakeVar( STRcpy( $1), $2, NULL);
+  }
+  | BRACKET_L expr binop expr BRACKET_R
+  {
+    $$ = TBmakeBinop( $3, $2, $4);
+  }
+  ;
 
 exprs: expr 
-        {
-
-          $$ = TBmakeExprs($1, NULL);
-
-        }
-      | expr exprs
-        {
-
-          $$ = TBmakeExprs($1, $2);
-
-        }
+  {
+    $$ = TBmakeExprs($1, NULL);
+  }
+  | expr exprs
+  {
+    $$ = TBmakeExprs($1, $2);
+  }
+  ;
 
 constant: floatval
           {
@@ -194,7 +270,7 @@ binop: PLUS      { $$ = BO_add; }
      | AND       { $$ = BO_and; }
      ;
 
-decl: globdef { $$ = $1; }
+decl: fundef { $$ = $1; }
 
 type: INT_TYPE { $$ = T_int;}
     | FLOAT_TYPE { $$ = T_float;}
