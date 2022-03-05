@@ -35,140 +35,37 @@ static int yyerror( char *errname);
 %token BRACKET_L BRACKET_R COMMA SEMICOLON
 %token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND
 %token TRUEVAL FALSEVAL LET INTTYPE FLOATTYPE BOOLTYPE 
-%token CURLY_BRACKET_L CURLY_BRACKET_R
+%token CURLY_BRACKET_L CURLY_BRACKET_R RETURN
+
+%token IF ELSE
 
 %token <cint> NUM
 %token <cflt> FLOAT
 %token <id> ID
 
-%type <node> intval floatval boolval constant expr 
-%type <node> stmts stmt assign varlet program
+%type <node> intval floatval boolval constant expr exprs
+%type <node> stmts stmt assign varlet
 
-%type <node> exprs decls fundef fundefs param decl funbody vardecl ids
+%type <node> fundef funbody ifelse return
 
 %type <cbinop> binop
 %type <ctype> type
 
-%start program
+%start fundef
 
 %%
 
-program: decls
+fundef: type ID BRACKET_L BRACKET_R funbody
   {
-    parseresult = $1;        
+    parseresult = TBmakeFundef($1, $2, NULL, $5);
   }
   ;
 
-decls: decl
+funbody: CURLY_BRACKET_L stmts CURLY_BRACKET_R
   {
-    $$ = TBmakeDecls($1, NULL);
-  }
-  | decl decls
-  {
-    $$ = TBmakeDecls($1, $2);
+    $$ = TBmakeFunbody(NULL, NULL, $2);
   }
   ;
-
-fundef: type ID BRACKET_L param BRACKET_R CURLY_BRACKET_L funbody CURLY_BRACKET_R
-  {
-    $$ = TBmakeFundef($1, $2, $4, $7);
-  }
-  | type ID BRACKET_L BRACKET_R CURLY_BRACKET_L funbody CURLY_BRACKET_R
-  {
-    $$ = TBmakeFundef($1, $2, NULL, $6);
-  }
-  | type ID BRACKET_L param BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-  {
-    $$ = TBmakeFundef($1, $2, $4, NULL);
-  }
-  | type ID BRACKET_L BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-  {
-    $$ = TBmakeFundef($1, $2, NULL, NULL);
-  }
-  ;
-
-funbody: vardecl fundefs stmts
-  {
-    $$ = TBmakeFunbody($1, $2, $3);
-  }
-  | vardecl fundefs
-  { 
-    $$ = TBmakeFunbody($1, $2, NULL);
-  }
-  | vardecl stmts
-  {
-    $$ = TBmakeFunbody($1, NULL, $2);
-  }
-  | fundefs stmts
-  {
-    $$ = TBmakeFunbody(NULL, $1, $2);
-  }
-  | vardecl
-  {
-    $$ = TBmakeFunbody($1, NULL, NULL);
-  }
-  | fundefs
-  {
-    $$ = TBmakeFunbody(NULL, $1, NULL);
-  }
-  | stmts
-  {
-    $$ = TBmakeFunbody(NULL, NULL, $1);
-  }
-  ;
-
-fundefs: fundef fundefs
-  {
-    $$ = TBmakeFundefs($1, $2);
-  }
-  | fundef
-  {
-    $$ = TBmakeFundefs($1, NULL);
-  }
-  ;
-
-vardecl: vardecl type ID exprs expr SEMICOLON
-  {
-    $$ = TBmakeVardecl($3, $2, $4, $5, $1);
-  }
-  | type ID exprs expr SEMICOLON
-  {
-    $$ = TBmakeVardecl($2, $1, $3, $4, NULL);
-  }
-  | type ID exprs SEMICOLON
-  {
-    $$ = TBmakeVardecl($2, $1, $3, NULL, NULL);
-  }
-  | type ID SEMICOLON
-  {
-    $$ = TBmakeVardecl($2, $1, NULL, NULL, NULL);
-  }
-  ;
-
-param: ID type ids COMMA param
-  {
-    $$ = TBmakeParam($1, $2, $3, $5);
-  }
-  | ID type ids
-  {
-    $$ = TBmakeParam($1, $2, $3, NULL);
-  }
-  | ID type
-  {
-    $$ = TBmakeParam($1, $2, NULL, NULL);
-  }
-  ;
-
-ids: ID ids
-  {
-    $$ = TBmakeIds($1, $2);
-  }
-  | ID
-  {
-    $$ = TBmakeIds($1, NULL);
-  }
-  ;
-
 
 stmts: stmt stmts
   {
@@ -184,6 +81,30 @@ stmt: assign
   {
     $$ = $1;
   }
+  | return
+  {
+    $$ = $1;
+  }
+  | ifelse
+  {
+    $$ = $1;
+  }
+  ;
+
+return: RETURN expr SEMICOLON
+  {
+    $$ = TBmakeReturn($2);
+  }
+  ;
+
+ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
+  {
+    $$ = TBmakeIfelse($3, $6, $10);
+  }
+  | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
+  {
+    $$ = TBmakeIfelse($3, NULL, NULL);
+  }
   ;
 
 assign: varlet LET expr SEMICOLON
@@ -192,10 +113,9 @@ assign: varlet LET expr SEMICOLON
   }
   ;
 
-
-varlet: ID exprs
+varlet: ID
   {
-    $$ = TBmakeVarlet( STRcpy( $1), $2, NULL);
+    $$ = TBmakeVarlet( STRcpy( $1), NULL, NULL);
   }
   ;
 
@@ -204,9 +124,9 @@ expr: constant
   {
     $$ = $1;
   }
-  | ID exprs
+  | ID
   {
-    $$ = TBmakeVar( STRcpy( $1), $2, NULL);
+    $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
   }
   | BRACKET_L expr binop expr BRACKET_R
   {
@@ -274,7 +194,6 @@ binop: PLUS      { $$ = BO_add; }
      | AND       { $$ = BO_and; }
      ;
 
-decl: fundef { $$ = $1; }
 
 type: INT_TYPE { $$ = T_int;}
     | FLOAT_TYPE { $$ = T_float;}

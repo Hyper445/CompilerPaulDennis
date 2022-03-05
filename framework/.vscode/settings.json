@@ -13,6 +13,7 @@
         "traverse_helper.h": "c",
         "print.h": "c",
         "ctinfo.h": "c",
-        "lookup_table.h": "c"
+        "lookup_table.h": "c",
+        "opt_sub.h": "c"
     }
 }

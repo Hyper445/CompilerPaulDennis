@@ -67,9 +67,12 @@
      BOOLTYPE = 283,
      CURLY_BRACKET_L = 284,
      CURLY_BRACKET_R = 285,
-     NUM = 286,
-     FLOAT = 287,
-     ID = 288
+     RETURN = 286,
+     IF = 287,
+     ELSE = 288,
+     NUM = 289,
+     FLOAT = 290,
+     ID = 291
    };
 #endif
 /* Tokens.  */
@@ -101,9 +104,12 @@
 #define BOOLTYPE 283
 #define CURLY_BRACKET_L 284
 #define CURLY_BRACKET_R 285
-#define NUM 286
-#define FLOAT 287
-#define ID 288
+#define RETURN 286
+#define IF 287
+#define ELSE 288
+#define NUM 289
+#define FLOAT 290
+#define ID 291
 
 
 
@@ -121,7 +127,7 @@ typedef union YYSTYPE
  type                ctype;
 }
 /* Line 1529 of yacc.c.  */
-#line 125 "y.tab.h"
+#line 131 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

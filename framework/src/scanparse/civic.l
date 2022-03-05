@@ -45,7 +45,14 @@
 "+"                        { FILTER( PLUS);  }
 "*"                        { FILTER( STAR);  } 
 "/"                        { FILTER( SLASH);  } 
-"%"                        { FILTER( PERCENT);  } 
+"%"                        { FILTER( PERCENT);  }
+
+"if"                       { FILTER( IF);}
+"else"                     { FILTER( ELSE);}
+
+"return"                   { FILTER ( RETURN);}
+
+"int"                      { FILTER ( INT_TYPE);  }
 
 "<="                       { FILTER( LE);    }
 "<"                        { FILTER( LT);    } 

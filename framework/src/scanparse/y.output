@@ -1,1151 +1,747 @@
+Useless nonterminals
+
+   exprs
+
+
 Terminals which are not used
 
+   COMMA
    NE
    INTTYPE
    FLOATTYPE
    BOOLTYPE
-   CURLY_BRACKET_L
-   CURLY_BRACKET_R
 
 
-State 11 conflicts: 4 shift/reduce
-State 13 conflicts: 3 shift/reduce
-State 15 conflicts: 1 shift/reduce
-State 16 conflicts: 4 shift/reduce
-State 19 conflicts: 1 shift/reduce
-State 29 conflicts: 6 shift/reduce
-State 35 conflicts: 1 shift/reduce
-State 39 conflicts: 1 shift/reduce
-State 45 conflicts: 4 shift/reduce
-State 49 conflicts: 1 shift/reduce
-State 52 conflicts: 4 shift/reduce
+Useless rules
+
+   38 exprs: expr
+   39      | expr exprs
 
 
 Grammar
 
-    0 $accept: program $end
+    0 $accept: fundef $end
 
-    1 program: decls
+    1 fundef: type ID BRACKET_L BRACKET_R funbody
 
-    2 decls: decl
-    3      | decl decls
+    2 funbody: CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
-    4 fundef: type ID param funbody
-    5       | type ID funbody
-    6       | type ID
+    3 stmts: stmt stmts
+    4      | stmt
 
-    7 funbody: vardecl fundefs stmts
-    8        | vardecl fundefs
-    9        | vardecl stmts
-   10        | fundefs stmts
-   11        | vardecl
-   12        | fundefs
-   13        | stmts
+    5 stmt: assign
+    6     | return
+    7     | ifelse
 
-   14 fundefs: fundef fundefs
-   15        | fundef
+    8 return: RETURN expr SEMICOLON
 
-   16 vardecl: vardecl type ID exprs expr SEMICOLON
-   17        | type ID exprs expr SEMICOLON
-   18        | type ID exprs SEMICOLON
-   19        | type ID SEMICOLON
+    9 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   10       | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
 
-   20 param: ID type ids COMMA param
-   21      | ID type ids
-   22      | ID type
+   11 assign: varlet LET expr SEMICOLON
 
-   23 ids: ID ids
-   24    | ID
+   12 varlet: ID
 
-   25 stmts: stmt stmts
-   26      | stmt
+   13 expr: constant
+   14     | ID
+   15     | BRACKET_L expr binop expr BRACKET_R
 
-   27 stmt: assign
+   16 constant: floatval
+   17         | intval
+   18         | boolval
 
-   28 assign: varlet LET expr SEMICOLON
+   19 floatval: FLOAT
 
-   29 varlet: ID exprs
+   20 intval: NUM
 
-   30 expr: constant
-   31     | ID exprs
-   32     | BRACKET_L expr binop expr BRACKET_R
+   21 boolval: TRUEVAL
+   22        | FALSEVAL
 
-   33 exprs: expr
-   34      | expr exprs
+   23 binop: PLUS
+   24      | MINUS
+   25      | STAR
+   26      | SLASH
+   27      | PERCENT
+   28      | LE
+   29      | LT
+   30      | GE
+   31      | GT
+   32      | EQ
+   33      | OR
+   34      | AND
 
-   35 constant: floatval
-   36         | intval
-   37         | boolval
-
-   38 floatval: FLOAT
-
-   39 intval: NUM
-
-   40 boolval: TRUEVAL
-   41        | FALSEVAL
-
-   42 binop: PLUS
-   43      | MINUS
-   44      | STAR
-   45      | SLASH
-   46      | PERCENT
-   47      | LE
-   48      | LT
-   49      | GE
-   50      | GT
-   51      | EQ
-   52      | OR
-   53      | AND
-
-   54 decl: fundef
-
-   55 type: INT_TYPE
-   56     | FLOAT_TYPE
-   57     | BOOL_TYPE
+   35 type: INT_TYPE
+   36     | FLOAT_TYPE
+   37     | BOOL_TYPE
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-INT_TYPE (258) 55
-FLOAT_TYPE (259) 56
-BOOL_TYPE (260) 57
-BRACKET_L (261) 32
-BRACKET_R (262) 32
-COMMA (263) 20
-SEMICOLON (264) 16 17 18 19 28
-MINUS (265) 43
-PLUS (266) 42
-STAR (267) 44
-SLASH (268) 45
-PERCENT (269) 46
-LE (270) 47
-LT (271) 48
-GE (272) 49
-GT (273) 50
-EQ (274) 51
+INT_TYPE (258) 35
+FLOAT_TYPE (259) 36
+BOOL_TYPE (260) 37
+BRACKET_L (261) 1 9 10 15
+BRACKET_R (262) 1 9 10 15
+COMMA (263)
+SEMICOLON (264) 8 11
+MINUS (265) 24
+PLUS (266) 23
+STAR (267) 25
+SLASH (268) 26
+PERCENT (269) 27
+LE (270) 28
+LT (271) 29
+GE (272) 30
+GT (273) 31
+EQ (274) 32
 NE (275)
-OR (276) 52
-AND (277) 53
-TRUEVAL (278) 40
-FALSEVAL (279) 41
-LET (280) 28
+OR (276) 33
+AND (277) 34
+TRUEVAL (278) 21
+FALSEVAL (279) 22
+LET (280) 11
 INTTYPE (281)
 FLOATTYPE (282)
 BOOLTYPE (283)
-CURLY_BRACKET_L (284)
-CURLY_BRACKET_R (285)
-NUM (286) 39
-FLOAT (287) 38
-ID (288) 4 5 6 16 17 18 19 20 21 22 23 24 29 31
+CURLY_BRACKET_L (284) 2 9 10
+CURLY_BRACKET_R (285) 2 9 10
+RETURN (286) 8
+IF (287) 9 10
+ELSE (288) 9 10
+NUM (289) 20
+FLOAT (290) 19
+ID (291) 1 12 14
 
 
 Nonterminals, with rules where they appear
 
-$accept (34)
+$accept (37)
     on left: 0
-program (35)
+fundef (38)
     on left: 1, on right: 0
-decls (36)
-    on left: 2 3, on right: 1 3
-fundef (37)
-    on left: 4 5 6, on right: 14 15 54
-funbody (38)
-    on left: 7 8 9 10 11 12 13, on right: 4 5
-fundefs (39)
-    on left: 14 15, on right: 7 8 10 12 14
-vardecl (40)
-    on left: 16 17 18 19, on right: 7 8 9 11 16
-param (41)
-    on left: 20 21 22, on right: 4 20
-ids (42)
-    on left: 23 24, on right: 20 21 23
-stmts (43)
-    on left: 25 26, on right: 7 9 10 13 25
-stmt (44)
-    on left: 27, on right: 25 26
-assign (45)
-    on left: 28, on right: 27
-varlet (46)
-    on left: 29, on right: 28
-expr (47)
-    on left: 30 31 32, on right: 16 17 28 32 33 34
-exprs (48)
-    on left: 33 34, on right: 16 17 18 29 31 34
-constant (49)
-    on left: 35 36 37, on right: 30
-floatval (50)
-    on left: 38, on right: 35
-intval (51)
-    on left: 39, on right: 36
-boolval (52)
-    on left: 40 41, on right: 37
-binop (53)
-    on left: 42 43 44 45 46 47 48 49 50 51 52 53, on right: 32
-decl (54)
-    on left: 54, on right: 2 3
-type (55)
-    on left: 55 56 57, on right: 4 5 6 16 17 18 19 20 21 22
+funbody (39)
+    on left: 2, on right: 1
+stmts (40)
+    on left: 3 4, on right: 2 3 9
+stmt (41)
+    on left: 5 6 7, on right: 3 4
+return (42)
+    on left: 8, on right: 6
+ifelse (43)
+    on left: 9 10, on right: 7
+assign (44)
+    on left: 11, on right: 5
+varlet (45)
+    on left: 12, on right: 11
+expr (46)
+    on left: 13 14 15, on right: 8 9 10 11 15
+constant (47)
+    on left: 16 17 18, on right: 13
+floatval (48)
+    on left: 19, on right: 16
+intval (49)
+    on left: 20, on right: 17
+boolval (50)
+    on left: 21 22, on right: 18
+binop (51)
+    on left: 23 24 25 26 27 28 29 30 31 32 33 34, on right: 15
+type (52)
+    on left: 35 36 37, on right: 1
 
 
 state 0
 
-    0 $accept: . program $end
+    0 $accept: . fundef $end
 
     INT_TYPE    shift, and go to state 1
     FLOAT_TYPE  shift, and go to state 2
     BOOL_TYPE   shift, and go to state 3
 
-    program  go to state 4
-    decls    go to state 5
-    fundef   go to state 6
-    decl     go to state 7
-    type     go to state 8
+    fundef  go to state 4
+    type    go to state 5
 
 
 state 1
 
-   55 type: INT_TYPE .
+   35 type: INT_TYPE .
 
-    $default  reduce using rule 55 (type)
+    $default  reduce using rule 35 (type)
 
 
 state 2
 
-   56 type: FLOAT_TYPE .
+   36 type: FLOAT_TYPE .
 
-    $default  reduce using rule 56 (type)
+    $default  reduce using rule 36 (type)
 
 
 state 3
 
-   57 type: BOOL_TYPE .
+   37 type: BOOL_TYPE .
 
-    $default  reduce using rule 57 (type)
+    $default  reduce using rule 37 (type)
 
 
 state 4
 
-    0 $accept: program . $end
+    0 $accept: fundef . $end
 
-    $end  shift, and go to state 9
+    $end  shift, and go to state 6
 
 
 state 5
 
-    1 program: decls .
+    1 fundef: type . ID BRACKET_L BRACKET_R funbody
 
-    $default  reduce using rule 1 (program)
+    ID  shift, and go to state 7
 
 
 state 6
 
-   54 decl: fundef .
-
-    $default  reduce using rule 54 (decl)
-
-
-state 7
-
-    2 decls: decl .
-    3      | decl . decls
-
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-
-    $default  reduce using rule 2 (decls)
-
-    decls   go to state 10
-    fundef  go to state 6
-    decl    go to state 7
-    type    go to state 8
-
-
-state 8
-
-    4 fundef: type . ID param funbody
-    5       | type . ID funbody
-    6       | type . ID
-
-    ID  shift, and go to state 11
-
-
-state 9
-
-    0 $accept: program $end .
+    0 $accept: fundef $end .
 
     $default  accept
 
 
+state 7
+
+    1 fundef: type ID . BRACKET_L BRACKET_R funbody
+
+    BRACKET_L  shift, and go to state 8
+
+
+state 8
+
+    1 fundef: type ID BRACKET_L . BRACKET_R funbody
+
+    BRACKET_R  shift, and go to state 9
+
+
+state 9
+
+    1 fundef: type ID BRACKET_L BRACKET_R . funbody
+
+    CURLY_BRACKET_L  shift, and go to state 10
+
+    funbody  go to state 11
+
+
 state 10
 
-    3 decls: decl decls .
+    2 funbody: CURLY_BRACKET_L . stmts CURLY_BRACKET_R
 
-    $default  reduce using rule 3 (decls)
+    RETURN  shift, and go to state 12
+    IF      shift, and go to state 13
+    ID      shift, and go to state 14
+
+    stmts   go to state 15
+    stmt    go to state 16
+    return  go to state 17
+    ifelse  go to state 18
+    assign  go to state 19
+    varlet  go to state 20
 
 
 state 11
 
-    4 fundef: type ID . param funbody
-    5       | type ID . funbody
-    6       | type ID .
+    1 fundef: type ID BRACKET_L BRACKET_R funbody .
 
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-    ID          shift, and go to state 12
-
-    INT_TYPE    [reduce using rule 6 (fundef)]
-    FLOAT_TYPE  [reduce using rule 6 (fundef)]
-    BOOL_TYPE   [reduce using rule 6 (fundef)]
-    ID          [reduce using rule 6 (fundef)]
-    $default    reduce using rule 6 (fundef)
-
-    fundef   go to state 13
-    funbody  go to state 14
-    fundefs  go to state 15
-    vardecl  go to state 16
-    param    go to state 17
-    stmts    go to state 18
-    stmt     go to state 19
-    assign   go to state 20
-    varlet   go to state 21
-    type     go to state 22
+    $default  reduce using rule 1 (fundef)
 
 
 state 12
 
-   20 param: ID . type ids COMMA param
-   21      | ID . type ids
-   22      | ID . type
-   29 varlet: ID . exprs
+    8 return: RETURN . expr SEMICOLON
 
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-    BRACKET_L   shift, and go to state 23
-    TRUEVAL     shift, and go to state 24
-    FALSEVAL    shift, and go to state 25
-    NUM         shift, and go to state 26
-    FLOAT       shift, and go to state 27
-    ID          shift, and go to state 28
+    BRACKET_L  shift, and go to state 21
+    TRUEVAL    shift, and go to state 22
+    FALSEVAL   shift, and go to state 23
+    NUM        shift, and go to state 24
+    FLOAT      shift, and go to state 25
+    ID         shift, and go to state 26
 
-    expr      go to state 29
-    exprs     go to state 30
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
-    type      go to state 35
+    expr      go to state 27
+    constant  go to state 28
+    floatval  go to state 29
+    intval    go to state 30
+    boolval   go to state 31
 
 
 state 13
 
-   14 fundefs: fundef . fundefs
-   15        | fundef .
+    9 ifelse: IF . BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   10       | IF . BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
 
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-
-    INT_TYPE    [reduce using rule 15 (fundefs)]
-    FLOAT_TYPE  [reduce using rule 15 (fundefs)]
-    BOOL_TYPE   [reduce using rule 15 (fundefs)]
-    $default    reduce using rule 15 (fundefs)
-
-    fundef   go to state 13
-    fundefs  go to state 36
-    type     go to state 8
+    BRACKET_L  shift, and go to state 32
 
 
 state 14
 
-    5 fundef: type ID funbody .
+   12 varlet: ID .
 
-    $default  reduce using rule 5 (fundef)
+    $default  reduce using rule 12 (varlet)
 
 
 state 15
 
-   10 funbody: fundefs . stmts
-   12        | fundefs .
+    2 funbody: CURLY_BRACKET_L stmts . CURLY_BRACKET_R
 
-    ID  shift, and go to state 37
-
-    ID        [reduce using rule 12 (funbody)]
-    $default  reduce using rule 12 (funbody)
-
-    stmts   go to state 38
-    stmt    go to state 19
-    assign  go to state 20
-    varlet  go to state 21
+    CURLY_BRACKET_R  shift, and go to state 33
 
 
 state 16
 
-    7 funbody: vardecl . fundefs stmts
-    8        | vardecl . fundefs
-    9        | vardecl . stmts
-   11        | vardecl .
-   16 vardecl: vardecl . type ID exprs expr SEMICOLON
+    3 stmts: stmt . stmts
+    4      | stmt .
 
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-    ID          shift, and go to state 37
+    RETURN  shift, and go to state 12
+    IF      shift, and go to state 13
+    ID      shift, and go to state 14
 
-    INT_TYPE    [reduce using rule 11 (funbody)]
-    FLOAT_TYPE  [reduce using rule 11 (funbody)]
-    BOOL_TYPE   [reduce using rule 11 (funbody)]
-    ID          [reduce using rule 11 (funbody)]
-    $default    reduce using rule 11 (funbody)
+    $default  reduce using rule 4 (stmts)
 
-    fundef   go to state 13
-    fundefs  go to state 39
-    stmts    go to state 40
-    stmt     go to state 19
-    assign   go to state 20
-    varlet   go to state 21
-    type     go to state 41
+    stmts   go to state 34
+    stmt    go to state 16
+    return  go to state 17
+    ifelse  go to state 18
+    assign  go to state 19
+    varlet  go to state 20
 
 
 state 17
 
-    4 fundef: type ID param . funbody
+    6 stmt: return .
 
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-    ID          shift, and go to state 37
-
-    fundef   go to state 13
-    funbody  go to state 42
-    fundefs  go to state 15
-    vardecl  go to state 16
-    stmts    go to state 18
-    stmt     go to state 19
-    assign   go to state 20
-    varlet   go to state 21
-    type     go to state 22
+    $default  reduce using rule 6 (stmt)
 
 
 state 18
 
-   13 funbody: stmts .
+    7 stmt: ifelse .
 
-    $default  reduce using rule 13 (funbody)
+    $default  reduce using rule 7 (stmt)
 
 
 state 19
 
-   25 stmts: stmt . stmts
-   26      | stmt .
+    5 stmt: assign .
 
-    ID  shift, and go to state 37
-
-    ID        [reduce using rule 26 (stmts)]
-    $default  reduce using rule 26 (stmts)
-
-    stmts   go to state 43
-    stmt    go to state 19
-    assign  go to state 20
-    varlet  go to state 21
+    $default  reduce using rule 5 (stmt)
 
 
 state 20
 
-   27 stmt: assign .
+   11 assign: varlet . LET expr SEMICOLON
 
-    $default  reduce using rule 27 (stmt)
+    LET  shift, and go to state 35
 
 
 state 21
 
-   28 assign: varlet . LET expr SEMICOLON
+   15 expr: BRACKET_L . expr binop expr BRACKET_R
 
-    LET  shift, and go to state 44
+    BRACKET_L  shift, and go to state 21
+    TRUEVAL    shift, and go to state 22
+    FALSEVAL   shift, and go to state 23
+    NUM        shift, and go to state 24
+    FLOAT      shift, and go to state 25
+    ID         shift, and go to state 26
+
+    expr      go to state 36
+    constant  go to state 28
+    floatval  go to state 29
+    intval    go to state 30
+    boolval   go to state 31
 
 
 state 22
 
-    4 fundef: type . ID param funbody
-    5       | type . ID funbody
-    6       | type . ID
-   17 vardecl: type . ID exprs expr SEMICOLON
-   18        | type . ID exprs SEMICOLON
-   19        | type . ID SEMICOLON
+   21 boolval: TRUEVAL .
 
-    ID  shift, and go to state 45
+    $default  reduce using rule 21 (boolval)
 
 
 state 23
 
-   32 expr: BRACKET_L . expr binop expr BRACKET_R
+   22 boolval: FALSEVAL .
 
-    BRACKET_L  shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 46
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
+    $default  reduce using rule 22 (boolval)
 
 
 state 24
 
-   40 boolval: TRUEVAL .
+   20 intval: NUM .
 
-    $default  reduce using rule 40 (boolval)
+    $default  reduce using rule 20 (intval)
 
 
 state 25
 
-   41 boolval: FALSEVAL .
+   19 floatval: FLOAT .
 
-    $default  reduce using rule 41 (boolval)
+    $default  reduce using rule 19 (floatval)
 
 
 state 26
 
-   39 intval: NUM .
+   14 expr: ID .
 
-    $default  reduce using rule 39 (intval)
+    $default  reduce using rule 14 (expr)
 
 
 state 27
 
-   38 floatval: FLOAT .
+    8 return: RETURN expr . SEMICOLON
 
-    $default  reduce using rule 38 (floatval)
+    SEMICOLON  shift, and go to state 37
 
 
 state 28
 
-   31 expr: ID . exprs
+   13 expr: constant .
 
-    BRACKET_L  shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 29
-    exprs     go to state 47
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
+    $default  reduce using rule 13 (expr)
 
 
 state 29
 
-   33 exprs: expr .
-   34      | expr . exprs
+   16 constant: floatval .
 
-    BRACKET_L  shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    BRACKET_L  [reduce using rule 33 (exprs)]
-    TRUEVAL    [reduce using rule 33 (exprs)]
-    FALSEVAL   [reduce using rule 33 (exprs)]
-    NUM        [reduce using rule 33 (exprs)]
-    FLOAT      [reduce using rule 33 (exprs)]
-    ID         [reduce using rule 33 (exprs)]
-    $default   reduce using rule 33 (exprs)
-
-    expr      go to state 29
-    exprs     go to state 48
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
+    $default  reduce using rule 16 (constant)
 
 
 state 30
 
-   29 varlet: ID exprs .
+   17 constant: intval .
 
-    $default  reduce using rule 29 (varlet)
+    $default  reduce using rule 17 (constant)
 
 
 state 31
 
-   30 expr: constant .
+   18 constant: boolval .
 
-    $default  reduce using rule 30 (expr)
+    $default  reduce using rule 18 (constant)
 
 
 state 32
 
-   35 constant: floatval .
+    9 ifelse: IF BRACKET_L . expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   10       | IF BRACKET_L . expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
 
-    $default  reduce using rule 35 (constant)
+    BRACKET_L  shift, and go to state 21
+    TRUEVAL    shift, and go to state 22
+    FALSEVAL   shift, and go to state 23
+    NUM        shift, and go to state 24
+    FLOAT      shift, and go to state 25
+    ID         shift, and go to state 26
+
+    expr      go to state 38
+    constant  go to state 28
+    floatval  go to state 29
+    intval    go to state 30
+    boolval   go to state 31
 
 
 state 33
 
-   36 constant: intval .
+    2 funbody: CURLY_BRACKET_L stmts CURLY_BRACKET_R .
 
-    $default  reduce using rule 36 (constant)
+    $default  reduce using rule 2 (funbody)
 
 
 state 34
 
-   37 constant: boolval .
+    3 stmts: stmt stmts .
 
-    $default  reduce using rule 37 (constant)
+    $default  reduce using rule 3 (stmts)
 
 
 state 35
 
-   20 param: ID type . ids COMMA param
-   21      | ID type . ids
-   22      | ID type .
+   11 assign: varlet LET . expr SEMICOLON
 
-    ID  shift, and go to state 49
+    BRACKET_L  shift, and go to state 21
+    TRUEVAL    shift, and go to state 22
+    FALSEVAL   shift, and go to state 23
+    NUM        shift, and go to state 24
+    FLOAT      shift, and go to state 25
+    ID         shift, and go to state 26
 
-    ID        [reduce using rule 22 (param)]
-    $default  reduce using rule 22 (param)
-
-    ids  go to state 50
+    expr      go to state 39
+    constant  go to state 28
+    floatval  go to state 29
+    intval    go to state 30
+    boolval   go to state 31
 
 
 state 36
 
-   14 fundefs: fundef fundefs .
+   15 expr: BRACKET_L expr . binop expr BRACKET_R
 
-    $default  reduce using rule 14 (fundefs)
+    MINUS    shift, and go to state 40
+    PLUS     shift, and go to state 41
+    STAR     shift, and go to state 42
+    SLASH    shift, and go to state 43
+    PERCENT  shift, and go to state 44
+    LE       shift, and go to state 45
+    LT       shift, and go to state 46
+    GE       shift, and go to state 47
+    GT       shift, and go to state 48
+    EQ       shift, and go to state 49
+    OR       shift, and go to state 50
+    AND      shift, and go to state 51
+
+    binop  go to state 52
 
 
 state 37
 
-   29 varlet: ID . exprs
+    8 return: RETURN expr SEMICOLON .
 
-    BRACKET_L  shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 29
-    exprs     go to state 30
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
+    $default  reduce using rule 8 (return)
 
 
 state 38
 
-   10 funbody: fundefs stmts .
+    9 ifelse: IF BRACKET_L expr . BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   10       | IF BRACKET_L expr . BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
 
-    $default  reduce using rule 10 (funbody)
+    BRACKET_R  shift, and go to state 53
 
 
 state 39
 
-    7 funbody: vardecl fundefs . stmts
-    8        | vardecl fundefs .
+   11 assign: varlet LET expr . SEMICOLON
 
-    ID  shift, and go to state 37
-
-    ID        [reduce using rule 8 (funbody)]
-    $default  reduce using rule 8 (funbody)
-
-    stmts   go to state 51
-    stmt    go to state 19
-    assign  go to state 20
-    varlet  go to state 21
+    SEMICOLON  shift, and go to state 54
 
 
 state 40
 
-    9 funbody: vardecl stmts .
+   24 binop: MINUS .
 
-    $default  reduce using rule 9 (funbody)
+    $default  reduce using rule 24 (binop)
 
 
 state 41
 
-    4 fundef: type . ID param funbody
-    5       | type . ID funbody
-    6       | type . ID
-   16 vardecl: vardecl type . ID exprs expr SEMICOLON
+   23 binop: PLUS .
 
-    ID  shift, and go to state 52
+    $default  reduce using rule 23 (binop)
 
 
 state 42
 
-    4 fundef: type ID param funbody .
+   25 binop: STAR .
 
-    $default  reduce using rule 4 (fundef)
+    $default  reduce using rule 25 (binop)
 
 
 state 43
 
-   25 stmts: stmt stmts .
+   26 binop: SLASH .
 
-    $default  reduce using rule 25 (stmts)
+    $default  reduce using rule 26 (binop)
 
 
 state 44
 
-   28 assign: varlet LET . expr SEMICOLON
+   27 binop: PERCENT .
 
-    BRACKET_L  shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 53
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
+    $default  reduce using rule 27 (binop)
 
 
 state 45
 
-    4 fundef: type ID . param funbody
-    5       | type ID . funbody
-    6       | type ID .
-   17 vardecl: type ID . exprs expr SEMICOLON
-   18        | type ID . exprs SEMICOLON
-   19        | type ID . SEMICOLON
+   28 binop: LE .
 
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-    BRACKET_L   shift, and go to state 23
-    SEMICOLON   shift, and go to state 54
-    TRUEVAL     shift, and go to state 24
-    FALSEVAL    shift, and go to state 25
-    NUM         shift, and go to state 26
-    FLOAT       shift, and go to state 27
-    ID          shift, and go to state 55
-
-    INT_TYPE    [reduce using rule 6 (fundef)]
-    FLOAT_TYPE  [reduce using rule 6 (fundef)]
-    BOOL_TYPE   [reduce using rule 6 (fundef)]
-    ID          [reduce using rule 6 (fundef)]
-    $default    reduce using rule 6 (fundef)
-
-    fundef    go to state 13
-    funbody   go to state 14
-    fundefs   go to state 15
-    vardecl   go to state 16
-    param     go to state 17
-    stmts     go to state 18
-    stmt      go to state 19
-    assign    go to state 20
-    varlet    go to state 21
-    expr      go to state 29
-    exprs     go to state 56
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
-    type      go to state 22
+    $default  reduce using rule 28 (binop)
 
 
 state 46
 
-   32 expr: BRACKET_L expr . binop expr BRACKET_R
+   29 binop: LT .
 
-    MINUS    shift, and go to state 57
-    PLUS     shift, and go to state 58
-    STAR     shift, and go to state 59
-    SLASH    shift, and go to state 60
-    PERCENT  shift, and go to state 61
-    LE       shift, and go to state 62
-    LT       shift, and go to state 63
-    GE       shift, and go to state 64
-    GT       shift, and go to state 65
-    EQ       shift, and go to state 66
-    OR       shift, and go to state 67
-    AND      shift, and go to state 68
-
-    binop  go to state 69
+    $default  reduce using rule 29 (binop)
 
 
 state 47
 
-   31 expr: ID exprs .
+   30 binop: GE .
 
-    $default  reduce using rule 31 (expr)
+    $default  reduce using rule 30 (binop)
 
 
 state 48
 
-   34 exprs: expr exprs .
+   31 binop: GT .
 
-    $default  reduce using rule 34 (exprs)
+    $default  reduce using rule 31 (binop)
 
 
 state 49
 
-   23 ids: ID . ids
-   24    | ID .
+   32 binop: EQ .
 
-    ID  shift, and go to state 49
-
-    ID        [reduce using rule 24 (ids)]
-    $default  reduce using rule 24 (ids)
-
-    ids  go to state 70
+    $default  reduce using rule 32 (binop)
 
 
 state 50
 
-   20 param: ID type ids . COMMA param
-   21      | ID type ids .
+   33 binop: OR .
 
-    COMMA  shift, and go to state 71
-
-    $default  reduce using rule 21 (param)
+    $default  reduce using rule 33 (binop)
 
 
 state 51
 
-    7 funbody: vardecl fundefs stmts .
+   34 binop: AND .
 
-    $default  reduce using rule 7 (funbody)
+    $default  reduce using rule 34 (binop)
 
 
 state 52
 
-    4 fundef: type ID . param funbody
-    5       | type ID . funbody
-    6       | type ID .
-   16 vardecl: vardecl type ID . exprs expr SEMICOLON
+   15 expr: BRACKET_L expr binop . expr BRACKET_R
 
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-    BRACKET_L   shift, and go to state 23
-    TRUEVAL     shift, and go to state 24
-    FALSEVAL    shift, and go to state 25
-    NUM         shift, and go to state 26
-    FLOAT       shift, and go to state 27
-    ID          shift, and go to state 55
+    BRACKET_L  shift, and go to state 21
+    TRUEVAL    shift, and go to state 22
+    FALSEVAL   shift, and go to state 23
+    NUM        shift, and go to state 24
+    FLOAT      shift, and go to state 25
+    ID         shift, and go to state 26
 
-    INT_TYPE    [reduce using rule 6 (fundef)]
-    FLOAT_TYPE  [reduce using rule 6 (fundef)]
-    BOOL_TYPE   [reduce using rule 6 (fundef)]
-    ID          [reduce using rule 6 (fundef)]
-    $default    reduce using rule 6 (fundef)
-
-    fundef    go to state 13
-    funbody   go to state 14
-    fundefs   go to state 15
-    vardecl   go to state 16
-    param     go to state 17
-    stmts     go to state 18
-    stmt      go to state 19
-    assign    go to state 20
-    varlet    go to state 21
-    expr      go to state 29
-    exprs     go to state 72
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
-    type      go to state 22
+    expr      go to state 55
+    constant  go to state 28
+    floatval  go to state 29
+    intval    go to state 30
+    boolval   go to state 31
 
 
 state 53
 
-   28 assign: varlet LET expr . SEMICOLON
+    9 ifelse: IF BRACKET_L expr BRACKET_R . CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   10       | IF BRACKET_L expr BRACKET_R . CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
 
-    SEMICOLON  shift, and go to state 73
+    CURLY_BRACKET_L  shift, and go to state 56
 
 
 state 54
 
-   19 vardecl: type ID SEMICOLON .
+   11 assign: varlet LET expr SEMICOLON .
 
-    $default  reduce using rule 19 (vardecl)
+    $default  reduce using rule 11 (assign)
 
 
 state 55
 
-   20 param: ID . type ids COMMA param
-   21      | ID . type ids
-   22      | ID . type
-   29 varlet: ID . exprs
-   31 expr: ID . exprs
+   15 expr: BRACKET_L expr binop expr . BRACKET_R
 
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-    BRACKET_L   shift, and go to state 23
-    TRUEVAL     shift, and go to state 24
-    FALSEVAL    shift, and go to state 25
-    NUM         shift, and go to state 26
-    FLOAT       shift, and go to state 27
-    ID          shift, and go to state 28
-
-    expr      go to state 29
-    exprs     go to state 74
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
-    type      go to state 35
+    BRACKET_R  shift, and go to state 57
 
 
 state 56
 
-   17 vardecl: type ID exprs . expr SEMICOLON
-   18        | type ID exprs . SEMICOLON
+    9 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L . stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   10       | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L . CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
 
-    BRACKET_L  shift, and go to state 23
-    SEMICOLON  shift, and go to state 75
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    CURLY_BRACKET_R  shift, and go to state 58
+    RETURN           shift, and go to state 12
+    IF               shift, and go to state 13
+    ID               shift, and go to state 14
 
-    expr      go to state 76
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
+    stmts   go to state 59
+    stmt    go to state 16
+    return  go to state 17
+    ifelse  go to state 18
+    assign  go to state 19
+    varlet  go to state 20
 
 
 state 57
 
-   43 binop: MINUS .
+   15 expr: BRACKET_L expr binop expr BRACKET_R .
 
-    $default  reduce using rule 43 (binop)
+    $default  reduce using rule 15 (expr)
 
 
 state 58
 
-   42 binop: PLUS .
+   10 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R . ELSE CURLY_BRACKET_L CURLY_BRACKET_R
 
-    $default  reduce using rule 42 (binop)
+    ELSE  shift, and go to state 60
 
 
 state 59
 
-   44 binop: STAR .
+    9 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts . CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
-    $default  reduce using rule 44 (binop)
+    CURLY_BRACKET_R  shift, and go to state 61
 
 
 state 60
 
-   45 binop: SLASH .
+   10 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE . CURLY_BRACKET_L CURLY_BRACKET_R
 
-    $default  reduce using rule 45 (binop)
+    CURLY_BRACKET_L  shift, and go to state 62
 
 
 state 61
 
-   46 binop: PERCENT .
+    9 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R . ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
-    $default  reduce using rule 46 (binop)
+    ELSE  shift, and go to state 63
 
 
 state 62
 
-   47 binop: LE .
+   10 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L . CURLY_BRACKET_R
 
-    $default  reduce using rule 47 (binop)
+    CURLY_BRACKET_R  shift, and go to state 64
 
 
 state 63
 
-   48 binop: LT .
+    9 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE . CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
-    $default  reduce using rule 48 (binop)
+    CURLY_BRACKET_L  shift, and go to state 65
 
 
 state 64
 
-   49 binop: GE .
+   10 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R .
 
-    $default  reduce using rule 49 (binop)
+    $default  reduce using rule 10 (ifelse)
 
 
 state 65
 
-   50 binop: GT .
+    9 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L . stmts CURLY_BRACKET_R
 
-    $default  reduce using rule 50 (binop)
+    RETURN  shift, and go to state 12
+    IF      shift, and go to state 13
+    ID      shift, and go to state 14
+
+    stmts   go to state 66
+    stmt    go to state 16
+    return  go to state 17
+    ifelse  go to state 18
+    assign  go to state 19
+    varlet  go to state 20
 
 
 state 66
 
-   51 binop: EQ .
+    9 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts . CURLY_BRACKET_R
 
-    $default  reduce using rule 51 (binop)
+    CURLY_BRACKET_R  shift, and go to state 67
 
 
 state 67
 
-   52 binop: OR .
+    9 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R .
 
-    $default  reduce using rule 52 (binop)
-
-
-state 68
-
-   53 binop: AND .
-
-    $default  reduce using rule 53 (binop)
-
-
-state 69
-
-   32 expr: BRACKET_L expr binop . expr BRACKET_R
-
-    BRACKET_L  shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 77
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
-
-
-state 70
-
-   23 ids: ID ids .
-
-    $default  reduce using rule 23 (ids)
-
-
-state 71
-
-   20 param: ID type ids COMMA . param
-
-    ID  shift, and go to state 78
-
-    param  go to state 79
-
-
-state 72
-
-   16 vardecl: vardecl type ID exprs . expr SEMICOLON
-
-    BRACKET_L  shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 80
-    constant  go to state 31
-    floatval  go to state 32
-    intval    go to state 33
-    boolval   go to state 34
-
-
-state 73
-
-   28 assign: varlet LET expr SEMICOLON .
-
-    $default  reduce using rule 28 (assign)
-
-
-state 74
-
-   29 varlet: ID exprs .
-   31 expr: ID exprs .
-
-    LET       reduce using rule 29 (varlet)
-    $default  reduce using rule 31 (expr)
-
-
-state 75
-
-   18 vardecl: type ID exprs SEMICOLON .
-
-    $default  reduce using rule 18 (vardecl)
-
-
-state 76
-
-   17 vardecl: type ID exprs expr . SEMICOLON
-
-    SEMICOLON  shift, and go to state 81
-
-
-state 77
-
-   32 expr: BRACKET_L expr binop expr . BRACKET_R
-
-    BRACKET_R  shift, and go to state 82
-
-
-state 78
-
-   20 param: ID . type ids COMMA param
-   21      | ID . type ids
-   22      | ID . type
-
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-
-    type  go to state 35
-
-
-state 79
-
-   20 param: ID type ids COMMA param .
-
-    $default  reduce using rule 20 (param)
-
-
-state 80
-
-   16 vardecl: vardecl type ID exprs expr . SEMICOLON
-
-    SEMICOLON  shift, and go to state 83
-
-
-state 81
-
-   17 vardecl: type ID exprs expr SEMICOLON .
-
-    $default  reduce using rule 17 (vardecl)
-
-
-state 82
-
-   32 expr: BRACKET_L expr binop expr BRACKET_R .
-
-    $default  reduce using rule 32 (expr)
-
-
-state 83
-
-   16 vardecl: vardecl type ID exprs expr SEMICOLON .
-
-    $default  reduce using rule 16 (vardecl)
+    $default  reduce using rule 9 (ifelse)
