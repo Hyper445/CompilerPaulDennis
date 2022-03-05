@@ -46,22 +46,54 @@ static int yyerror( char *errname);
 %type <node> intval floatval boolval constant expr exprs
 %type <node> stmts stmt assign varlet
 
-%type <node> fundef funbody ifelse return
+%type <node> program decls decl fundefs fundef funbody ifelse return 
 
 %type <cbinop> binop
 %type <ctype> type
 
-%start fundef
+%start program
 
 %%
 
-fundef: type ID BRACKET_L BRACKET_R funbody
+program: decls
   {
-    parseresult = TBmakeFundef($1, $2, NULL, $5);
+    parseresult = $1;      
   }
   ;
 
-funbody: CURLY_BRACKET_L stmts CURLY_BRACKET_R
+decls: decl
+  {
+    $$ = TBmakeDecls($1, NULL);
+  }
+  | decl decls
+  {
+    $$ = TBmakeDecls($1, $2);
+  }
+  ;
+
+decl: fundef { $$ = $1; }
+
+fundef: type ID BRACKET_L BRACKET_R funbody
+  {
+    $$ = TBmakeFundef($1, $2, NULL, $5);
+  }
+  ;
+
+fundefs: fundef fundefs
+  {
+    $$ = TBmakeFundefs($1, $2);
+  }
+  | fundef
+  {
+    $$ = TBmakeFundefs($1, NULL);
+  }
+  ;
+
+funbody: CURLY_BRACKET_L fundefs stmts CURLY_BRACKET_R
+  {
+    $$ = TBmakeFunbody(NULL, $2, $3);
+  }
+  | CURLY_BRACKET_L stmts CURLY_BRACKET_R
   {
     $$ = TBmakeFunbody(NULL, NULL, $2);
   }
@@ -102,6 +134,10 @@ ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE C
     $$ = TBmakeIfelse($3, $6, $10);
   }
   | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
+  {
+    $$ = TBmakeIfelse($3, NULL, NULL);
+  }
+  | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
   {
     $$ = TBmakeIfelse($3, NULL, NULL);
   }

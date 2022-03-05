@@ -79,24 +79,25 @@ extern node *PRTfor (node * arg_node, info * arg_info){return arg_node;}
 
 extern node *PRTprogram (node * arg_node, info * arg_info)
 {
-  // DBUG_ENTER ("PRTprogram");
-  // printf("test");
+  DBUG_ENTER ("PRTprogram");
 
-  // PROGRAM_DECLS( arg_node) = TRAVdo( PROGRAM_DECLS( arg_node), arg_info);
+  PROGRAM_DECLS( arg_node) = TRAVdo( PROGRAM_DECLS( arg_node), arg_info);
+
+  printf("\n\ntest");
   
-  return (arg_node);
+  DBUG_RETURN(arg_node);
 }
 
 extern node *PRTdecls (node * arg_node, info * arg_info)
 {
-  // DBUG_ENTER ("PRTdecls");
-  // printf("decls");
+  DBUG_ENTER ("PRTdecls");
+  printf("decls");
 
-  // DECLS_DECL( arg_node) = TRAVdo( DECLS_DECL( arg_node), arg_info);
+  DECLS_DECL( arg_node) = TRAVdo( DECLS_DECL( arg_node), arg_info);
   
-  // DECLS_NEXT( arg_node) = TRAVopt( DECLS_NEXT( arg_node), arg_info);
+  DECLS_NEXT( arg_node) = TRAVopt( DECLS_NEXT( arg_node), arg_info);
 
-  return (arg_node);
+  DBUG_RETURN(arg_node);
 }
 
 extern node *PRTfundef (node * arg_node, info * arg_info)
@@ -158,11 +159,13 @@ extern node *PRTfunbody (node * arg_node, info * arg_info)
 extern node *PRTfundefs (node * arg_node, info * arg_info) 
 {
 
-  // FUNDEFS_FUNDEF( arg_node) = TRAVdo(FUNDEFS_FUNDEF(arg_node), arg_info);
+  DBUG_ENTER("PRTfundefs");
 
-  // FUNDEFS_NEXT( arg_node) = TRAVopt(FUNDEFS_NEXT(arg_node), arg_info);
+  FUNDEFS_FUNDEF( arg_node) = TRAVdo(FUNDEFS_FUNDEF(arg_node), arg_info);
 
-  return arg_node;
+  FUNDEFS_NEXT( arg_node) = TRAVopt(FUNDEFS_NEXT(arg_node), arg_info);
+
+  DBUG_RETURN( arg_node);
 
 }
 
