@@ -127,11 +127,19 @@ return: RETURN expr SEMICOLON
   {
     $$ = TBmakeReturn($2);
   }
+  | RETURN SEMICOLON
+  {
+    $$ = TBmakeReturn(NULL);
+  }
   ;
 
 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
   {
     $$ = TBmakeIfelse($3, $6, $10);
+  }
+  | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+  {
+    $$ = TBmakeIfelse($3, $6, NULL);
   }
   | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
   {
