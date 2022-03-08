@@ -2,7 +2,6 @@ int test() {
     
     int test2() {
         if(4) {return 2;}
-        else {return 3;}
     }
     
     if(3) { return 5; }
