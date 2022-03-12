@@ -1,0 +1,19 @@
+{
+    "files.associations": {
+        "*.mac": "c",
+        "typeinfo": "c",
+        "dbug.h": "c",
+        "locale": "cpp",
+        "copy_info.h": "c",
+        "__node_handle": "cpp",
+        "node_basic.h": "c",
+        "__locale": "c",
+        "store_operators.h": "c",
+        "traverse_tables.h": "c",
+        "traverse_helper.h": "c",
+        "print.h": "c",
+        "ctinfo.h": "c",
+        "lookup_table.h": "c",
+        "opt_sub.h": "c"
+    }
+}

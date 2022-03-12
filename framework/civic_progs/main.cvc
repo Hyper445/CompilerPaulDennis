@@ -1,0 +1,81 @@
+#include "civic.h"
+#include "core.cvc"
+#include "coreio.cvc"
+#include "array.cvc"
+
+export int main () {
+
+    testCore();
+    testCoreio();
+    testArray();
+	return 0;
+}
+
+void testCore() {
+
+    int a = 12;
+    int b = 13;
+    int c = 144;
+    int d = 3;
+
+    printNewlines(1);
+    printInt(gcd(a, c));
+    printNewlines(1);
+    printInt(fac(d));
+    printNewlines(1);
+    printInt(fib(d));
+    printNewlines(1);
+    if (isPrime(12)) {
+        printInt(1);
+    } else {
+        printInt(0);
+    }
+    if (isPrime(13)) {
+        printInt(1);
+    } else {
+        printInt(0);
+    }
+    printNewlines(2);
+
+}
+
+void testCoreio() {
+
+    int a = 8;
+
+    fibs(a);
+    printNewlines(1);
+    primes(a);
+
+
+}
+
+void testArray() {
+    float[3,2] matFloatA = [[3.0,4.0],[7.0,2.0],[5.0,9.0]];
+	float[2,3] matFloatB = [[3.0,1.0,5.0],[6.0,9.0,7.0]];
+	float[3,3] matFloatC;
+
+    int[4] vecInt = [1,2,3,4];
+    float[4] vecFloat = [2.0,3.0,4.0,5.0];
+
+    int[3,2] matIntA = [[1,2], [3,4], [5,6]];
+
+    int[3] intA;
+    float[3] floatA;
+
+    int[1,2] matIntB;
+
+    printIntVec(vecInt);
+    printFloatVec(vecFloat);
+
+    printIntMat(matIntA);
+    printFloatMat(matFloatA);
+
+    scanIntVec(intA);
+    scanFloatVec(floatA);
+
+    scanIntMat(matIntB);
+    scanFloatMat(matFloatC);
+
+	matMul(matFloatA, matFloatB, matFloatC);
+}
