@@ -52,9 +52,12 @@
 
 "for"                      { FILTER( FOR);}
 
-"return"                   { FILTER ( RETURN);}
+"do"                       { FILTER( DO);}
+"while"                    { FILTER( WHILE);}
 
-"int"                      { FILTER ( INT_TYPE);  }
+"return"                   { FILTER( RETURN);}
+
+"int"                      { FILTER( INT_TYPE);  }
 
 "<="                       { FILTER( LE);    }
 "<"                        { FILTER( LT);    } 

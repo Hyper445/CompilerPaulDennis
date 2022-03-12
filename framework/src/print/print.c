@@ -58,7 +58,15 @@ extern node *PRTarrexpr (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTexprstmt (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTfuncall (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTcast (node * arg_node, info * arg_info){return arg_node;}
-extern node *PRTdowhile (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTdowhile (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTdowhile");
+  printf("while{\n");
+  DOWHILE_BLOCK( arg_node) = TRAVopt( DOWHILE_BLOCK(arg_node), arg_info);
+  printf("} while (");
+  DOWHILE_COND( arg_node) = TRAVopt( DOWHILE_COND(arg_node), arg_info);
+  printf(")");
+  DBUG_RETURN(arg_node);
+  }
 extern node *PRTglobdecl (node * arg_node, info * arg_info){return arg_node;}
 
 extern node *PRTglobdef (node * arg_node, info * arg_info){

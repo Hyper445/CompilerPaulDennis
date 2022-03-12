@@ -37,7 +37,7 @@ static int yyerror( char *errname);
 %token TRUEVAL FALSEVAL LET INTTYPE FLOATTYPE BOOLTYPE 
 %token CURLY_BRACKET_L CURLY_BRACKET_R RETURN
 
-%token IF ELSE FOR
+%token IF ELSE FOR DO WHILE  
 
 %token <cint> NUM
 %token <cflt> FLOAT
@@ -46,7 +46,7 @@ static int yyerror( char *errname);
 %type <node> intval floatval boolval constant expr exprs
 %type <node> stmts stmt assign varlet
 
-%type <node> program decls decl fundefs fundef funbody ifelse return for
+%type <node> program decls decl fundefs fundef funbody ifelse return for doWhile
 
 %type <cbinop> binop
 %type <ctype> type
@@ -125,6 +125,10 @@ stmt: assign
   {
     $$ = $1;
   }
+  | doWhile
+  {
+    $$ = $1;
+  }
   ;
 
 return: RETURN expr SEMICOLON
@@ -178,6 +182,11 @@ assign: varlet LET expr SEMICOLON
     $$ = TBmakeFor( $4, $6, $8, $10, $13);
   }
   ;
+
+  doWhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
+  {
+    $$ = TBmakeDowhile( $7, $3);
+  }
 
 varlet: ID
   {
