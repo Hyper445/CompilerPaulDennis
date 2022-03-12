@@ -90,14 +90,14 @@ extern node *PRTfor (node * arg_node, info * arg_info){
   DBUG_RETURN(arg_node);
   }
 
-
 extern node *PRTprogram (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTprogram");
-  printf("test program\n");
+
+
   PROGRAM_DECLS( arg_node) = TRAVdo( PROGRAM_DECLS( arg_node), arg_info);
 
-
+  printf("\n\ntest");
   
   DBUG_RETURN(arg_node);
 }
