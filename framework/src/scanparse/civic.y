@@ -37,11 +37,7 @@ static int yyerror( char *errname);
 %token TRUEVAL FALSEVAL LET INTTYPE FLOATTYPE BOOLTYPE 
 %token CURLY_BRACKET_L CURLY_BRACKET_R RETURN
 
-<<<<<<< HEAD
 %token IF ELSE FOR
-=======
-%token IF ELSE
->>>>>>> 824c629005e55b4e81c7dfa2001bb6c48c338115
 
 %token <cint> NUM
 %token <cflt> FLOAT
@@ -50,11 +46,7 @@ static int yyerror( char *errname);
 %type <node> intval floatval boolval constant expr exprs
 %type <node> stmts stmt assign varlet
 
-<<<<<<< HEAD
 %type <node> program decls decl fundefs fundef funbody ifelse return for
-=======
-%type <node> program decls decl fundefs fundef funbody ifelse return 
->>>>>>> 824c629005e55b4e81c7dfa2001bb6c48c338115
 
 %type <cbinop> binop
 %type <ctype> type
@@ -129,13 +121,10 @@ stmt: assign
   {
     $$ = $1;
   }
-<<<<<<< HEAD
   | for
   {
     $$ = $1;
   }
-=======
->>>>>>> 824c629005e55b4e81c7dfa2001bb6c48c338115
   ;
 
 return: RETURN expr SEMICOLON
@@ -172,7 +161,6 @@ assign: varlet LET expr SEMICOLON
   }
   ;
 
-<<<<<<< HEAD
   for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
   {
     $$ = TBmakeFor( $4, $6, $8, NULL, NULL);
@@ -191,8 +179,6 @@ assign: varlet LET expr SEMICOLON
   }
   ;
 
-=======
->>>>>>> 824c629005e55b4e81c7dfa2001bb6c48c338115
 varlet: ID
   {
     $$ = TBmakeVarlet( STRcpy( $1), NULL, NULL);

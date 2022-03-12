@@ -50,11 +50,8 @@
 "if"                       { FILTER( IF);}
 "else"                     { FILTER( ELSE);}
 
-<<<<<<< HEAD
 "for"                      { FILTER( FOR);}
 
-=======
->>>>>>> 824c629005e55b4e81c7dfa2001bb6c48c338115
 "return"                   { FILTER ( RETURN);}
 
 "int"                      { FILTER ( INT_TYPE);  }
