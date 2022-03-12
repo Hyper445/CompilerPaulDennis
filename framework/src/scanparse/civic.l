@@ -53,6 +53,8 @@
 "return"                   { FILTER ( RETURN);}
 
 "int"                      { FILTER ( INT_TYPE);  }
+"float"                      { FILTER ( FLOAT_TYPE);  }
+"bool"                      { FILTER ( BOOL_TYPE);  }
 
 "<="                       { FILTER( LE);    }
 "<"                        { FILTER( LT);    } 
@@ -75,6 +77,10 @@
 [0-9]+                     { yylval.cint=atoi(yytext);
                              FILTER( NUM);
                            }
+                          
+[0-9]+\.[0-9]+([eE][+-][0-9]+)?  { yylval.cflt = atof(yytext);
+                                   FILTER(FLOAT);
+                                 }
 
 \n.*                       { global.line += 1;
                              global.col = 0;

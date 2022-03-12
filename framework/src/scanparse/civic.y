@@ -46,7 +46,7 @@ static int yyerror( char *errname);
 %type <node> intval floatval boolval constant expr exprs
 %type <node> stmts stmt assign varlet
 
-%type <node> program decls decl fundefs fundef funbody ifelse return 
+%type <node> program decls decl fundefs globdecl globdef fundef param block ids funbody vardecl ifelse return 
 
 %type <cbinop> binop
 %type <ctype> type
@@ -71,11 +71,53 @@ decls: decl
   }
   ;
 
-decl: fundef { $$ = $1; }
+decl: fundef 
+  { 
+    $$ = $1; 
+  }
+  | globdef 
+  { 
+    $$ = $1; 
+  }
+  | globdecl
+  {
+    $$ = $1;
+  }
+  ;
+
+globdecl: type ID ids SEMICOLON
+  {
+    $$ = TBmakeGlobdecl($1, STRcpy($2), $3);
+  }
+  | type ID SEMICOLON
+  {
+    $$ = TBmakeGlobdecl($1, STRcpy($2), NULL);
+  }
+  ;
+
+globdef: type ID LET expr SEMICOLON 
+  {
+    $$ = TBmakeGlobdef($1, STRcpy($2), NULL, $4);
+  }
+  ;
 
 fundef: type ID BRACKET_L BRACKET_R funbody
   {
-    $$ = TBmakeFundef($1, $2, NULL, $5);
+    $$ = TBmakeFundef($1, STRcpy($2), NULL, $5);
+  }
+  ;
+
+param: type ID ids param
+  {
+    $$ = TBmakeParam($1, STRcpy($2), $3, $4);
+  }
+  | type ID ids
+  {
+    $$ = TBmakeParam($1, STRcpy($2), $3, NULL);
+  }
+  | type ID
+  {
+    $$ = TBmakeParam($1, STRcpy($2), NULL, NULL);
   }
   ;
 
@@ -89,15 +131,81 @@ fundefs: fundef fundefs
   }
   ;
 
-funbody: CURLY_BRACKET_L fundefs stmts CURLY_BRACKET_R
+ids: ID ids
+  {
+    $$ = TBmakeIds(STRcpy($1), $2);
+  }
+  | ID
+  {
+    $$ = TBmakeIds(STRcpy($1), NULL);
+  }
+
+funbody: CURLY_BRACKET_L vardecl fundefs stmts CURLY_BRACKET_R
+  {
+    $$ = TBmakeFunbody($2, $3, $4);
+  }
+  | CURLY_BRACKET_L fundefs stmts CURLY_BRACKET_R
   {
     $$ = TBmakeFunbody(NULL, $2, $3);
+  }
+  | CURLY_BRACKET_L vardecl stmts CURLY_BRACKET_R
+  {
+    $$ = TBmakeFunbody($2, NULL, $3);
+  }
+  | CURLY_BRACKET_L vardecl fundefs CURLY_BRACKET_R
+  {
+    $$ = TBmakeFunbody($2, $3, NULL);
+  }
+  | CURLY_BRACKET_L vardecl CURLY_BRACKET_R
+  {
+    $$ = TBmakeFunbody($2, NULL, NULL);
   }
   | CURLY_BRACKET_L stmts CURLY_BRACKET_R
   {
     $$ = TBmakeFunbody(NULL, NULL, $2);
   }
+  | CURLY_BRACKET_L fundefs CURLY_BRACKET_R
+  {
+    $$ = TBmakeFunbody(NULL, $2, NULL);
+  }
+  | CURLY_BRACKET_L CURLY_BRACKET_R
+  {
+    $$ = TBmakeFunbody(NULL, NULL, NULL);
+  }
   ;
+
+vardecl: type ID LET exprs expr SEMICOLON vardecl
+  {
+    $$ = TBmakeVardecl($1, STRcpy($2), $4, $5, $7);
+  }
+  | type ID LET exprs expr SEMICOLON
+  {
+    $$ = TBmakeVardecl($1, STRcpy($2), $4, $5, NULL);
+  }
+  | type ID LET exprs SEMICOLON vardecl
+  {
+    $$ = TBmakeVardecl($1, STRcpy($2), $4, NULL, $6);
+  }
+  | type ID LET expr SEMICOLON vardecl
+  {
+    $$ = TBmakeVardecl($1, STRcpy($2), NULL, $4, $6);
+  }
+  | type ID LET exprs SEMICOLON
+  {
+    $$ = TBmakeVardecl($1, STRcpy($2), $4, NULL, NULL);
+  }
+  | type ID LET expr SEMICOLON
+  {
+    $$ = TBmakeVardecl($1, STRcpy($2), NULL, $4, NULL);
+  }
+  | type ID LET SEMICOLON vardecl
+  {
+    $$ = TBmakeVardecl($1, STRcpy($2), NULL, NULL, $5);
+  }
+  | type ID SEMICOLON
+  {
+    $$ = TBmakeVardecl($1, STRcpy($2), NULL, NULL, NULL);
+  }
 
 stmts: stmt stmts
   {
@@ -133,13 +241,13 @@ return: RETURN expr SEMICOLON
   }
   ;
 
-ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE CURLY_BRACKET_L stmts CURLY_BRACKET_R
+ifelse: IF BRACKET_L expr BRACKET_R block ELSE block
   {
-    $$ = TBmakeIfelse($3, $6, $10);
+    $$ = TBmakeIfelse($3, $5, $7);
   }
-  | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+  | IF BRACKET_L expr BRACKET_R block
   {
-    $$ = TBmakeIfelse($3, $6, NULL);
+    $$ = TBmakeIfelse($3, $5, NULL);
   }
   | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
   {
@@ -148,6 +256,12 @@ ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R ELSE C
   | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
   {
     $$ = TBmakeIfelse($3, NULL, NULL);
+  }
+  ;
+
+block: CURLY_BRACKET_L stmts CURLY_BRACKET_R
+  {
+    $$ = $2;
   }
   ;
 

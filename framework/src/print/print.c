@@ -62,15 +62,15 @@ extern node *PRTdowhile (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTglobdecl (node * arg_node, info * arg_info){return arg_node;}
 
 extern node *PRTglobdef (node * arg_node, info * arg_info){
-  // DBUG_ENTER ("PRTglobdef");
+  DBUG_ENTER ("PRTglobdef");
 
-  // printf("%u %s", GLOBDEF_TYPE(arg_node), GLOBDEF_NAME(arg_node));
+  printf("%s\n", GLOBDEF_NAME(arg_node));
 
-  // GLOBDEF_INIT( arg_node) = TRAVdo( GLOBDEF_INIT( arg_node), arg_info);
+  GLOBDEF_INIT( arg_node) = TRAVopt( GLOBDEF_INIT( arg_node), arg_info);
 
-  // GLOBDEF_DIMS ( arg_node) = TRAVdo( GLOBDEF_DIMS( arg_node), arg_info);
+  GLOBDEF_DIMS ( arg_node) = TRAVopt( GLOBDEF_DIMS( arg_node), arg_info);
   
-  return arg_node;
+  DBUG_RETURN( arg_node);
 }
 extern node *PRTmonop (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTwhile (node * arg_node, info * arg_info){return arg_node;}
@@ -82,8 +82,6 @@ extern node *PRTprogram (node * arg_node, info * arg_info)
   DBUG_ENTER ("PRTprogram");
 
   PROGRAM_DECLS( arg_node) = TRAVdo( PROGRAM_DECLS( arg_node), arg_info);
-
-  printf("\n\ntest");
   
   DBUG_RETURN(arg_node);
 }
@@ -91,7 +89,6 @@ extern node *PRTprogram (node * arg_node, info * arg_info)
 extern node *PRTdecls (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTdecls");
-  printf("decls");
 
   DECLS_DECL( arg_node) = TRAVdo( DECLS_DECL( arg_node), arg_info);
   
@@ -193,8 +190,8 @@ extern node *PRTifelse (node * arg_node, info * arg_info)
   DBUG_ENTER("PRTifelse");
 
   IFELSE_COND( arg_node) = TRAVdo( IFELSE_COND(arg_node), arg_info);
-  IFELSE_THEN( arg_node) = TRAVopt( IFELSE_ELSE(arg_node), arg_info);
-  IFELSE_ELSE( arg_node) = TRAVopt( IFELSE_THEN(arg_node), arg_info);
+  IFELSE_THEN( arg_node) = TRAVopt( IFELSE_THEN(arg_node), arg_info);
+  IFELSE_ELSE( arg_node) = TRAVopt( IFELSE_ELSE(arg_node), arg_info);
 
   DBUG_RETURN( arg_node);
 

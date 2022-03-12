@@ -1,8 +1,15 @@
+int x;
+
+int x = 3;
+
 int test() { 
     
-    int test2() {
-        if(4) {return 2;}
-    }
     
-    if(3) { return 5; }
+    float x;
+
+    if (4) {
+        x = 3;
+    } else {
+        x = 4;
+    }
 }

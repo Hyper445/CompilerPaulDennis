@@ -711,8 +711,8 @@
             </son>
         </sons>
         <attributes>
-            <attribute name="Name">
-                <type name="String">
+            <attribute name="Type">
+                <type name="Type">
                     <targets>
                         <target mandatory="yes">
                             <any/>
@@ -722,9 +722,9 @@
                         </target>
                     </targets>
                 </type>
-            </attribute>
-            <attribute name="Type">
-                <type name="Type">
+            </attribute>  
+            <attribute name="Name">
+                <type name="String">
                     <targets>
                         <target mandatory="yes">
                             <any/>
@@ -772,8 +772,8 @@
             </son>
         </sons>
         <attributes>
-            <attribute name="Name">
-                <type name="String">
+            <attribute name="Type">
+                <type name="Type">
                     <targets>
                         <target mandatory="yes">
                             <any/>
@@ -784,8 +784,8 @@
                     </targets>
                 </type>
             </attribute>
-            <attribute name="Type">
-                <type name="Type">
+            <attribute name="Name">
+                <type name="String">
                     <targets>
                         <target mandatory="yes">
                             <any/>
