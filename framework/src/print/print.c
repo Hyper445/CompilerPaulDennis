@@ -81,7 +81,15 @@ extern node *PRTglobdef (node * arg_node, info * arg_info){
   return arg_node;
 }
 extern node *PRTmonop (node * arg_node, info * arg_info){return arg_node;}
-extern node *PRTwhile (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTwhile (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTwhile");
+  printf("while(");
+  WHILE_COND( arg_node) = TRAVopt( WHILE_COND(arg_node), arg_info);
+  printf(") {\n");
+  WHILE_BLOCK( arg_node) = TRAVopt( WHILE_BLOCK(arg_node), arg_info);
+  printf("}");
+  DBUG_RETURN(arg_node);
+  }
 
 extern node *PRTfor (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTfor");

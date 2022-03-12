@@ -46,7 +46,7 @@ static int yyerror( char *errname);
 %type <node> intval floatval boolval constant expr exprs
 %type <node> stmts stmt assign varlet
 
-%type <node> program decls decl fundefs fundef funbody ifelse return for doWhile
+%type <node> program decls decl fundefs fundef funbody ifelse return for doWhile while
 
 %type <cbinop> binop
 %type <ctype> type
@@ -129,6 +129,10 @@ stmt: assign
   {
     $$ = $1;
   }
+  | while
+  {
+    $$ = $1;
+  }
   ;
 
 return: RETURN expr SEMICOLON
@@ -186,6 +190,11 @@ assign: varlet LET expr SEMICOLON
   doWhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
   {
     $$ = TBmakeDowhile( $7, $3);
+  }
+
+  while: WHILE BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+  {
+    $$ = TBmakeWhile( $3, $6);
   }
 
 varlet: ID
