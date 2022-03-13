@@ -1,0 +1,6 @@
+int test() {
+    bool b = !true;
+    int a = -4;
+    
+    return a;
+}

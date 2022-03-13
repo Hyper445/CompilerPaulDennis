@@ -68,8 +68,10 @@
 ">"                        { FILTER( GT);    }
 "=="                       { FILTER( EQ);    }
 "!="                       { FILTER( NE);    }
-"&&"                       { FILTER( AND);    }
+"&&"                       { FILTER( AND);   }
 "||"                       { FILTER( OR);    }
+
+"!"                        { FILTER( NOT);   }
 
 "="                        { FILTER( LET);    }
 
