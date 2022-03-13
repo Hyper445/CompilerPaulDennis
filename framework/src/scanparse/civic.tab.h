@@ -70,9 +70,12 @@
      RETURN = 286,
      IF = 287,
      ELSE = 288,
-     NUM = 289,
-     FLOAT = 290,
-     ID = 291
+     FOR = 289,
+     DO = 290,
+     WHILE = 291,
+     NUM = 292,
+     FLOAT = 293,
+     ID = 294
    };
 #endif
 /* Tokens.  */
@@ -107,9 +110,12 @@
 #define RETURN 286
 #define IF 287
 #define ELSE 288
-#define NUM 289
-#define FLOAT 290
-#define ID 291
+#define FOR 289
+#define DO 290
+#define WHILE 291
+#define NUM 292
+#define FLOAT 293
+#define ID 294
 
 
 
@@ -127,7 +133,7 @@ typedef union YYSTYPE
  type                ctype;
 }
 /* Line 1529 of yacc.c.  */
-#line 131 "y.tab.h"
+#line 137 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
