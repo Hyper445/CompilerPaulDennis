@@ -2,13 +2,13 @@ int x;
 
 int x = 3;
 
-int test() { 
+int test(int a) { 
     
     
     float x;
 
     if (4) {
-        x = 3;
+        x = -3;
     } else {
         x = 4;
     }
