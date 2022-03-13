@@ -123,10 +123,6 @@ param: type ID ids param
   {
     $$ = TBmakeParam($1, STRcpy($2), $3, NULL);
   }
-  | type ID COMMA param
-  {
-    $$ = TBmakeParam($1, STRcpy($2), NULL, $4);
-  }
   | type ID
   {
     $$ = TBmakeParam($1, STRcpy($2), NULL, NULL);
