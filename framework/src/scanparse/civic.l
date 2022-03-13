@@ -50,11 +50,17 @@
 "if"                       { FILTER( IF);}
 "else"                     { FILTER( ELSE);}
 
-"return"                   { FILTER ( RETURN);}
+"for"                      { FILTER( FOR);}
 
 "int"                      { FILTER ( INT_TYPE);  }
 "float"                      { FILTER ( FLOAT_TYPE);  }
 "bool"                      { FILTER ( BOOL_TYPE);  }
+"do"                       { FILTER( DO);}
+"while"                    { FILTER( WHILE);}
+
+"return"                   { FILTER( RETURN);}
+
+"int"                      { FILTER( INT_TYPE);  }
 
 "<="                       { FILTER( LE);    }
 "<"                        { FILTER( LT);    } 

@@ -58,7 +58,15 @@ extern node *PRTarrexpr (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTexprstmt (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTfuncall (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTcast (node * arg_node, info * arg_info){return arg_node;}
-extern node *PRTdowhile (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTdowhile (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTdowhile");
+  printf("while{\n");
+  DOWHILE_BLOCK( arg_node) = TRAVopt( DOWHILE_BLOCK(arg_node), arg_info);
+  printf("} while (");
+  DOWHILE_COND( arg_node) = TRAVopt( DOWHILE_COND(arg_node), arg_info);
+  printf(")");
+  DBUG_RETURN(arg_node);
+  }
 extern node *PRTglobdecl (node * arg_node, info * arg_info){return arg_node;}
 
 extern node *PRTglobdef (node * arg_node, info * arg_info){
@@ -73,13 +81,35 @@ extern node *PRTglobdef (node * arg_node, info * arg_info){
   DBUG_RETURN( arg_node);
 }
 extern node *PRTmonop (node * arg_node, info * arg_info){return arg_node;}
-extern node *PRTwhile (node * arg_node, info * arg_info){return arg_node;}
-extern node *PRTfor (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTwhile (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTwhile");
+  printf("while(");
+  WHILE_COND( arg_node) = TRAVopt( WHILE_COND(arg_node), arg_info);
+  printf(") {\n");
+  WHILE_BLOCK( arg_node) = TRAVopt( WHILE_BLOCK(arg_node), arg_info);
+  printf("}");
+  DBUG_RETURN(arg_node);
+  }
 
+extern node *PRTfor (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTfor");
+
+  printf("for( %s", FOR_LOOPVAR(arg_node));
+  FOR_START( arg_node) = TRAVdo( FOR_START(arg_node), arg_info);
+  printf(", ");
+  FOR_STOP( arg_node) = TRAVdo( FOR_STOP(arg_node), arg_info);
+  printf(", ");
+  FOR_STEP( arg_node) = TRAVopt( FOR_STEP(arg_node), arg_info);
+  printf(" ){\n");
+  FOR_BLOCK( arg_node) = TRAVopt( FOR_BLOCK(arg_node), arg_info);
+  printf("}");
+  DBUG_RETURN(arg_node);
+  }
 
 extern node *PRTprogram (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTprogram");
+
 
   PROGRAM_DECLS( arg_node) = TRAVdo( PROGRAM_DECLS( arg_node), arg_info);
   

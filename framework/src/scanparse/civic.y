@@ -37,7 +37,7 @@ static int yyerror( char *errname);
 %token TRUEVAL FALSEVAL LET INTTYPE FLOATTYPE BOOLTYPE 
 %token CURLY_BRACKET_L CURLY_BRACKET_R RETURN
 
-%token IF ELSE
+%token IF ELSE FOR DO WHILE  
 
 %token <cint> NUM
 %token <cflt> FLOAT
@@ -47,6 +47,7 @@ static int yyerror( char *errname);
 %type <node> stmts stmt assign varlet
 
 %type <node> program decls decl fundefs globdecl globdef fundef param block ids funbody vardecl ifelse return 
+%type <node> for doWhile while
 
 %type <cbinop> binop
 %type <ctype> type
@@ -229,6 +230,18 @@ stmt: assign
   {
     $$ = $1;
   }
+  | for
+  {
+    $$ = $1;
+  }
+  | doWhile
+  {
+    $$ = $1;
+  }
+  | while
+  {
+    $$ = $1;
+  }
   ;
 
 return: RETURN expr SEMICOLON
@@ -270,6 +283,34 @@ assign: varlet LET expr SEMICOLON
     $$ = TBmakeAssign( $1, $3);
   }
   ;
+
+  for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+  {
+    $$ = TBmakeFor( $4, $6, $8, NULL, NULL);
+  }
+  | FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+  {
+    $$ = TBmakeFor( $4, $6, $8, $10, NULL);
+  }
+  | FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+  {
+    $$ = TBmakeFor( $4, $6, $8, NULL, $11);
+  }
+  | FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+  {
+    $$ = TBmakeFor( $4, $6, $8, $10, $13);
+  }
+  ;
+
+  doWhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
+  {
+    $$ = TBmakeDowhile( $7, $3);
+  }
+
+  while: WHILE BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+  {
+    $$ = TBmakeWhile( $3, $6);
+  }
 
 varlet: ID
   {
