@@ -27,6 +27,7 @@ static int yyerror( char *errname);
  int                 cint;
  float               cflt;
  binop               cbinop;
+ monop               cmonop;
  node               *node;
  type                ctype;
 }
@@ -34,6 +35,7 @@ static int yyerror( char *errname);
 %token INT_TYPE FLOAT_TYPE BOOL_TYPE
 %token BRACKET_L BRACKET_R COMMA SEMICOLON
 %token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND
+%token NOT NEG
 %token TRUEVAL FALSEVAL LET INTTYPE FLOATTYPE BOOLTYPE 
 %token CURLY_BRACKET_L CURLY_BRACKET_R RETURN
 
@@ -51,6 +53,7 @@ static int yyerror( char *errname);
 
 %type <cbinop> binop
 %type <ctype> type
+%type <cmonop> monop
 
 %start program
 
@@ -327,11 +330,16 @@ expr: constant
   {
     $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
   }
+  | monop expr 
+  {
+    $$ = TBmakeMonop($1, $2);
+  }
   | BRACKET_L expr binop expr BRACKET_R
   {
     $$ = TBmakeBinop( $3, $2, $4);
   }
   ;
+  
 
 exprs: expr 
   {
@@ -393,6 +401,9 @@ binop: PLUS      { $$ = BO_add; }
      | AND       { $$ = BO_and; }
      ;
 
+monop: NOT { $$ = MO_not; }
+     | MINUS { $$ = MO_neg; }
+     ;
 
 type: INT_TYPE { $$ = T_int;}
     | FLOAT_TYPE { $$ = T_float;}

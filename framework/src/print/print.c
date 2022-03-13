@@ -58,6 +58,7 @@ extern node *PRTarrexpr (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTexprstmt (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTfuncall (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTcast (node * arg_node, info * arg_info){return arg_node;}
+
 extern node *PRTdowhile (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTdowhile");
   printf("while{\n");
@@ -67,7 +68,8 @@ extern node *PRTdowhile (node * arg_node, info * arg_info){
   printf(")");
   DBUG_RETURN(arg_node);
   }
-extern node *PRTglobdecl (node * arg_node, info * arg_info){return arg_node;}
+
+extern node *PRTglobdecl (node * arg_node, info * arg_info){return arg_node;}  
 
 extern node *PRTglobdef (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTglobdef");
@@ -80,7 +82,27 @@ extern node *PRTglobdef (node * arg_node, info * arg_info){
   
   DBUG_RETURN( arg_node);
 }
-extern node *PRTmonop (node * arg_node, info * arg_info){return arg_node;}
+
+extern node *PRTmonop (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTmonop");
+
+  switch (MONOP_OP(arg_node)) {
+    case 0 :
+      printf("!");
+      break;
+    case 1 :
+      printf("-");
+      break;
+    case 2 :
+      printf("unknown");
+      break;
+  }
+
+  MONOP_OPERAND( arg_node) = TRAVdo( MONOP_OPERAND(arg_node), arg_info);
+
+  DBUG_RETURN(arg_node);
+  }
+
 extern node *PRTwhile (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTwhile");
   printf("while(");
