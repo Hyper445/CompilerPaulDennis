@@ -22,7 +22,6 @@
 #include "memory.h"
 #include "globals.h"
 
-void print_type(int type);
 
 /*
  * INFO structure
@@ -54,15 +53,7 @@ static info *FreeInfo( info *info)
 
 
 extern node *PRTdeclarations (node * arg_node, info * arg_info){return arg_node;}
-
-extern node *PRTexprs (node * arg_node, info * arg_info){
-  DBUG_ENTER ("PRTexprs");
-
-  EXPRS_EXPR( arg_node) = TRAVdo( EXPRS_EXPR(arg_node), arg_info);
-  EXPRS_NEXT ( arg_node) = TRAVopt (EXPRS_NEXT(arg_node), arg_info);
-
-  DBUG_RETURN(arg_node);
-}
+extern node *PRTexprs (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTarrexpr (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTexprstmt (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTfuncall (node * arg_node, info * arg_info){return arg_node;}
@@ -103,7 +94,7 @@ extern node *PRTwhile (node * arg_node, info * arg_info){
 extern node *PRTfor (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTfor");
 
-  printf("for(int %s", FOR_LOOPVAR(arg_node));
+  printf("for( %s", FOR_LOOPVAR(arg_node));
   FOR_START( arg_node) = TRAVdo( FOR_START(arg_node), arg_info);
   printf(", ");
   FOR_STOP( arg_node) = TRAVdo( FOR_STOP(arg_node), arg_info);
@@ -111,7 +102,7 @@ extern node *PRTfor (node * arg_node, info * arg_info){
   FOR_STEP( arg_node) = TRAVopt( FOR_STEP(arg_node), arg_info);
   printf(" ){\n");
   FOR_BLOCK( arg_node) = TRAVopt( FOR_BLOCK(arg_node), arg_info);
-  printf("}\n");
+  printf("}");
   DBUG_RETURN(arg_node);
   }
 
@@ -141,17 +132,11 @@ extern node *PRTfundef (node * arg_node, info * arg_info)
 
   DBUG_ENTER("PRTfundef");
 
-  print_type(FUNDEF_TYPE(arg_node));
-
-  printf("%s (", FUNDEF_NAME(arg_node));
-  
-  FUNDEF_PARAMS( arg_node) = TRAVopt( FUNDEF_PARAMS( arg_node), arg_info);
-
-  printf(") {\n");
+  printf("Int %s () {\n", FUNDEF_NAME(arg_node));
 
   FUNDEF_FUNBODY( arg_node) = TRAVopt( FUNDEF_FUNBODY( arg_node), arg_info);
   
-  
+  FUNDEF_PARAMS( arg_node) = TRAVopt( FUNDEF_PARAMS( arg_node), arg_info);
 
 
   DBUG_RETURN( arg_node);
@@ -161,14 +146,8 @@ extern node *PRTfundef (node * arg_node, info * arg_info)
 extern node *PRTparam (node * arg_node, info * arg_info)
 {
 
-  print_type(PARAM_TYPE(arg_node));
-  printf("%s", PARAM_NAME(arg_node));
-  PARAM_DIMS( arg_node) = TRAVopt(PARAM_DIMS(arg_node), arg_info);
-
-  if(PARAM_NEXT( arg_node) != NULL) {
-    printf(", ");
-  }
-  PARAM_NEXT( arg_node) = TRAVopt(PARAM_NEXT(arg_node), arg_info);
+  // PARAM_DIMS( arg_node) = TRAVopt(PARAM_DIMS(arg_node), arg_info);
+  // PARAM_NEXT( arg_node) = TRAVopt(PARAM_NEXT(arg_node), arg_info);
 
   // printf("%s, %s", PARAM_TYPE(arg_node), PARAM_NAME(arg_node));
 
@@ -221,18 +200,14 @@ extern node *PRTfundefs (node * arg_node, info * arg_info)
 extern node *PRTvardecl (node * arg_node, info * arg_info)
 {
   
-  print_type(VARDECL_TYPE( arg_node));
-  printf("%s = ", VARDECL_NAME( arg_node));
+  // VARDECL_DIMS( arg_node) = TRAVopt( VARDECL_DIMS(arg_node), arg_info);
 
-  VARDECL_INIT( arg_node) = TRAVopt( VARDECL_INIT(arg_node), arg_info);
+  // VARDECL_INIT( arg_node) = TRAVopt( VARDECL_INIT(arg_node), arg_info);
 
-  VARDECL_DIMS( arg_node) = TRAVopt( VARDECL_DIMS(arg_node), arg_info);
+  // VARDECL_NEXT( arg_node) = TRAVopt( VARDECL_NEXT(arg_node), arg_info);
 
-  printf("\n");
 
-  VARDECL_NEXT( arg_node) = TRAVopt( VARDECL_NEXT(arg_node), arg_info);
-
-  
+  // printf("%s, %s", VARDECL_TYPE(arg_node), VARDECL_NAME( arg_node));
   
   return arg_node;
   
@@ -256,7 +231,6 @@ extern node *PRTreturn (node * arg_node, info * arg_info)
 {
   
   DBUG_ENTER("PRTreturn");
-  printf("return ");
   RETURN_EXPR( arg_node) = TRAVopt(RETURN_EXPR( arg_node), arg_info);
 
   DBUG_RETURN( arg_node);
@@ -637,23 +611,3 @@ node
 /**
  * @}
  */
-
-void print_type(int type) {
-  switch(type) {
-    case 0 :
-      printf("void ");
-      break;
-    case 1 :
-      printf("bool ");
-      break;
-    case 2 :
-      printf("int ");
-      break;
-    case 3 :
-      printf("float ");
-      break;
-    case 4 :
-      printf("unknown ");
-      break;
-  }
-}

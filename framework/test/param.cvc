@@ -1,4 +1,0 @@
-int test(int a, bool b, float c) {
-    a = (a + 1);
-    return a;
-}

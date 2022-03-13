@@ -106,10 +106,6 @@ fundef: type ID BRACKET_L BRACKET_R funbody
   {
     $$ = TBmakeFundef($1, STRcpy($2), NULL, $5);
   }
-  | type ID BRACKET_L param BRACKET_R funbody
-  {
-    $$ = TBmakeFundef($1, STRcpy($2), $4, $6);
-  }
   ;
 
 param: type ID ids param
