@@ -100,13 +100,49 @@ globdecl: EXTERN type ID ids SEMICOLON
   }
   ;
 
-globdef: type ID LET expr SEMICOLON
+globdef: EXPORT type ID LET expr COMMA exprs SEMICOLON
+  {
+    $$ = TBmakeGlobdef($2, STRcpy($3), $7, $5);
+  } 
+  | EXPORT type ID LET expr SEMICOLON
+  {
+    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, $5);
+  }
+  | EXPORT type ID SEMICOLON
+  {
+    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, NULL);
+  }
+  | type ID LET expr COMMA exprs SEMICOLON
+  {
+    $$ = TBmakeGlobdef($1, STRcpy($2), $6, $4);
+  } 
+  | type ID LET expr SEMICOLON
   {
     $$ = TBmakeGlobdef($1, STRcpy($2), NULL, $4);
   }
+  | type ID SEMICOLON
+  {
+    $$ = TBmakeGlobdef($1, STRcpy($2), NULL, NULL);
+  }
   ;
 
-fundef: type ID BRACKET_L BRACKET_R funbody
+fundef: EXPORT type ID BRACKET_L BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+  {
+    $$ = TBmakeFundef($2, STRcpy($3), NULL, NULL);
+  } 
+  | EXPORT type ID BRACKET_L BRACKET_R funbody
+  {
+    $$ = TBmakeFundef($2, STRcpy($3), NULL, $6);
+  }
+  | EXPORT type ID BRACKET_L param BRACKET_R funbody
+  {
+    $$ = TBmakeFundef($2, STRcpy($3), $5, $7);
+  }
+  | type ID BRACKET_L BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+  {
+    $$ = TBmakeFundef($1, STRcpy($2), NULL, NULL);
+  } 
+  | type ID BRACKET_L BRACKET_R funbody
   {
     $$ = TBmakeFundef($1, STRcpy($2), NULL, $5);
   }
@@ -281,6 +317,10 @@ ifelse: IF BRACKET_L expr BRACKET_R block ELSE block
   | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
   {
     $$ = TBmakeIfelse($3, NULL, NULL);
+  }
+  | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE block
+  {
+    $$ = TBmakeIfelse($3, NULL, $8);
   }
   | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
   {
