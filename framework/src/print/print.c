@@ -64,11 +64,16 @@ extern node *PRTexprs (node * arg_node, info * arg_info){
   DBUG_RETURN(arg_node);
 }
 extern node *PRTarrexpr (node * arg_node, info * arg_info){return arg_node;}
-extern node *PRTexprstmt (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTexprstmt (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTfuncall");
+
+  EXPRSTMT_EXPR( arg_node) = TRAVdo( EXPRSTMT_EXPR( arg_node), arg_info);
+  
+  DBUG_RETURN(arg_node);
+  }
 
 extern node *PRTfuncall (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTfuncall");
-  printf("test\n");
   printf("%s(", FUNCALL_NAME(arg_node));
 
   FUNCALL_ARGS( arg_node) = TRAVopt( FUNCALL_ARGS( arg_node), arg_info);
