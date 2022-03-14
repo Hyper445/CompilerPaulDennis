@@ -50,7 +50,7 @@ static int yyerror( char *errname);
 %type <node> stmts stmt assign varlet
 
 %type <node> program decls decl fundefs globdecl globdef fundef param block ids funbody vardecl ifelse return 
-%type <node> for dowhile while exprstmt arrexpr funcall cast
+%type <node> for dowhile while arrexpr funcall cast
 
 %type <cbinop> binop
 %type <ctype> type
@@ -254,9 +254,9 @@ stmt: assign
   {
     $$ = $1;
   }
-  | exprstmt
+  | expr
   {
-    $$ = $1;
+    $$ = TBmakeExprstmt($1);
   }
   ;
 
@@ -328,10 +328,10 @@ assign: varlet LET expr SEMICOLON
     $$ = TBmakeWhile( $3, $6);
   }
 
-exprstmt: expr
-  {
-    $$ = TBmakeExprstmt($1);
-  }
+// exprstmt: expr
+//   {
+//     $$ = TBmakeExprstmt($1);
+//   }
 
 varlet: ID
   {

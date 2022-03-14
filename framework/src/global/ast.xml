@@ -1027,18 +1027,6 @@
                     </targets>
                 </type>
             </attribute>
-            <attribute name="Decl">
-                <type name="Link">
-                    <targets>
-                        <target mandatory="yes">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
         </attributes>
     </node>
 
