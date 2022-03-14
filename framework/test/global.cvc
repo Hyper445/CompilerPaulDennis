@@ -1,0 +1,6 @@
+extern int patients;
+
+int test() {
+    int a = (4 + 3);
+    int b = true;
+}

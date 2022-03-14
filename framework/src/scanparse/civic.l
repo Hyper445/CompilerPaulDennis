@@ -81,6 +81,9 @@
 "true"                     { FILTER( TRUEVAL); }
 "false"                    { FILTER( FALSEVAL); }
 
+"extern"                   { FILTER( EXTERN); }
+"export"                   { FILTER( EXPORT); }
+
 [A-Za-z][A-Za-z0-9_]*      { yylval.id = STRcpy(yytext);
                              FILTER( ID);
                            }

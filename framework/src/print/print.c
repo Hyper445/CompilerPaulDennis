@@ -65,7 +65,7 @@ extern node *PRTexprs (node * arg_node, info * arg_info){
 }
 extern node *PRTarrexpr (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTexprstmt (node * arg_node, info * arg_info){
-  DBUG_ENTER ("PRTfuncall");
+  DBUG_ENTER ("PRTexprstmt");
 
   EXPRSTMT_EXPR( arg_node) = TRAVdo( EXPRSTMT_EXPR( arg_node), arg_info);
   
@@ -95,14 +95,27 @@ extern node *PRTdowhile (node * arg_node, info * arg_info){
   DBUG_RETURN(arg_node);
   }
 
-extern node *PRTglobdecl (node * arg_node, info * arg_info){return arg_node;}  
+extern node *PRTglobdecl (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTglobdecl");
+
+  printf("extern ");
+  print_type(GLOBDECL_TYPE(arg_node));
+  printf("%s\n", GLOBDECL_NAME(arg_node));
+
+  GLOBDECL_DIMS(arg_node) = TRAVopt( GLOBDECL_DIMS( arg_node), arg_info);
+
+  DBUG_RETURN( arg_node);
+  }  
 
 extern node *PRTglobdef (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTglobdef");
 
-  printf("%s\n", GLOBDEF_NAME(arg_node));
+  print_type(GLOBDEF_TYPE(arg_node));
+  printf("%s ", GLOBDEF_NAME(arg_node));
 
   GLOBDEF_INIT( arg_node) = TRAVopt( GLOBDEF_INIT( arg_node), arg_info);
+
+  printf(";\n");
 
   GLOBDEF_DIMS ( arg_node) = TRAVopt( GLOBDEF_DIMS( arg_node), arg_info);
   

@@ -38,6 +38,7 @@ static int yyerror( char *errname);
 %token NOT NEG
 %token TRUEVAL FALSEVAL LET INTTYPE FLOATTYPE BOOLTYPE 
 %token CURLY_BRACKET_L CURLY_BRACKET_R RETURN SQUARE_BRACKET_L SQUARE_BRACKET_R
+%token EXTERN EXPORT
 
 %token IF ELSE FOR DO WHILE  
 
@@ -89,17 +90,17 @@ decl: fundef
   }
   ;
 
-globdecl: type ID ids SEMICOLON
+globdecl: EXTERN type ID ids SEMICOLON
   {
-    $$ = TBmakeGlobdecl($1, STRcpy($2), $3);
+    $$ = TBmakeGlobdecl($2, STRcpy($3), $4);
   }
-  | type ID SEMICOLON
+  | EXTERN type ID SEMICOLON
   {
-    $$ = TBmakeGlobdecl($1, STRcpy($2), NULL);
+    $$ = TBmakeGlobdecl($2, STRcpy($3), NULL);
   }
   ;
 
-globdef: type ID LET expr SEMICOLON 
+globdef: type ID LET expr SEMICOLON
   {
     $$ = TBmakeGlobdef($1, STRcpy($2), NULL, $4);
   }
