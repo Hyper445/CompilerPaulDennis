@@ -43,6 +43,7 @@ extern node *PRTbinop (node * arg_node, info * arg_info);
 extern node *PRTfloat (node * arg_node, info * arg_info);
 extern node *PRTnum (node * arg_node, info * arg_info);
 extern node *PRTbool (node * arg_node, info * arg_info);
+extern node *PRTsymboltable (node * arg_node, info * arg_info);
 extern node *PRTsymboltableentry (node * arg_node, info * arg_info);
 extern node *PRTerror (node * arg_node, info * arg_info);
 

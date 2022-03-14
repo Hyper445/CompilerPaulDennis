@@ -41,6 +41,9 @@
 "{"                        { FILTER( CURLY_BRACKET_L); }
 "}"                        { FILTER( CURLY_BRACKET_R); }
 
+"["                        { FILTER ( SQUARE_BRACKET_L); }
+"]"                        { FILTER ( SQUARE_BRACKET_R); }
+
 "-"                        { FILTER( MINUS); }
 "+"                        { FILTER( PLUS);  }
 "*"                        { FILTER( STAR);  } 

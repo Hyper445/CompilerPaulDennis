@@ -37,7 +37,7 @@ static int yyerror( char *errname);
 %token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND
 %token NOT NEG
 %token TRUEVAL FALSEVAL LET INTTYPE FLOATTYPE BOOLTYPE 
-%token CURLY_BRACKET_L CURLY_BRACKET_R RETURN
+%token CURLY_BRACKET_L CURLY_BRACKET_R RETURN SQUARE_BRACKET_L SQUARE_BRACKET_R
 
 %token IF ELSE FOR DO WHILE  
 
@@ -105,7 +105,11 @@ globdef: type ID LET expr SEMICOLON
   }
   ;
 
-fundef: type ID BRACKET_L param BRACKET_R funbody
+fundef: type ID BRACKET_L BRACKET_R funbody
+  {
+    $$ = TBmakeFundef($1, STRcpy($2), NULL, $5);
+  }
+  | type ID BRACKET_L param BRACKET_R funbody
   {
     $$ = TBmakeFundef($1, STRcpy($2), $4, $6);
   }
@@ -365,35 +369,36 @@ expr: constant
   }
   ;
 
-cast: BRACKET_L type BRACKET_R expr
+cast: BRACKET_L type BRACKET_R expr SEMICOLON
   {
     $$ = TBmakeCast($2, $4);
   }
   ;
 
-funcall: ID BRACKET_L exprs BRACKET_R 
+
+funcall: ID BRACKET_L exprs BRACKET_R SEMICOLON
   {
     $$ = TBmakeFuncall($1, NULL, $3);
   }
-  | ID BRACKET_L BRACKET_R
+  | ID BRACKET_L BRACKET_R SEMICOLON
   {
     $$ = TBmakeFuncall($1, NULL, NULL);
   }
   ;
   
-arrexpr: exprs
+arrexpr: SQUARE_BRACKET_L exprs SQUARE_BRACKET_R
   {
-    TBmakeArrexpr($1);
+    TBmakeArrexpr($2);
   }
   ;
 
-exprs: expr 
+exprs: expr
   {
     $$ = TBmakeExprs($1, NULL);
   }
-  | expr exprs
+  | expr COMMA exprs
   {
-    $$ = TBmakeExprs($1, $2);
+    $$ = TBmakeExprs($1, $3);
   }
   ;
 
