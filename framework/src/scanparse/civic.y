@@ -371,7 +371,7 @@ cast: BRACKET_L type BRACKET_R expr
   }
   ;
 
-funcall: ID BRACKET_L exprs BRACKET_R
+funcall: ID BRACKET_L exprs BRACKET_R 
   {
     $$ = TBmakeFuncall($1, NULL, $3);
   }
