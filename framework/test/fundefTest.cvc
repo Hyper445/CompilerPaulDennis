@@ -6,9 +6,12 @@ int test(int a) {
     
     
     float x;
+    (int) x;
+
+    test(3);
 
     if (4) {
-        (int)x = -3;
+        x = -3;
     } else {
         x = 4;
     }

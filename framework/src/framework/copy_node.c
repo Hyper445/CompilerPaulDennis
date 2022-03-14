@@ -630,6 +630,53 @@ node           *COPYstmts(node * arg_node, info * arg_info) {
 }
 /** <!--******************************************************************-->
  *
+ * @fn COPYsymboltable
+ *
+ * @brief Copies the node and its sons/attributes
+ *
+ * @param arg_node Symboltable node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node           *COPYsymboltable(node * arg_node, info * arg_info) {
+	node           *result = TBmakeSymboltable(NULL, NULL, NULL);
+	DBUG_ENTER("COPYsymboltable");
+	LUTinsertIntoLutP(INFO_LUT(arg_info), arg_node, result);
+	/* Copy attributes */
+	SYMBOLTABLE_NAME(result) = STRcpy(SYMBOLTABLE_NAME(arg_node));
+	SYMBOLTABLE_DECL(result) = LUTsearchInLutPp(INFO_LUT(arg_info), SYMBOLTABLE_DECL(arg_node));
+	/* Copy sons */
+	SYMBOLTABLE_ENTRIES(result) = COPYTRAV(SYMBOLTABLE_ENTRIES(arg_node), arg_info);
+	/* Return value */
+	DBUG_RETURN(result);
+}
+/** <!--******************************************************************-->
+ *
+ * @fn COPYsymboltableentry
+ *
+ * @brief Copies the node and its sons/attributes
+ *
+ * @param arg_node SymboltableEntry node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node           *COPYsymboltableentry(node * arg_node, info * arg_info) {
+	node           *result = TBmakeSymboltableentry(NULL, T_unknown, 0);
+	DBUG_ENTER("COPYsymboltableentry");
+	LUTinsertIntoLutP(INFO_LUT(arg_info), arg_node, result);
+	/* Copy attributes */
+	SYMBOLTABLEENTRY_NAME(result) = STRcpy(SYMBOLTABLEENTRY_NAME(arg_node));
+	SYMBOLTABLEENTRY_TYPE(result) = SYMBOLTABLEENTRY_TYPE(arg_node);
+	SYMBOLTABLEENTRY_NESTINGLEVEL(result) = SYMBOLTABLEENTRY_NESTINGLEVEL(arg_node);
+	/* Return value */
+	DBUG_RETURN(result);
+}
+/** <!--******************************************************************-->
+ *
  * @fn COPYvar
  *
  * @brief Copies the node and its sons/attributes

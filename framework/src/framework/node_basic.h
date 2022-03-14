@@ -249,6 +249,24 @@ extern node    *TBmakeVarlet(char *Name, node * Decl, node * Indices);
 extern node    *TBmakeVar(char *Name, node * Decl, node * Indices);
 
 /*****************************************************************************
+ * macros and functions for N_symboltable
+ *****************************************************************************/
+
+#define SYMBOLTABLE_ENTRIES( n) ((n)->sons.N_symboltable->Entries)
+#define SYMBOLTABLE_NAME( n) ((n)->attribs.N_symboltable->Name)
+#define SYMBOLTABLE_DECL( n) ((n)->attribs.N_symboltable->Decl)
+extern node    *TBmakeSymboltable(char *Name, node * Decl, node * Entries);
+
+/*****************************************************************************
+ * macros and functions for N_symboltableentry
+ *****************************************************************************/
+
+#define SYMBOLTABLEENTRY_NAME( n) ((n)->attribs.N_symboltableentry->Name)
+#define SYMBOLTABLEENTRY_TYPE( n) ((n)->attribs.N_symboltableentry->Type)
+#define SYMBOLTABLEENTRY_NESTINGLEVEL( n) ((n)->attribs.N_symboltableentry->NestingLevel)
+extern node    *TBmakeSymboltableentry(char *Name, type Type, int NestingLevel);
+
+/*****************************************************************************
  * macros and functions for N_num
  *****************************************************************************/
 

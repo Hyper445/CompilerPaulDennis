@@ -888,6 +888,62 @@ node           *TBmakeVar(char *Name, node * Decl, node * Indices){
 }
 
 /*****************************************************************************
+ * N_Symboltable :
+ *****************************************************************************/
+
+node           *TBmakeSymboltable(char *Name, node * Decl, node * Entries){
+	node           *this;
+	DBUG_ENTER("TBmakeSymboltable");
+	DBUG_PRINT("MAKE", ("allocating node structure"));
+	this = MakeEmptyNode();
+	NODE_TYPE(this) = N_symboltable;
+	DBUG_PRINT("MAKE", ("address: %s ", this));
+	DBUG_PRINT("MAKE", ("allocating sons structure"));
+	this->sons.N_symboltable = MEMmalloc(sizeof(struct SONS_N_SYMBOLTABLE));
+	DBUG_PRINT("MAKE", ("allocating attrib structure"));
+	this->attribs.N_symboltable = MEMmalloc(sizeof(struct ATTRIBS_N_SYMBOLTABLE));
+	DBUG_PRINT("MAKE", ("setting node type"));
+	NODE_TYPE(this) = N_symboltable;
+	DBUG_PRINT("MAKE", ("assigning son Entries initial value: %s ", Entries));
+	SYMBOLTABLE_ENTRIES(this) = Entries;
+	SYMBOLTABLE_NAME(this) = Name;
+	SYMBOLTABLE_DECL(this) = Decl;
+#ifndef DBUG_OFF
+	DBUG_PRINT("MAKE", ("doing son target checks"));
+	if ((SYMBOLTABLE_ENTRIES(this) != NULL) && (NODE_TYPE(SYMBOLTABLE_ENTRIES(this)) != N_symboltableentry)) {
+		CTIwarn("Field Entries of node N_Symboltable has non-allowed target node.");
+	}
+#endif				/* DBUG_OFF */
+	DBUG_RETURN(this);
+}
+
+/*****************************************************************************
+ * N_SymboltableEntry :
+ *****************************************************************************/
+
+node           *TBmakeSymboltableentry(char *Name, type Type, int NestingLevel){
+	node           *this;
+	DBUG_ENTER("TBmakeSymboltableentry");
+	DBUG_PRINT("MAKE", ("allocating node structure"));
+	this = MakeEmptyNode();
+	NODE_TYPE(this) = N_symboltableentry;
+	DBUG_PRINT("MAKE", ("address: %s ", this));
+	DBUG_PRINT("MAKE", ("allocating sons structure"));
+	this->sons.N_symboltableentry = MEMmalloc(sizeof(struct SONS_N_SYMBOLTABLEENTRY));
+	DBUG_PRINT("MAKE", ("allocating attrib structure"));
+	this->attribs.N_symboltableentry = MEMmalloc(sizeof(struct ATTRIBS_N_SYMBOLTABLEENTRY));
+	DBUG_PRINT("MAKE", ("setting node type"));
+	NODE_TYPE(this) = N_symboltableentry;
+	SYMBOLTABLEENTRY_NAME(this) = Name;
+	SYMBOLTABLEENTRY_TYPE(this) = Type;
+	SYMBOLTABLEENTRY_NESTINGLEVEL(this) = NestingLevel;
+#ifndef DBUG_OFF
+	DBUG_PRINT("MAKE", ("doing son target checks"));
+#endif				/* DBUG_OFF */
+	DBUG_RETURN(this);
+}
+
+/*****************************************************************************
  * N_Num :
  *****************************************************************************/
 

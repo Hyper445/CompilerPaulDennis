@@ -687,6 +687,56 @@ node           *FREEstmts(node * arg_node, info * arg_info) {
 }
 /** <!--******************************************************************-->
  *
+ * @fn FREEsymboltable
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node Symboltable node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node           *FREEsymboltable(node * arg_node, info * arg_info) {
+	node           *result = NULL;
+	DBUG_ENTER("FREEsymboltable");
+	DBUG_PRINT("FREE", ("Processing node N_symboltable at " F_PTR, arg_node));
+	SYMBOLTABLE_NAME(arg_node) = FREEattribString(SYMBOLTABLE_NAME(arg_node), arg_node);
+	SYMBOLTABLE_DECL(arg_node) = FREEattribLink(SYMBOLTABLE_DECL(arg_node), arg_node);
+	SYMBOLTABLE_ENTRIES(arg_node) = FREETRAV(SYMBOLTABLE_ENTRIES(arg_node), arg_info);
+	result = NULL;
+	arg_node->sons.N_symboltable = MEMfree(arg_node->sons.N_symboltable);
+	arg_node->attribs.N_symboltable = MEMfree(arg_node->attribs.N_symboltable);
+	DBUG_PRINT("FREE", ("Processing node N_symboltable at " F_PTR, arg_node));
+	result = MEMfree(arg_node);
+	DBUG_RETURN(result);
+}
+/** <!--******************************************************************-->
+ *
+ * @fn FREEsymboltableentry
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node SymboltableEntry node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node           *FREEsymboltableentry(node * arg_node, info * arg_info) {
+	node           *result = NULL;
+	DBUG_ENTER("FREEsymboltableentry");
+	DBUG_PRINT("FREE", ("Processing node N_symboltableentry at " F_PTR, arg_node));
+	SYMBOLTABLEENTRY_NAME(arg_node) = FREEattribString(SYMBOLTABLEENTRY_NAME(arg_node), arg_node);
+	result = NULL;
+	arg_node->sons.N_symboltableentry = MEMfree(arg_node->sons.N_symboltableentry);
+	arg_node->attribs.N_symboltableentry = MEMfree(arg_node->attribs.N_symboltableentry);
+	DBUG_PRINT("FREE", ("Processing node N_symboltableentry at " F_PTR, arg_node));
+	result = MEMfree(arg_node);
+	DBUG_RETURN(result);
+}
+/** <!--******************************************************************-->
+ *
  * @fn FREEvar
  *
  * @brief Frees the node and its sons/attributes

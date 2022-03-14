@@ -23,19 +23,19 @@
 travtables_t	travtables = {
 	/* TR_undefined */
 	{&TRAVerror
-	,&TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror}
+	,&TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror}
 
 	/* TR_prt */
-	,{&TRAVerror, &PRTprogram, &PRTdecls, &PRTexprs, &PRTarrexpr, &PRTids, &PRTexprstmt, &PRTreturn, &PRTfuncall, &PRTcast, &PRTfundefs, &PRTfundef, &PRTfunbody, &PRTifelse, &PRTwhile, &PRTdowhile, &PRTfor, &PRTglobdecl, &PRTglobdef, &PRTparam, &PRTvardecl, &PRTstmts, &PRTassign, &PRTbinop, &PRTmonop, &PRTvarlet, &PRTvar, &PRTnum, &PRTfloat, &PRTbool, &PRTerror}
+	,{&TRAVerror, &PRTprogram, &PRTdecls, &PRTexprs, &PRTarrexpr, &PRTids, &PRTexprstmt, &PRTreturn, &PRTfuncall, &PRTcast, &PRTfundefs, &PRTfundef, &PRTfunbody, &PRTifelse, &PRTwhile, &PRTdowhile, &PRTfor, &PRTglobdecl, &PRTglobdef, &PRTparam, &PRTvardecl, &PRTstmts, &PRTassign, &PRTbinop, &PRTmonop, &PRTvarlet, &PRTvar, &PRTsymboltable, &PRTsymboltableentry, &PRTnum, &PRTfloat, &PRTbool, &PRTerror}
 
 	/* TR_copy */
-	,{&TRAVerror, &COPYprogram, &COPYdecls, &COPYexprs, &COPYarrexpr, &COPYids, &COPYexprstmt, &COPYreturn, &COPYfuncall, &COPYcast, &COPYfundefs, &COPYfundef, &COPYfunbody, &COPYifelse, &COPYwhile, &COPYdowhile, &COPYfor, &COPYglobdecl, &COPYglobdef, &COPYparam, &COPYvardecl, &COPYstmts, &COPYassign, &COPYbinop, &COPYmonop, &COPYvarlet, &COPYvar, &COPYnum, &COPYfloat, &COPYbool, &COPYerror}
+	,{&TRAVerror, &COPYprogram, &COPYdecls, &COPYexprs, &COPYarrexpr, &COPYids, &COPYexprstmt, &COPYreturn, &COPYfuncall, &COPYcast, &COPYfundefs, &COPYfundef, &COPYfunbody, &COPYifelse, &COPYwhile, &COPYdowhile, &COPYfor, &COPYglobdecl, &COPYglobdef, &COPYparam, &COPYvardecl, &COPYstmts, &COPYassign, &COPYbinop, &COPYmonop, &COPYvarlet, &COPYvar, &COPYsymboltable, &COPYsymboltableentry, &COPYnum, &COPYfloat, &COPYbool, &COPYerror}
 
 	/* TR_free */
-	,{&TRAVerror, &FREEprogram, &FREEdecls, &FREEexprs, &FREEarrexpr, &FREEids, &FREEexprstmt, &FREEreturn, &FREEfuncall, &FREEcast, &FREEfundefs, &FREEfundef, &FREEfunbody, &FREEifelse, &FREEwhile, &FREEdowhile, &FREEfor, &FREEglobdecl, &FREEglobdef, &FREEparam, &FREEvardecl, &FREEstmts, &FREEassign, &FREEbinop, &FREEmonop, &FREEvarlet, &FREEvar, &FREEnum, &FREEfloat, &FREEbool, &FREEerror}
+	,{&TRAVerror, &FREEprogram, &FREEdecls, &FREEexprs, &FREEarrexpr, &FREEids, &FREEexprstmt, &FREEreturn, &FREEfuncall, &FREEcast, &FREEfundefs, &FREEfundef, &FREEfunbody, &FREEifelse, &FREEwhile, &FREEdowhile, &FREEfor, &FREEglobdecl, &FREEglobdef, &FREEparam, &FREEvardecl, &FREEstmts, &FREEassign, &FREEbinop, &FREEmonop, &FREEvarlet, &FREEvar, &FREEsymboltable, &FREEsymboltableentry, &FREEnum, &FREEfloat, &FREEbool, &FREEerror}
 
 	/* TR_chk */
-	,{&TRAVerror, &CHKprogram, &CHKdecls, &CHKexprs, &CHKarrexpr, &CHKids, &CHKexprstmt, &CHKreturn, &CHKfuncall, &CHKcast, &CHKfundefs, &CHKfundef, &CHKfunbody, &CHKifelse, &CHKwhile, &CHKdowhile, &CHKfor, &CHKglobdecl, &CHKglobdef, &CHKparam, &CHKvardecl, &CHKstmts, &CHKassign, &CHKbinop, &CHKmonop, &CHKvarlet, &CHKvar, &CHKnum, &CHKfloat, &CHKbool, &CHKerror}
+	,{&TRAVerror, &CHKprogram, &CHKdecls, &CHKexprs, &CHKarrexpr, &CHKids, &CHKexprstmt, &CHKreturn, &CHKfuncall, &CHKcast, &CHKfundefs, &CHKfundef, &CHKfunbody, &CHKifelse, &CHKwhile, &CHKdowhile, &CHKfor, &CHKglobdecl, &CHKglobdef, &CHKparam, &CHKvardecl, &CHKstmts, &CHKassign, &CHKbinop, &CHKmonop, &CHKvarlet, &CHKvar, &CHKsymboltable, &CHKsymboltableentry, &CHKnum, &CHKfloat, &CHKbool, &CHKerror}
 };
 
 preposttable_t	pretable = {

@@ -9,35 +9,34 @@ Terminals which are not used
 
 Rules never reduced
 
-   72 exprs: expr exprs
+   72 exprs: expr COMMA exprs
 
 
 State 28 conflicts: 1 shift/reduce
-State 29 conflicts: 9 shift/reduce
-State 43 conflicts: 19 shift/reduce
-State 47 conflicts: 8 shift/reduce
-State 48 conflicts: 28 reduce/reduce
-State 49 conflicts: 8 shift/reduce, 28 reduce/reduce
-State 54 conflicts: 8 reduce/reduce
+State 29 conflicts: 2 shift/reduce
+State 43 conflicts: 13 shift/reduce
+State 48 conflicts: 1 shift/reduce, 28 reduce/reduce
+State 68 conflicts: 1 shift/reduce
 State 69 conflicts: 1 shift/reduce
-State 76 conflicts: 1 shift/reduce
-State 90 conflicts: 8 shift/reduce, 14 reduce/reduce
-State 94 conflicts: 9 shift/reduce
-State 95 conflicts: 8 shift/reduce, 28 reduce/reduce
-State 98 conflicts: 9 shift/reduce
-State 116 conflicts: 9 shift/reduce
-State 119 conflicts: 9 shift/reduce
-State 125 conflicts: 9 shift/reduce
-State 135 conflicts: 9 shift/reduce
-State 136 conflicts: 9 shift/reduce
-State 144 conflicts: 3 shift/reduce
-State 145 conflicts: 3 shift/reduce
-State 146 conflicts: 9 shift/reduce
-State 150 conflicts: 9 shift/reduce
-State 156 conflicts: 3 shift/reduce
-State 162 conflicts: 9 shift/reduce
-State 166 conflicts: 10 shift/reduce
-State 173 conflicts: 9 shift/reduce
+State 70 conflicts: 28 reduce/reduce
+State 77 conflicts: 1 shift/reduce
+State 91 conflicts: 1 shift/reduce, 14 reduce/reduce
+State 95 conflicts: 2 shift/reduce
+State 96 conflicts: 2 shift/reduce
+State 99 conflicts: 2 shift/reduce
+State 119 conflicts: 2 shift/reduce
+State 122 conflicts: 2 shift/reduce
+State 128 conflicts: 2 shift/reduce
+State 138 conflicts: 2 shift/reduce
+State 139 conflicts: 9 shift/reduce
+State 147 conflicts: 3 shift/reduce
+State 148 conflicts: 3 shift/reduce
+State 149 conflicts: 2 shift/reduce
+State 153 conflicts: 1 shift/reduce
+State 159 conflicts: 3 shift/reduce
+State 165 conflicts: 2 shift/reduce
+State 169 conflicts: 2 shift/reduce
+State 176 conflicts: 2 shift/reduce
 
 
 Grammar
@@ -133,15 +132,15 @@ Grammar
    65     | funcall
    66     | arrexpr
 
-   67 cast: BRACKET_L type BRACKET_R expr
+   67 cast: BRACKET_L type BRACKET_R expr SEMICOLON
 
-   68 funcall: ID BRACKET_L exprs BRACKET_R
+   68 funcall: ID BRACKET_L exprs BRACKET_R SEMICOLON
    69        | ID BRACKET_L BRACKET_R
 
    70 arrexpr: exprs
 
    71 exprs: expr
-   72      | expr exprs
+   72      | expr COMMA exprs
 
    73 constant: floatval
    74         | intval
@@ -184,8 +183,8 @@ FLOAT_TYPE (259) 95
 BOOL_TYPE (260) 96
 BRACKET_L (261) 10 46 47 48 49 52 53 54 55 56 57 63 67 68 69
 BRACKET_R (262) 10 46 47 48 49 52 53 54 55 56 57 63 67 68 69
-COMMA (263) 13 52 53 54 55
-SEMICOLON (264) 7 8 9 27 28 29 30 31 32 33 34 44 45 51 56
+COMMA (263) 13 52 53 54 55 72
+SEMICOLON (264) 7 8 9 27 28 29 30 31 32 33 34 44 45 51 56 67 68
 MINUS (265) 81 93
 PLUS (266) 80
 STAR (267) 82
@@ -514,7 +513,7 @@ state 20
 state 21
 
    63 expr: BRACKET_L . expr binop expr BRACKET_R
-   67 cast: BRACKET_L . type BRACKET_R expr
+   67 cast: BRACKET_L . type BRACKET_R expr SEMICOLON
 
     INT_TYPE    shift, and go to state 1
     FLOAT_TYPE  shift, and go to state 2
@@ -586,7 +585,7 @@ state 27
 state 28
 
    61 expr: ID .
-   68 funcall: ID . BRACKET_L exprs BRACKET_R
+   68 funcall: ID . BRACKET_L exprs BRACKET_R SEMICOLON
    69        | ID . BRACKET_L BRACKET_R
 
     BRACKET_L  shift, and go to state 45
@@ -599,38 +598,13 @@ state 29
 
     9 globdef: type ID LET expr . SEMICOLON
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    SEMICOLON  shift, and go to state 46
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    COMMA      shift, and go to state 46
+    SEMICOLON  shift, and go to state 47
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
+    COMMA      [reduce using rule 71 (exprs)]
     SEMICOLON  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
 
 
 state 30
@@ -702,7 +676,7 @@ state 38
     FLOAT      shift, and go to state 27
     ID         shift, and go to state 28
 
-    expr      go to state 49
+    expr      go to state 48
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -732,9 +706,9 @@ state 41
 
    10 fundef: type ID BRACKET_L param BRACKET_R . funbody
 
-    CURLY_BRACKET_L  shift, and go to state 50
+    CURLY_BRACKET_L  shift, and go to state 49
 
-    funbody  go to state 51
+    funbody  go to state 50
 
 
 state 42
@@ -744,87 +718,65 @@ state 42
    13      | type ID . COMMA param
    14      | type ID .
 
-    COMMA  shift, and go to state 52
+    COMMA  shift, and go to state 51
     ID     shift, and go to state 17
 
     $default  reduce using rule 14 (param)
 
-    ids  go to state 53
+    ids  go to state 52
 
 
 state 43
 
    63 expr: BRACKET_L expr . binop expr BRACKET_R
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    MINUS      shift, and go to state 54
-    PLUS       shift, and go to state 55
-    STAR       shift, and go to state 56
-    SLASH      shift, and go to state 57
-    PERCENT    shift, and go to state 58
-    LE         shift, and go to state 59
-    LT         shift, and go to state 60
-    GE         shift, and go to state 61
-    GT         shift, and go to state 62
-    EQ         shift, and go to state 63
-    OR         shift, and go to state 64
-    AND        shift, and go to state 65
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    COMMA    shift, and go to state 46
+    MINUS    shift, and go to state 53
+    PLUS     shift, and go to state 54
+    STAR     shift, and go to state 55
+    SLASH    shift, and go to state 56
+    PERCENT  shift, and go to state 57
+    LE       shift, and go to state 58
+    LT       shift, and go to state 59
+    GE       shift, and go to state 60
+    GT       shift, and go to state 61
+    EQ       shift, and go to state 62
+    OR       shift, and go to state 63
+    AND      shift, and go to state 64
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    PLUS       [reduce using rule 71 (exprs)]
-    STAR       [reduce using rule 71 (exprs)]
-    SLASH      [reduce using rule 71 (exprs)]
-    PERCENT    [reduce using rule 71 (exprs)]
-    LE         [reduce using rule 71 (exprs)]
-    LT         [reduce using rule 71 (exprs)]
-    GE         [reduce using rule 71 (exprs)]
-    GT         [reduce using rule 71 (exprs)]
-    EQ         [reduce using rule 71 (exprs)]
-    OR         [reduce using rule 71 (exprs)]
-    AND        [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
+    COMMA    [reduce using rule 71 (exprs)]
+    MINUS    [reduce using rule 71 (exprs)]
+    PLUS     [reduce using rule 71 (exprs)]
+    STAR     [reduce using rule 71 (exprs)]
+    SLASH    [reduce using rule 71 (exprs)]
+    PERCENT  [reduce using rule 71 (exprs)]
+    LE       [reduce using rule 71 (exprs)]
+    LT       [reduce using rule 71 (exprs)]
+    GE       [reduce using rule 71 (exprs)]
+    GT       [reduce using rule 71 (exprs)]
+    EQ       [reduce using rule 71 (exprs)]
+    OR       [reduce using rule 71 (exprs)]
+    AND      [reduce using rule 71 (exprs)]
 
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    binop     go to state 66
-    monop     go to state 38
+    binop  go to state 65
 
 
 state 44
 
-   67 cast: BRACKET_L type . BRACKET_R expr
+   67 cast: BRACKET_L type . BRACKET_R expr SEMICOLON
 
-    BRACKET_R  shift, and go to state 67
+    BRACKET_R  shift, and go to state 66
 
 
 state 45
 
-   68 funcall: ID BRACKET_L . exprs BRACKET_R
+   68 funcall: ID BRACKET_L . exprs BRACKET_R SEMICOLON
    69        | ID BRACKET_L . BRACKET_R
 
     BRACKET_L  shift, and go to state 21
-    BRACKET_R  shift, and go to state 68
+    BRACKET_R  shift, and go to state 67
     MINUS      shift, and go to state 22
     NOT        shift, and go to state 23
     TRUEVAL    shift, and go to state 24
@@ -833,7 +785,7 @@ state 45
     FLOAT      shift, and go to state 27
     ID         shift, and go to state 28
 
-    expr      go to state 47
+    expr      go to state 68
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -847,15 +799,7 @@ state 45
 
 state 46
 
-    9 globdef: type ID LET expr SEMICOLON .
-
-    $default  reduce using rule 9 (globdef)
-
-
-state 47
-
-   71 exprs: expr .
-   72      | expr . exprs
+   72 exprs: expr COMMA . exprs
 
     BRACKET_L  shift, and go to state 21
     MINUS      shift, and go to state 22
@@ -866,21 +810,11 @@ state 47
     FLOAT      shift, and go to state 27
     ID         shift, and go to state 28
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-    $default   reduce using rule 71 (exprs)
-
-    expr      go to state 47
+    expr      go to state 68
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
-    exprs     go to state 48
+    exprs     go to state 70
     constant  go to state 34
     floatval  go to state 35
     intval    go to state 36
@@ -888,10 +822,336 @@ state 47
     monop     go to state 38
 
 
+state 47
+
+    9 globdef: type ID LET expr SEMICOLON .
+
+    $default  reduce using rule 9 (globdef)
+
+
 state 48
 
+   62 expr: monop expr .
+   71 exprs: expr .
+   72      | expr . COMMA exprs
+
+    COMMA  shift, and go to state 46
+
+    BRACKET_L        reduce using rule 62 (expr)
+    BRACKET_L        [reduce using rule 71 (exprs)]
+    BRACKET_R        reduce using rule 62 (expr)
+    BRACKET_R        [reduce using rule 71 (exprs)]
+    COMMA            [reduce using rule 62 (expr)]
+    COMMA            [reduce using rule 71 (exprs)]
+    SEMICOLON        reduce using rule 62 (expr)
+    SEMICOLON        [reduce using rule 71 (exprs)]
+    MINUS            reduce using rule 62 (expr)
+    MINUS            [reduce using rule 71 (exprs)]
+    PLUS             reduce using rule 62 (expr)
+    PLUS             [reduce using rule 71 (exprs)]
+    STAR             reduce using rule 62 (expr)
+    STAR             [reduce using rule 71 (exprs)]
+    SLASH            reduce using rule 62 (expr)
+    SLASH            [reduce using rule 71 (exprs)]
+    PERCENT          reduce using rule 62 (expr)
+    PERCENT          [reduce using rule 71 (exprs)]
+    LE               reduce using rule 62 (expr)
+    LE               [reduce using rule 71 (exprs)]
+    LT               reduce using rule 62 (expr)
+    LT               [reduce using rule 71 (exprs)]
+    GE               reduce using rule 62 (expr)
+    GE               [reduce using rule 71 (exprs)]
+    GT               reduce using rule 62 (expr)
+    GT               [reduce using rule 71 (exprs)]
+    EQ               reduce using rule 62 (expr)
+    EQ               [reduce using rule 71 (exprs)]
+    OR               reduce using rule 62 (expr)
+    OR               [reduce using rule 71 (exprs)]
+    AND              reduce using rule 62 (expr)
+    AND              [reduce using rule 71 (exprs)]
+    NOT              reduce using rule 62 (expr)
+    NOT              [reduce using rule 71 (exprs)]
+    TRUEVAL          reduce using rule 62 (expr)
+    TRUEVAL          [reduce using rule 71 (exprs)]
+    FALSEVAL         reduce using rule 62 (expr)
+    FALSEVAL         [reduce using rule 71 (exprs)]
+    CURLY_BRACKET_R  reduce using rule 62 (expr)
+    CURLY_BRACKET_R  [reduce using rule 71 (exprs)]
+    RETURN           reduce using rule 62 (expr)
+    RETURN           [reduce using rule 71 (exprs)]
+    IF               reduce using rule 62 (expr)
+    IF               [reduce using rule 71 (exprs)]
+    FOR              reduce using rule 62 (expr)
+    FOR              [reduce using rule 71 (exprs)]
+    DO               reduce using rule 62 (expr)
+    DO               [reduce using rule 71 (exprs)]
+    WHILE            reduce using rule 62 (expr)
+    WHILE            [reduce using rule 71 (exprs)]
+    NUM              reduce using rule 62 (expr)
+    NUM              [reduce using rule 71 (exprs)]
+    FLOAT            reduce using rule 62 (expr)
+    FLOAT            [reduce using rule 71 (exprs)]
+    ID               reduce using rule 62 (expr)
+    ID               [reduce using rule 71 (exprs)]
+    $default         reduce using rule 62 (expr)
+
+
+state 49
+
+   19 funbody: CURLY_BRACKET_L . vardecl fundefs stmts CURLY_BRACKET_R
+   20        | CURLY_BRACKET_L . fundefs stmts CURLY_BRACKET_R
+   21        | CURLY_BRACKET_L . vardecl stmts CURLY_BRACKET_R
+   22        | CURLY_BRACKET_L . vardecl fundefs CURLY_BRACKET_R
+   23        | CURLY_BRACKET_L . vardecl CURLY_BRACKET_R
+   24        | CURLY_BRACKET_L . stmts CURLY_BRACKET_R
+   25        | CURLY_BRACKET_L . fundefs CURLY_BRACKET_R
+   26        | CURLY_BRACKET_L . CURLY_BRACKET_R
+
+    INT_TYPE         shift, and go to state 1
+    FLOAT_TYPE       shift, and go to state 2
+    BOOL_TYPE        shift, and go to state 3
+    BRACKET_L        shift, and go to state 21
+    MINUS            shift, and go to state 22
+    NOT              shift, and go to state 23
+    TRUEVAL          shift, and go to state 24
+    FALSEVAL         shift, and go to state 25
+    CURLY_BRACKET_R  shift, and go to state 71
+    RETURN           shift, and go to state 72
+    IF               shift, and go to state 73
+    FOR              shift, and go to state 74
+    DO               shift, and go to state 75
+    WHILE            shift, and go to state 76
+    NUM              shift, and go to state 26
+    FLOAT            shift, and go to state 27
+    ID               shift, and go to state 77
+
+    fundef    go to state 78
+    fundefs   go to state 79
+    vardecl   go to state 80
+    stmts     go to state 81
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    cast      go to state 30
+    funcall   go to state 31
+    arrexpr   go to state 32
+    exprs     go to state 33
+    constant  go to state 34
+    floatval  go to state 35
+    intval    go to state 36
+    boolval   go to state 37
+    monop     go to state 38
+    type      go to state 92
+
+
+state 50
+
+   10 fundef: type ID BRACKET_L param BRACKET_R funbody .
+
+    $default  reduce using rule 10 (fundef)
+
+
+state 51
+
+   13 param: type ID COMMA . param
+
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    BOOL_TYPE   shift, and go to state 3
+
+    param  go to state 93
+    type   go to state 20
+
+
+state 52
+
+   11 param: type ID ids . param
+   12      | type ID ids .
+
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    BOOL_TYPE   shift, and go to state 3
+
+    $default  reduce using rule 12 (param)
+
+    param  go to state 94
+    type   go to state 20
+
+
+state 53
+
+   81 binop: MINUS .
+
+    $default  reduce using rule 81 (binop)
+
+
+state 54
+
+   80 binop: PLUS .
+
+    $default  reduce using rule 80 (binop)
+
+
+state 55
+
+   82 binop: STAR .
+
+    $default  reduce using rule 82 (binop)
+
+
+state 56
+
+   83 binop: SLASH .
+
+    $default  reduce using rule 83 (binop)
+
+
+state 57
+
+   84 binop: PERCENT .
+
+    $default  reduce using rule 84 (binop)
+
+
+state 58
+
+   85 binop: LE .
+
+    $default  reduce using rule 85 (binop)
+
+
+state 59
+
+   86 binop: LT .
+
+    $default  reduce using rule 86 (binop)
+
+
+state 60
+
+   87 binop: GE .
+
+    $default  reduce using rule 87 (binop)
+
+
+state 61
+
+   88 binop: GT .
+
+    $default  reduce using rule 88 (binop)
+
+
+state 62
+
+   89 binop: EQ .
+
+    $default  reduce using rule 89 (binop)
+
+
+state 63
+
+   90 binop: OR .
+
+    $default  reduce using rule 90 (binop)
+
+
+state 64
+
+   91 binop: AND .
+
+    $default  reduce using rule 91 (binop)
+
+
+state 65
+
+   63 expr: BRACKET_L expr binop . expr BRACKET_R
+
+    BRACKET_L  shift, and go to state 21
+    MINUS      shift, and go to state 22
+    NOT        shift, and go to state 23
+    TRUEVAL    shift, and go to state 24
+    FALSEVAL   shift, and go to state 25
+    NUM        shift, and go to state 26
+    FLOAT      shift, and go to state 27
+    ID         shift, and go to state 28
+
+    expr      go to state 95
+    cast      go to state 30
+    funcall   go to state 31
+    arrexpr   go to state 32
+    exprs     go to state 33
+    constant  go to state 34
+    floatval  go to state 35
+    intval    go to state 36
+    boolval   go to state 37
+    monop     go to state 38
+
+
+state 66
+
+   67 cast: BRACKET_L type BRACKET_R . expr SEMICOLON
+
+    BRACKET_L  shift, and go to state 21
+    MINUS      shift, and go to state 22
+    NOT        shift, and go to state 23
+    TRUEVAL    shift, and go to state 24
+    FALSEVAL   shift, and go to state 25
+    NUM        shift, and go to state 26
+    FLOAT      shift, and go to state 27
+    ID         shift, and go to state 28
+
+    expr      go to state 96
+    cast      go to state 30
+    funcall   go to state 31
+    arrexpr   go to state 32
+    exprs     go to state 33
+    constant  go to state 34
+    floatval  go to state 35
+    intval    go to state 36
+    boolval   go to state 37
+    monop     go to state 38
+
+
+state 67
+
+   69 funcall: ID BRACKET_L BRACKET_R .
+
+    $default  reduce using rule 69 (funcall)
+
+
+state 68
+
+   71 exprs: expr .
+   72      | expr . COMMA exprs
+
+    COMMA  shift, and go to state 46
+
+    COMMA     [reduce using rule 71 (exprs)]
+    $default  reduce using rule 71 (exprs)
+
+
+state 69
+
+   68 funcall: ID BRACKET_L exprs . BRACKET_R SEMICOLON
    70 arrexpr: exprs .
-   72 exprs: expr exprs .
+
+    BRACKET_R  shift, and go to state 97
+
+    BRACKET_R  [reduce using rule 70 (arrexpr)]
+    $default   reduce using rule 70 (arrexpr)
+
+
+state 70
+
+   70 arrexpr: exprs .
+   72 exprs: expr COMMA exprs .
 
     BRACKET_L        reduce using rule 70 (arrexpr)
     BRACKET_L        [reduce using rule 72 (exprs)]
@@ -952,363 +1212,20 @@ state 48
     $default         reduce using rule 70 (arrexpr)
 
 
-state 49
-
-   62 expr: monop expr .
-   71 exprs: expr .
-   72      | expr . exprs
-
-    BRACKET_L  shift, and go to state 21
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    BRACKET_L        [reduce using rule 62 (expr)]
-    BRACKET_L        [reduce using rule 71 (exprs)]
-    BRACKET_R        reduce using rule 62 (expr)
-    BRACKET_R        [reduce using rule 71 (exprs)]
-    COMMA            reduce using rule 62 (expr)
-    COMMA            [reduce using rule 71 (exprs)]
-    SEMICOLON        reduce using rule 62 (expr)
-    SEMICOLON        [reduce using rule 71 (exprs)]
-    MINUS            [reduce using rule 62 (expr)]
-    MINUS            [reduce using rule 71 (exprs)]
-    PLUS             reduce using rule 62 (expr)
-    PLUS             [reduce using rule 71 (exprs)]
-    STAR             reduce using rule 62 (expr)
-    STAR             [reduce using rule 71 (exprs)]
-    SLASH            reduce using rule 62 (expr)
-    SLASH            [reduce using rule 71 (exprs)]
-    PERCENT          reduce using rule 62 (expr)
-    PERCENT          [reduce using rule 71 (exprs)]
-    LE               reduce using rule 62 (expr)
-    LE               [reduce using rule 71 (exprs)]
-    LT               reduce using rule 62 (expr)
-    LT               [reduce using rule 71 (exprs)]
-    GE               reduce using rule 62 (expr)
-    GE               [reduce using rule 71 (exprs)]
-    GT               reduce using rule 62 (expr)
-    GT               [reduce using rule 71 (exprs)]
-    EQ               reduce using rule 62 (expr)
-    EQ               [reduce using rule 71 (exprs)]
-    OR               reduce using rule 62 (expr)
-    OR               [reduce using rule 71 (exprs)]
-    AND              reduce using rule 62 (expr)
-    AND              [reduce using rule 71 (exprs)]
-    NOT              [reduce using rule 62 (expr)]
-    NOT              [reduce using rule 71 (exprs)]
-    TRUEVAL          [reduce using rule 62 (expr)]
-    TRUEVAL          [reduce using rule 71 (exprs)]
-    FALSEVAL         [reduce using rule 62 (expr)]
-    FALSEVAL         [reduce using rule 71 (exprs)]
-    CURLY_BRACKET_R  reduce using rule 62 (expr)
-    CURLY_BRACKET_R  [reduce using rule 71 (exprs)]
-    RETURN           reduce using rule 62 (expr)
-    RETURN           [reduce using rule 71 (exprs)]
-    IF               reduce using rule 62 (expr)
-    IF               [reduce using rule 71 (exprs)]
-    FOR              reduce using rule 62 (expr)
-    FOR              [reduce using rule 71 (exprs)]
-    DO               reduce using rule 62 (expr)
-    DO               [reduce using rule 71 (exprs)]
-    WHILE            reduce using rule 62 (expr)
-    WHILE            [reduce using rule 71 (exprs)]
-    NUM              [reduce using rule 62 (expr)]
-    NUM              [reduce using rule 71 (exprs)]
-    FLOAT            [reduce using rule 62 (expr)]
-    FLOAT            [reduce using rule 71 (exprs)]
-    ID               [reduce using rule 62 (expr)]
-    ID               [reduce using rule 71 (exprs)]
-    $default         reduce using rule 62 (expr)
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-
-
-state 50
-
-   19 funbody: CURLY_BRACKET_L . vardecl fundefs stmts CURLY_BRACKET_R
-   20        | CURLY_BRACKET_L . fundefs stmts CURLY_BRACKET_R
-   21        | CURLY_BRACKET_L . vardecl stmts CURLY_BRACKET_R
-   22        | CURLY_BRACKET_L . vardecl fundefs CURLY_BRACKET_R
-   23        | CURLY_BRACKET_L . vardecl CURLY_BRACKET_R
-   24        | CURLY_BRACKET_L . stmts CURLY_BRACKET_R
-   25        | CURLY_BRACKET_L . fundefs CURLY_BRACKET_R
-   26        | CURLY_BRACKET_L . CURLY_BRACKET_R
-
-    INT_TYPE         shift, and go to state 1
-    FLOAT_TYPE       shift, and go to state 2
-    BOOL_TYPE        shift, and go to state 3
-    BRACKET_L        shift, and go to state 21
-    MINUS            shift, and go to state 22
-    NOT              shift, and go to state 23
-    TRUEVAL          shift, and go to state 24
-    FALSEVAL         shift, and go to state 25
-    CURLY_BRACKET_R  shift, and go to state 70
-    RETURN           shift, and go to state 71
-    IF               shift, and go to state 72
-    FOR              shift, and go to state 73
-    DO               shift, and go to state 74
-    WHILE            shift, and go to state 75
-    NUM              shift, and go to state 26
-    FLOAT            shift, and go to state 27
-    ID               shift, and go to state 76
-
-    fundef    go to state 77
-    fundefs   go to state 78
-    vardecl   go to state 79
-    stmts     go to state 80
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 33
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-    type      go to state 91
-
-
-state 51
-
-   10 fundef: type ID BRACKET_L param BRACKET_R funbody .
-
-    $default  reduce using rule 10 (fundef)
-
-
-state 52
-
-   13 param: type ID COMMA . param
-
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-
-    param  go to state 92
-    type   go to state 20
-
-
-state 53
-
-   11 param: type ID ids . param
-   12      | type ID ids .
-
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-
-    $default  reduce using rule 12 (param)
-
-    param  go to state 93
-    type   go to state 20
-
-
-state 54
-
-   81 binop: MINUS .
-   93 monop: MINUS .
-
-    BRACKET_L  reduce using rule 81 (binop)
-    BRACKET_L  [reduce using rule 93 (monop)]
-    MINUS      reduce using rule 81 (binop)
-    MINUS      [reduce using rule 93 (monop)]
-    NOT        reduce using rule 81 (binop)
-    NOT        [reduce using rule 93 (monop)]
-    TRUEVAL    reduce using rule 81 (binop)
-    TRUEVAL    [reduce using rule 93 (monop)]
-    FALSEVAL   reduce using rule 81 (binop)
-    FALSEVAL   [reduce using rule 93 (monop)]
-    NUM        reduce using rule 81 (binop)
-    NUM        [reduce using rule 93 (monop)]
-    FLOAT      reduce using rule 81 (binop)
-    FLOAT      [reduce using rule 93 (monop)]
-    ID         reduce using rule 81 (binop)
-    ID         [reduce using rule 93 (monop)]
-    $default   reduce using rule 81 (binop)
-
-
-state 55
-
-   80 binop: PLUS .
-
-    $default  reduce using rule 80 (binop)
-
-
-state 56
-
-   82 binop: STAR .
-
-    $default  reduce using rule 82 (binop)
-
-
-state 57
-
-   83 binop: SLASH .
-
-    $default  reduce using rule 83 (binop)
-
-
-state 58
-
-   84 binop: PERCENT .
-
-    $default  reduce using rule 84 (binop)
-
-
-state 59
-
-   85 binop: LE .
-
-    $default  reduce using rule 85 (binop)
-
-
-state 60
-
-   86 binop: LT .
-
-    $default  reduce using rule 86 (binop)
-
-
-state 61
-
-   87 binop: GE .
-
-    $default  reduce using rule 87 (binop)
-
-
-state 62
-
-   88 binop: GT .
-
-    $default  reduce using rule 88 (binop)
-
-
-state 63
-
-   89 binop: EQ .
-
-    $default  reduce using rule 89 (binop)
-
-
-state 64
-
-   90 binop: OR .
-
-    $default  reduce using rule 90 (binop)
-
-
-state 65
-
-   91 binop: AND .
-
-    $default  reduce using rule 91 (binop)
-
-
-state 66
-
-   63 expr: BRACKET_L expr binop . expr BRACKET_R
-
-    BRACKET_L  shift, and go to state 21
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 94
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 33
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-
-
-state 67
-
-   67 cast: BRACKET_L type BRACKET_R . expr
-
-    BRACKET_L  shift, and go to state 21
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 95
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 33
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-
-
-state 68
-
-   69 funcall: ID BRACKET_L BRACKET_R .
-
-    $default  reduce using rule 69 (funcall)
-
-
-state 69
-
-   68 funcall: ID BRACKET_L exprs . BRACKET_R
-   70 arrexpr: exprs .
-
-    BRACKET_R  shift, and go to state 96
-
-    BRACKET_R  [reduce using rule 70 (arrexpr)]
-    $default   reduce using rule 70 (arrexpr)
-
-
-state 70
+state 71
 
    26 funbody: CURLY_BRACKET_L CURLY_BRACKET_R .
 
     $default  reduce using rule 26 (funbody)
 
 
-state 71
+state 72
 
    44 return: RETURN . expr SEMICOLON
    45       | RETURN . SEMICOLON
 
     BRACKET_L  shift, and go to state 21
-    SEMICOLON  shift, and go to state 97
+    SEMICOLON  shift, and go to state 98
     MINUS      shift, and go to state 22
     NOT        shift, and go to state 23
     TRUEVAL    shift, and go to state 24
@@ -1317,7 +1234,7 @@ state 71
     FLOAT      shift, and go to state 27
     ID         shift, and go to state 28
 
-    expr      go to state 98
+    expr      go to state 99
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -1329,45 +1246,45 @@ state 71
     monop     go to state 38
 
 
-state 72
+state 73
 
    46 ifelse: IF . BRACKET_L expr BRACKET_R block ELSE block
    47       | IF . BRACKET_L expr BRACKET_R block
    48       | IF . BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
    49       | IF . BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
 
-    BRACKET_L  shift, and go to state 99
+    BRACKET_L  shift, and go to state 100
 
 
-state 73
+state 74
 
    52 for: FOR . BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    53    | FOR . BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    54    | FOR . BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
    55    | FOR . BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
-    BRACKET_L  shift, and go to state 100
-
-
-state 74
-
-   56 dowhile: DO . CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
-
-    CURLY_BRACKET_L  shift, and go to state 101
+    BRACKET_L  shift, and go to state 101
 
 
 state 75
 
-   57 while: WHILE . BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   56 dowhile: DO . CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
 
-    BRACKET_L  shift, and go to state 102
+    CURLY_BRACKET_L  shift, and go to state 102
 
 
 state 76
 
+   57 while: WHILE . BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+
+    BRACKET_L  shift, and go to state 103
+
+
+state 77
+
    59 varlet: ID .
    61 expr: ID .
-   68 funcall: ID . BRACKET_L exprs BRACKET_R
+   68 funcall: ID . BRACKET_L exprs BRACKET_R SEMICOLON
    69        | ID . BRACKET_L BRACKET_R
 
     BRACKET_L  shift, and go to state 45
@@ -1377,7 +1294,7 @@ state 76
     $default   reduce using rule 61 (expr)
 
 
-state 77
+state 78
 
    15 fundefs: fundef . fundefs
    16        | fundef .
@@ -1388,12 +1305,12 @@ state 77
 
     $default  reduce using rule 16 (fundefs)
 
-    fundef   go to state 77
-    fundefs  go to state 103
-    type     go to state 104
+    fundef   go to state 78
+    fundefs  go to state 104
+    type     go to state 105
 
 
-state 78
+state 79
 
    20 funbody: CURLY_BRACKET_L fundefs . stmts CURLY_BRACKET_R
    25        | CURLY_BRACKET_L fundefs . CURLY_BRACKET_R
@@ -1403,27 +1320,27 @@ state 78
     NOT              shift, and go to state 23
     TRUEVAL          shift, and go to state 24
     FALSEVAL         shift, and go to state 25
-    CURLY_BRACKET_R  shift, and go to state 105
-    RETURN           shift, and go to state 71
-    IF               shift, and go to state 72
-    FOR              shift, and go to state 73
-    DO               shift, and go to state 74
-    WHILE            shift, and go to state 75
+    CURLY_BRACKET_R  shift, and go to state 106
+    RETURN           shift, and go to state 72
+    IF               shift, and go to state 73
+    FOR              shift, and go to state 74
+    DO               shift, and go to state 75
+    WHILE            shift, and go to state 76
     NUM              shift, and go to state 26
     FLOAT            shift, and go to state 27
-    ID               shift, and go to state 76
+    ID               shift, and go to state 77
 
-    stmts     go to state 106
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
+    stmts     go to state 107
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -1435,7 +1352,7 @@ state 78
     monop     go to state 38
 
 
-state 79
+state 80
 
    19 funbody: CURLY_BRACKET_L vardecl . fundefs stmts CURLY_BRACKET_R
    21        | CURLY_BRACKET_L vardecl . stmts CURLY_BRACKET_R
@@ -1450,29 +1367,29 @@ state 79
     NOT              shift, and go to state 23
     TRUEVAL          shift, and go to state 24
     FALSEVAL         shift, and go to state 25
-    CURLY_BRACKET_R  shift, and go to state 107
-    RETURN           shift, and go to state 71
-    IF               shift, and go to state 72
-    FOR              shift, and go to state 73
-    DO               shift, and go to state 74
-    WHILE            shift, and go to state 75
+    CURLY_BRACKET_R  shift, and go to state 108
+    RETURN           shift, and go to state 72
+    IF               shift, and go to state 73
+    FOR              shift, and go to state 74
+    DO               shift, and go to state 75
+    WHILE            shift, and go to state 76
     NUM              shift, and go to state 26
     FLOAT            shift, and go to state 27
-    ID               shift, and go to state 76
+    ID               shift, and go to state 77
 
-    fundef    go to state 77
-    fundefs   go to state 108
-    stmts     go to state 109
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
+    fundef    go to state 78
+    fundefs   go to state 109
+    stmts     go to state 110
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -1482,17 +1399,17 @@ state 79
     intval    go to state 36
     boolval   go to state 37
     monop     go to state 38
-    type      go to state 104
-
-
-state 80
-
-   24 funbody: CURLY_BRACKET_L stmts . CURLY_BRACKET_R
-
-    CURLY_BRACKET_R  shift, and go to state 110
+    type      go to state 105
 
 
 state 81
+
+   24 funbody: CURLY_BRACKET_L stmts . CURLY_BRACKET_R
+
+    CURLY_BRACKET_R  shift, and go to state 111
+
+
+state 82
 
    35 stmts: stmt . stmts
    36      | stmt .
@@ -1502,28 +1419,28 @@ state 81
     NOT        shift, and go to state 23
     TRUEVAL    shift, and go to state 24
     FALSEVAL   shift, and go to state 25
-    RETURN     shift, and go to state 71
-    IF         shift, and go to state 72
-    FOR        shift, and go to state 73
-    DO         shift, and go to state 74
-    WHILE      shift, and go to state 75
+    RETURN     shift, and go to state 72
+    IF         shift, and go to state 73
+    FOR        shift, and go to state 74
+    DO         shift, and go to state 75
+    WHILE      shift, and go to state 76
     NUM        shift, and go to state 26
     FLOAT      shift, and go to state 27
-    ID         shift, and go to state 76
+    ID         shift, and go to state 77
 
     $default  reduce using rule 36 (stmts)
 
-    stmts     go to state 111
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
+    stmts     go to state 112
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -1535,86 +1452,80 @@ state 81
     monop     go to state 38
 
 
-state 82
+state 83
 
    38 stmt: return .
 
     $default  reduce using rule 38 (stmt)
 
 
-state 83
+state 84
 
    39 stmt: ifelse .
 
     $default  reduce using rule 39 (stmt)
 
 
-state 84
+state 85
 
    37 stmt: assign .
 
     $default  reduce using rule 37 (stmt)
 
 
-state 85
+state 86
 
    40 stmt: for .
 
     $default  reduce using rule 40 (stmt)
 
 
-state 86
+state 87
 
    41 stmt: dowhile .
 
     $default  reduce using rule 41 (stmt)
 
 
-state 87
+state 88
 
    42 stmt: while .
 
     $default  reduce using rule 42 (stmt)
 
 
-state 88
+state 89
 
    43 stmt: exprstmt .
 
     $default  reduce using rule 43 (stmt)
 
 
-state 89
+state 90
 
    51 assign: varlet . LET expr SEMICOLON
 
-    LET  shift, and go to state 112
+    LET  shift, and go to state 113
 
 
-state 90
+state 91
 
    58 exprstmt: expr .
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    COMMA  shift, and go to state 46
 
-    BRACKET_L        [reduce using rule 58 (exprstmt)]
+    BRACKET_L        reduce using rule 58 (exprstmt)
     BRACKET_L        [reduce using rule 71 (exprs)]
-    MINUS            [reduce using rule 58 (exprstmt)]
+    COMMA            [reduce using rule 71 (exprs)]
+    MINUS            reduce using rule 58 (exprstmt)
     MINUS            [reduce using rule 71 (exprs)]
-    NOT              [reduce using rule 58 (exprstmt)]
+    NOT              reduce using rule 58 (exprstmt)
     NOT              [reduce using rule 71 (exprs)]
-    TRUEVAL          [reduce using rule 58 (exprstmt)]
+    TRUEVAL          reduce using rule 58 (exprstmt)
     TRUEVAL          [reduce using rule 71 (exprs)]
-    FALSEVAL         [reduce using rule 58 (exprstmt)]
+    FALSEVAL         reduce using rule 58 (exprstmt)
     FALSEVAL         [reduce using rule 71 (exprs)]
     CURLY_BRACKET_R  reduce using rule 58 (exprstmt)
     CURLY_BRACKET_R  [reduce using rule 71 (exprs)]
@@ -1628,27 +1539,16 @@ state 90
     DO               [reduce using rule 71 (exprs)]
     WHILE            reduce using rule 58 (exprstmt)
     WHILE            [reduce using rule 71 (exprs)]
-    NUM              [reduce using rule 58 (exprstmt)]
+    NUM              reduce using rule 58 (exprstmt)
     NUM              [reduce using rule 71 (exprs)]
-    FLOAT            [reduce using rule 58 (exprstmt)]
+    FLOAT            reduce using rule 58 (exprstmt)
     FLOAT            [reduce using rule 71 (exprs)]
-    ID               [reduce using rule 58 (exprstmt)]
+    ID               reduce using rule 58 (exprstmt)
     ID               [reduce using rule 71 (exprs)]
     $default         reduce using rule 58 (exprstmt)
 
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
 
-
-state 91
+state 92
 
    10 fundef: type . ID BRACKET_L param BRACKET_R funbody
    27 vardecl: type . ID LET exprs expr SEMICOLON vardecl
@@ -1660,283 +1560,82 @@ state 91
    33        | type . ID LET SEMICOLON vardecl
    34        | type . ID SEMICOLON
 
-    ID  shift, and go to state 113
+    ID  shift, and go to state 114
 
 
-state 92
+state 93
 
    13 param: type ID COMMA param .
 
     $default  reduce using rule 13 (param)
 
 
-state 93
+state 94
 
    11 param: type ID ids param .
 
     $default  reduce using rule 11 (param)
 
 
-state 94
+state 95
 
    63 expr: BRACKET_L expr binop expr . BRACKET_R
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    BRACKET_R  shift, and go to state 114
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    BRACKET_R  shift, and go to state 115
+    COMMA      shift, and go to state 46
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
     BRACKET_R  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-
-
-state 95
-
-   67 cast: BRACKET_L type BRACKET_R expr .
-   71 exprs: expr .
-   72      | expr . exprs
-
-    BRACKET_L  shift, and go to state 21
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    BRACKET_L        [reduce using rule 67 (cast)]
-    BRACKET_L        [reduce using rule 71 (exprs)]
-    BRACKET_R        reduce using rule 67 (cast)
-    BRACKET_R        [reduce using rule 71 (exprs)]
-    COMMA            reduce using rule 67 (cast)
-    COMMA            [reduce using rule 71 (exprs)]
-    SEMICOLON        reduce using rule 67 (cast)
-    SEMICOLON        [reduce using rule 71 (exprs)]
-    MINUS            [reduce using rule 67 (cast)]
-    MINUS            [reduce using rule 71 (exprs)]
-    PLUS             reduce using rule 67 (cast)
-    PLUS             [reduce using rule 71 (exprs)]
-    STAR             reduce using rule 67 (cast)
-    STAR             [reduce using rule 71 (exprs)]
-    SLASH            reduce using rule 67 (cast)
-    SLASH            [reduce using rule 71 (exprs)]
-    PERCENT          reduce using rule 67 (cast)
-    PERCENT          [reduce using rule 71 (exprs)]
-    LE               reduce using rule 67 (cast)
-    LE               [reduce using rule 71 (exprs)]
-    LT               reduce using rule 67 (cast)
-    LT               [reduce using rule 71 (exprs)]
-    GE               reduce using rule 67 (cast)
-    GE               [reduce using rule 71 (exprs)]
-    GT               reduce using rule 67 (cast)
-    GT               [reduce using rule 71 (exprs)]
-    EQ               reduce using rule 67 (cast)
-    EQ               [reduce using rule 71 (exprs)]
-    OR               reduce using rule 67 (cast)
-    OR               [reduce using rule 71 (exprs)]
-    AND              reduce using rule 67 (cast)
-    AND              [reduce using rule 71 (exprs)]
-    NOT              [reduce using rule 67 (cast)]
-    NOT              [reduce using rule 71 (exprs)]
-    TRUEVAL          [reduce using rule 67 (cast)]
-    TRUEVAL          [reduce using rule 71 (exprs)]
-    FALSEVAL         [reduce using rule 67 (cast)]
-    FALSEVAL         [reduce using rule 71 (exprs)]
-    CURLY_BRACKET_R  reduce using rule 67 (cast)
-    CURLY_BRACKET_R  [reduce using rule 71 (exprs)]
-    RETURN           reduce using rule 67 (cast)
-    RETURN           [reduce using rule 71 (exprs)]
-    IF               reduce using rule 67 (cast)
-    IF               [reduce using rule 71 (exprs)]
-    FOR              reduce using rule 67 (cast)
-    FOR              [reduce using rule 71 (exprs)]
-    DO               reduce using rule 67 (cast)
-    DO               [reduce using rule 71 (exprs)]
-    WHILE            reduce using rule 67 (cast)
-    WHILE            [reduce using rule 71 (exprs)]
-    NUM              [reduce using rule 67 (cast)]
-    NUM              [reduce using rule 71 (exprs)]
-    FLOAT            [reduce using rule 67 (cast)]
-    FLOAT            [reduce using rule 71 (exprs)]
-    ID               [reduce using rule 67 (cast)]
-    ID               [reduce using rule 71 (exprs)]
-    $default         reduce using rule 67 (cast)
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
+    COMMA      [reduce using rule 71 (exprs)]
 
 
 state 96
 
-   68 funcall: ID BRACKET_L exprs BRACKET_R .
+   67 cast: BRACKET_L type BRACKET_R expr . SEMICOLON
+   71 exprs: expr .
+   72      | expr . COMMA exprs
 
-    $default  reduce using rule 68 (funcall)
+    COMMA      shift, and go to state 46
+    SEMICOLON  shift, and go to state 116
+
+    COMMA      [reduce using rule 71 (exprs)]
+    SEMICOLON  [reduce using rule 71 (exprs)]
 
 
 state 97
+
+   68 funcall: ID BRACKET_L exprs BRACKET_R . SEMICOLON
+
+    SEMICOLON  shift, and go to state 117
+
+
+state 98
 
    45 return: RETURN SEMICOLON .
 
     $default  reduce using rule 45 (return)
 
 
-state 98
+state 99
 
    44 return: RETURN expr . SEMICOLON
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    SEMICOLON  shift, and go to state 115
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    COMMA      shift, and go to state 46
+    SEMICOLON  shift, and go to state 118
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
+    COMMA      [reduce using rule 71 (exprs)]
     SEMICOLON  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
 
 
-state 99
+state 100
 
    46 ifelse: IF BRACKET_L . expr BRACKET_R block ELSE block
    47       | IF BRACKET_L . expr BRACKET_R block
    48       | IF BRACKET_L . expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
    49       | IF BRACKET_L . expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-
-    BRACKET_L  shift, and go to state 21
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 116
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 33
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-
-
-state 100
-
-   52 for: FOR BRACKET_L . type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-   53    | FOR BRACKET_L . type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-   54    | FOR BRACKET_L . type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
-   55    | FOR BRACKET_L . type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
-
-    INT_TYPE    shift, and go to state 1
-    FLOAT_TYPE  shift, and go to state 2
-    BOOL_TYPE   shift, and go to state 3
-
-    type  go to state 117
-
-
-state 101
-
-   56 dowhile: DO CURLY_BRACKET_L . stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
-
-    BRACKET_L  shift, and go to state 21
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    RETURN     shift, and go to state 71
-    IF         shift, and go to state 72
-    FOR        shift, and go to state 73
-    DO         shift, and go to state 74
-    WHILE      shift, and go to state 75
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 76
-
-    stmts     go to state 118
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 33
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-
-
-state 102
-
-   57 while: WHILE BRACKET_L . expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
     BRACKET_L  shift, and go to state 21
     MINUS      shift, and go to state 22
@@ -1959,72 +1658,49 @@ state 102
     monop     go to state 38
 
 
-state 103
+state 101
 
-   15 fundefs: fundef fundefs .
+   52 for: FOR BRACKET_L . type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+   53    | FOR BRACKET_L . type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+   54    | FOR BRACKET_L . type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   55    | FOR BRACKET_L . type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
-    $default  reduce using rule 15 (fundefs)
+    INT_TYPE    shift, and go to state 1
+    FLOAT_TYPE  shift, and go to state 2
+    BOOL_TYPE   shift, and go to state 3
 
-
-state 104
-
-   10 fundef: type . ID BRACKET_L param BRACKET_R funbody
-
-    ID  shift, and go to state 120
-
-
-state 105
-
-   25 funbody: CURLY_BRACKET_L fundefs CURLY_BRACKET_R .
-
-    $default  reduce using rule 25 (funbody)
+    type  go to state 120
 
 
-state 106
+state 102
 
-   20 funbody: CURLY_BRACKET_L fundefs stmts . CURLY_BRACKET_R
+   56 dowhile: DO CURLY_BRACKET_L . stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
 
-    CURLY_BRACKET_R  shift, and go to state 121
+    BRACKET_L  shift, and go to state 21
+    MINUS      shift, and go to state 22
+    NOT        shift, and go to state 23
+    TRUEVAL    shift, and go to state 24
+    FALSEVAL   shift, and go to state 25
+    RETURN     shift, and go to state 72
+    IF         shift, and go to state 73
+    FOR        shift, and go to state 74
+    DO         shift, and go to state 75
+    WHILE      shift, and go to state 76
+    NUM        shift, and go to state 26
+    FLOAT      shift, and go to state 27
+    ID         shift, and go to state 77
 
-
-state 107
-
-   23 funbody: CURLY_BRACKET_L vardecl CURLY_BRACKET_R .
-
-    $default  reduce using rule 23 (funbody)
-
-
-state 108
-
-   19 funbody: CURLY_BRACKET_L vardecl fundefs . stmts CURLY_BRACKET_R
-   22        | CURLY_BRACKET_L vardecl fundefs . CURLY_BRACKET_R
-
-    BRACKET_L        shift, and go to state 21
-    MINUS            shift, and go to state 22
-    NOT              shift, and go to state 23
-    TRUEVAL          shift, and go to state 24
-    FALSEVAL         shift, and go to state 25
-    CURLY_BRACKET_R  shift, and go to state 122
-    RETURN           shift, and go to state 71
-    IF               shift, and go to state 72
-    FOR              shift, and go to state 73
-    DO               shift, and go to state 74
-    WHILE            shift, and go to state 75
-    NUM              shift, and go to state 26
-    FLOAT            shift, and go to state 27
-    ID               shift, and go to state 76
-
-    stmts     go to state 123
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
+    stmts     go to state 121
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -2036,28 +1712,130 @@ state 108
     monop     go to state 38
 
 
-state 109
+state 103
 
-   21 funbody: CURLY_BRACKET_L vardecl stmts . CURLY_BRACKET_R
+   57 while: WHILE BRACKET_L . expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+
+    BRACKET_L  shift, and go to state 21
+    MINUS      shift, and go to state 22
+    NOT        shift, and go to state 23
+    TRUEVAL    shift, and go to state 24
+    FALSEVAL   shift, and go to state 25
+    NUM        shift, and go to state 26
+    FLOAT      shift, and go to state 27
+    ID         shift, and go to state 28
+
+    expr      go to state 122
+    cast      go to state 30
+    funcall   go to state 31
+    arrexpr   go to state 32
+    exprs     go to state 33
+    constant  go to state 34
+    floatval  go to state 35
+    intval    go to state 36
+    boolval   go to state 37
+    monop     go to state 38
+
+
+state 104
+
+   15 fundefs: fundef fundefs .
+
+    $default  reduce using rule 15 (fundefs)
+
+
+state 105
+
+   10 fundef: type . ID BRACKET_L param BRACKET_R funbody
+
+    ID  shift, and go to state 123
+
+
+state 106
+
+   25 funbody: CURLY_BRACKET_L fundefs CURLY_BRACKET_R .
+
+    $default  reduce using rule 25 (funbody)
+
+
+state 107
+
+   20 funbody: CURLY_BRACKET_L fundefs stmts . CURLY_BRACKET_R
 
     CURLY_BRACKET_R  shift, and go to state 124
 
 
+state 108
+
+   23 funbody: CURLY_BRACKET_L vardecl CURLY_BRACKET_R .
+
+    $default  reduce using rule 23 (funbody)
+
+
+state 109
+
+   19 funbody: CURLY_BRACKET_L vardecl fundefs . stmts CURLY_BRACKET_R
+   22        | CURLY_BRACKET_L vardecl fundefs . CURLY_BRACKET_R
+
+    BRACKET_L        shift, and go to state 21
+    MINUS            shift, and go to state 22
+    NOT              shift, and go to state 23
+    TRUEVAL          shift, and go to state 24
+    FALSEVAL         shift, and go to state 25
+    CURLY_BRACKET_R  shift, and go to state 125
+    RETURN           shift, and go to state 72
+    IF               shift, and go to state 73
+    FOR              shift, and go to state 74
+    DO               shift, and go to state 75
+    WHILE            shift, and go to state 76
+    NUM              shift, and go to state 26
+    FLOAT            shift, and go to state 27
+    ID               shift, and go to state 77
+
+    stmts     go to state 126
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    cast      go to state 30
+    funcall   go to state 31
+    arrexpr   go to state 32
+    exprs     go to state 33
+    constant  go to state 34
+    floatval  go to state 35
+    intval    go to state 36
+    boolval   go to state 37
+    monop     go to state 38
+
+
 state 110
+
+   21 funbody: CURLY_BRACKET_L vardecl stmts . CURLY_BRACKET_R
+
+    CURLY_BRACKET_R  shift, and go to state 127
+
+
+state 111
 
    24 funbody: CURLY_BRACKET_L stmts CURLY_BRACKET_R .
 
     $default  reduce using rule 24 (funbody)
 
 
-state 111
+state 112
 
    35 stmts: stmt stmts .
 
     $default  reduce using rule 35 (stmts)
 
 
-state 112
+state 113
 
    51 assign: varlet LET . expr SEMICOLON
 
@@ -2070,7 +1848,7 @@ state 112
     FLOAT      shift, and go to state 27
     ID         shift, and go to state 28
 
-    expr      go to state 125
+    expr      go to state 128
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -2082,7 +1860,7 @@ state 112
     monop     go to state 38
 
 
-state 113
+state 114
 
    10 fundef: type ID . BRACKET_L param BRACKET_R funbody
    27 vardecl: type ID . LET exprs expr SEMICOLON vardecl
@@ -2095,201 +1873,140 @@ state 113
    34        | type ID . SEMICOLON
 
     BRACKET_L  shift, and go to state 14
-    SEMICOLON  shift, and go to state 126
-    LET        shift, and go to state 127
+    SEMICOLON  shift, and go to state 129
+    LET        shift, and go to state 130
 
 
-state 114
+state 115
 
    63 expr: BRACKET_L expr binop expr BRACKET_R .
 
     $default  reduce using rule 63 (expr)
 
 
-state 115
+state 116
+
+   67 cast: BRACKET_L type BRACKET_R expr SEMICOLON .
+
+    $default  reduce using rule 67 (cast)
+
+
+state 117
+
+   68 funcall: ID BRACKET_L exprs BRACKET_R SEMICOLON .
+
+    $default  reduce using rule 68 (funcall)
+
+
+state 118
 
    44 return: RETURN expr SEMICOLON .
 
     $default  reduce using rule 44 (return)
 
 
-state 116
+state 119
 
    46 ifelse: IF BRACKET_L expr . BRACKET_R block ELSE block
    47       | IF BRACKET_L expr . BRACKET_R block
    48       | IF BRACKET_L expr . BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
    49       | IF BRACKET_L expr . BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    BRACKET_R  shift, and go to state 128
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    BRACKET_R  shift, and go to state 131
+    COMMA      shift, and go to state 46
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
     BRACKET_R  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
+    COMMA      [reduce using rule 71 (exprs)]
 
 
-state 117
+state 120
 
    52 for: FOR BRACKET_L type . ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    53    | FOR BRACKET_L type . ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    54    | FOR BRACKET_L type . ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
    55    | FOR BRACKET_L type . ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
-    ID  shift, and go to state 129
+    ID  shift, and go to state 132
 
 
-state 118
+state 121
 
    56 dowhile: DO CURLY_BRACKET_L stmts . CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
 
-    CURLY_BRACKET_R  shift, and go to state 130
+    CURLY_BRACKET_R  shift, and go to state 133
 
 
-state 119
+state 122
 
    57 while: WHILE BRACKET_L expr . BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    BRACKET_R  shift, and go to state 131
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    BRACKET_R  shift, and go to state 134
+    COMMA      shift, and go to state 46
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
     BRACKET_R  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
+    COMMA      [reduce using rule 71 (exprs)]
 
 
-state 120
+state 123
 
    10 fundef: type ID . BRACKET_L param BRACKET_R funbody
 
     BRACKET_L  shift, and go to state 14
 
 
-state 121
+state 124
 
    20 funbody: CURLY_BRACKET_L fundefs stmts CURLY_BRACKET_R .
 
     $default  reduce using rule 20 (funbody)
 
 
-state 122
+state 125
 
    22 funbody: CURLY_BRACKET_L vardecl fundefs CURLY_BRACKET_R .
 
     $default  reduce using rule 22 (funbody)
 
 
-state 123
+state 126
 
    19 funbody: CURLY_BRACKET_L vardecl fundefs stmts . CURLY_BRACKET_R
 
-    CURLY_BRACKET_R  shift, and go to state 132
+    CURLY_BRACKET_R  shift, and go to state 135
 
 
-state 124
+state 127
 
    21 funbody: CURLY_BRACKET_L vardecl stmts CURLY_BRACKET_R .
 
     $default  reduce using rule 21 (funbody)
 
 
-state 125
+state 128
 
    51 assign: varlet LET expr . SEMICOLON
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    SEMICOLON  shift, and go to state 133
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    COMMA      shift, and go to state 46
+    SEMICOLON  shift, and go to state 136
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
+    COMMA      [reduce using rule 71 (exprs)]
     SEMICOLON  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
 
 
-state 126
+state 129
 
    34 vardecl: type ID SEMICOLON .
 
     $default  reduce using rule 34 (vardecl)
 
 
-state 127
+state 130
 
    27 vardecl: type ID LET . exprs expr SEMICOLON vardecl
    28        | type ID LET . exprs expr SEMICOLON
@@ -2300,7 +2017,7 @@ state 127
    33        | type ID LET . SEMICOLON vardecl
 
     BRACKET_L  shift, and go to state 21
-    SEMICOLON  shift, and go to state 134
+    SEMICOLON  shift, and go to state 137
     MINUS      shift, and go to state 22
     NOT        shift, and go to state 23
     TRUEVAL    shift, and go to state 24
@@ -2309,11 +2026,11 @@ state 127
     FLOAT      shift, and go to state 27
     ID         shift, and go to state 28
 
-    expr      go to state 135
+    expr      go to state 138
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
-    exprs     go to state 136
+    exprs     go to state 139
     constant  go to state 34
     floatval  go to state 35
     intval    go to state 36
@@ -2321,57 +2038,57 @@ state 127
     monop     go to state 38
 
 
-state 128
+state 131
 
    46 ifelse: IF BRACKET_L expr BRACKET_R . block ELSE block
    47       | IF BRACKET_L expr BRACKET_R . block
    48       | IF BRACKET_L expr BRACKET_R . CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
    49       | IF BRACKET_L expr BRACKET_R . CURLY_BRACKET_L CURLY_BRACKET_R
 
-    CURLY_BRACKET_L  shift, and go to state 137
+    CURLY_BRACKET_L  shift, and go to state 140
 
-    block  go to state 138
+    block  go to state 141
 
 
-state 129
+state 132
 
    52 for: FOR BRACKET_L type ID . LET expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    53    | FOR BRACKET_L type ID . LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    54    | FOR BRACKET_L type ID . LET expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
    55    | FOR BRACKET_L type ID . LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
-    LET  shift, and go to state 139
+    LET  shift, and go to state 142
 
 
-state 130
+state 133
 
    56 dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R . WHILE BRACKET_L expr BRACKET_R SEMICOLON
 
-    WHILE  shift, and go to state 140
+    WHILE  shift, and go to state 143
 
 
-state 131
+state 134
 
    57 while: WHILE BRACKET_L expr BRACKET_R . CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
-    CURLY_BRACKET_L  shift, and go to state 141
+    CURLY_BRACKET_L  shift, and go to state 144
 
 
-state 132
+state 135
 
    19 funbody: CURLY_BRACKET_L vardecl fundefs stmts CURLY_BRACKET_R .
 
     $default  reduce using rule 19 (funbody)
 
 
-state 133
+state 136
 
    51 assign: varlet LET expr SEMICOLON .
 
     $default  reduce using rule 51 (assign)
 
 
-state 134
+state 137
 
    33 vardecl: type ID LET SEMICOLON . vardecl
 
@@ -2379,50 +2096,26 @@ state 134
     FLOAT_TYPE  shift, and go to state 2
     BOOL_TYPE   shift, and go to state 3
 
-    vardecl  go to state 142
-    type     go to state 143
+    vardecl  go to state 145
+    type     go to state 146
 
 
-state 135
+state 138
 
    30 vardecl: type ID LET expr . SEMICOLON vardecl
    32        | type ID LET expr . SEMICOLON
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    SEMICOLON  shift, and go to state 144
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    COMMA      shift, and go to state 46
+    SEMICOLON  shift, and go to state 147
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
+    COMMA      [reduce using rule 71 (exprs)]
     SEMICOLON  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
+    $default   reduce using rule 71 (exprs)
 
 
-state 136
+state 139
 
    27 vardecl: type ID LET exprs . expr SEMICOLON vardecl
    28        | type ID LET exprs . expr SEMICOLON
@@ -2431,7 +2124,7 @@ state 136
    70 arrexpr: exprs .
 
     BRACKET_L  shift, and go to state 21
-    SEMICOLON  shift, and go to state 145
+    SEMICOLON  shift, and go to state 148
     MINUS      shift, and go to state 22
     NOT        shift, and go to state 23
     TRUEVAL    shift, and go to state 24
@@ -2449,8 +2142,9 @@ state 136
     NUM        [reduce using rule 70 (arrexpr)]
     FLOAT      [reduce using rule 70 (arrexpr)]
     ID         [reduce using rule 70 (arrexpr)]
+    $default   reduce using rule 70 (arrexpr)
 
-    expr      go to state 146
+    expr      go to state 149
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -2462,7 +2156,7 @@ state 136
     monop     go to state 38
 
 
-state 137
+state 140
 
    48 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L . CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R
    49       | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L . CURLY_BRACKET_R
@@ -2473,27 +2167,27 @@ state 137
     NOT              shift, and go to state 23
     TRUEVAL          shift, and go to state 24
     FALSEVAL         shift, and go to state 25
-    CURLY_BRACKET_R  shift, and go to state 147
-    RETURN           shift, and go to state 71
-    IF               shift, and go to state 72
-    FOR              shift, and go to state 73
-    DO               shift, and go to state 74
-    WHILE            shift, and go to state 75
+    CURLY_BRACKET_R  shift, and go to state 150
+    RETURN           shift, and go to state 72
+    IF               shift, and go to state 73
+    FOR              shift, and go to state 74
+    DO               shift, and go to state 75
+    WHILE            shift, and go to state 76
     NUM              shift, and go to state 26
     FLOAT            shift, and go to state 27
-    ID               shift, and go to state 76
+    ID               shift, and go to state 77
 
-    stmts     go to state 148
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
+    stmts     go to state 151
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -2505,17 +2199,17 @@ state 137
     monop     go to state 38
 
 
-state 138
+state 141
 
    46 ifelse: IF BRACKET_L expr BRACKET_R block . ELSE block
    47       | IF BRACKET_L expr BRACKET_R block .
 
-    ELSE  shift, and go to state 149
+    ELSE  shift, and go to state 152
 
     $default  reduce using rule 47 (ifelse)
 
 
-state 139
+state 142
 
    52 for: FOR BRACKET_L type ID LET . expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    53    | FOR BRACKET_L type ID LET . expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
@@ -2531,7 +2225,7 @@ state 139
     FLOAT      shift, and go to state 27
     ID         shift, and go to state 28
 
-    expr      go to state 150
+    expr      go to state 153
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -2543,14 +2237,14 @@ state 139
     monop     go to state 38
 
 
-state 140
+state 143
 
    56 dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE . BRACKET_L expr BRACKET_R SEMICOLON
 
-    BRACKET_L  shift, and go to state 151
+    BRACKET_L  shift, and go to state 154
 
 
-state 141
+state 144
 
    57 while: WHILE BRACKET_L expr BRACKET_R CURLY_BRACKET_L . stmts CURLY_BRACKET_R
 
@@ -2559,26 +2253,26 @@ state 141
     NOT        shift, and go to state 23
     TRUEVAL    shift, and go to state 24
     FALSEVAL   shift, and go to state 25
-    RETURN     shift, and go to state 71
-    IF         shift, and go to state 72
-    FOR        shift, and go to state 73
-    DO         shift, and go to state 74
-    WHILE      shift, and go to state 75
+    RETURN     shift, and go to state 72
+    IF         shift, and go to state 73
+    FOR        shift, and go to state 74
+    DO         shift, and go to state 75
+    WHILE      shift, and go to state 76
     NUM        shift, and go to state 26
     FLOAT      shift, and go to state 27
-    ID         shift, and go to state 76
+    ID         shift, and go to state 77
 
-    stmts     go to state 152
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
+    stmts     go to state 155
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -2590,14 +2284,14 @@ state 141
     monop     go to state 38
 
 
-state 142
+state 145
 
    33 vardecl: type ID LET SEMICOLON vardecl .
 
     $default  reduce using rule 33 (vardecl)
 
 
-state 143
+state 146
 
    27 vardecl: type . ID LET exprs expr SEMICOLON vardecl
    28        | type . ID LET exprs expr SEMICOLON
@@ -2608,10 +2302,10 @@ state 143
    33        | type . ID LET SEMICOLON vardecl
    34        | type . ID SEMICOLON
 
-    ID  shift, and go to state 153
+    ID  shift, and go to state 156
 
 
-state 144
+state 147
 
    30 vardecl: type ID LET expr SEMICOLON . vardecl
    32        | type ID LET expr SEMICOLON .
@@ -2625,11 +2319,11 @@ state 144
     BOOL_TYPE   [reduce using rule 32 (vardecl)]
     $default    reduce using rule 32 (vardecl)
 
-    vardecl  go to state 154
-    type     go to state 143
+    vardecl  go to state 157
+    type     go to state 146
 
 
-state 145
+state 148
 
    29 vardecl: type ID LET exprs SEMICOLON . vardecl
    31        | type ID LET exprs SEMICOLON .
@@ -2643,117 +2337,65 @@ state 145
     BOOL_TYPE   [reduce using rule 31 (vardecl)]
     $default    reduce using rule 31 (vardecl)
 
-    vardecl  go to state 155
-    type     go to state 143
-
-
-state 146
-
-   27 vardecl: type ID LET exprs expr . SEMICOLON vardecl
-   28        | type ID LET exprs expr . SEMICOLON
-   71 exprs: expr .
-   72      | expr . exprs
-
-    BRACKET_L  shift, and go to state 21
-    SEMICOLON  shift, and go to state 156
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    BRACKET_L  [reduce using rule 71 (exprs)]
-    SEMICOLON  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-
-
-state 147
-
-   48 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R . ELSE CURLY_BRACKET_L CURLY_BRACKET_R
-   49       | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R .
-
-    ELSE  shift, and go to state 157
-
-    $default  reduce using rule 49 (ifelse)
-
-
-state 148
-
-   50 block: CURLY_BRACKET_L stmts . CURLY_BRACKET_R
-
-    CURLY_BRACKET_R  shift, and go to state 158
+    vardecl  go to state 158
+    type     go to state 146
 
 
 state 149
 
-   46 ifelse: IF BRACKET_L expr BRACKET_R block ELSE . block
+   27 vardecl: type ID LET exprs expr . SEMICOLON vardecl
+   28        | type ID LET exprs expr . SEMICOLON
+   71 exprs: expr .
+   72      | expr . COMMA exprs
 
-    CURLY_BRACKET_L  shift, and go to state 159
+    COMMA      shift, and go to state 46
+    SEMICOLON  shift, and go to state 159
 
-    block  go to state 160
+    COMMA      [reduce using rule 71 (exprs)]
+    SEMICOLON  [reduce using rule 71 (exprs)]
 
 
 state 150
+
+   48 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R . ELSE CURLY_BRACKET_L CURLY_BRACKET_R
+   49       | IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R .
+
+    ELSE  shift, and go to state 160
+
+    $default  reduce using rule 49 (ifelse)
+
+
+state 151
+
+   50 block: CURLY_BRACKET_L stmts . CURLY_BRACKET_R
+
+    CURLY_BRACKET_R  shift, and go to state 161
+
+
+state 152
+
+   46 ifelse: IF BRACKET_L expr BRACKET_R block ELSE . block
+
+    CURLY_BRACKET_L  shift, and go to state 162
+
+    block  go to state 163
+
+
+state 153
 
    52 for: FOR BRACKET_L type ID LET expr . COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    53    | FOR BRACKET_L type ID LET expr . COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    54    | FOR BRACKET_L type ID LET expr . COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
    55    | FOR BRACKET_L type ID LET expr . COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    COMMA      shift, and go to state 161
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    COMMA  shift, and go to state 164
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
-    COMMA      [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
+    COMMA  [reduce using rule 71 (exprs)]
 
 
-state 151
+state 154
 
    56 dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L . expr BRACKET_R SEMICOLON
 
@@ -2766,7 +2408,7 @@ state 151
     FLOAT      shift, and go to state 27
     ID         shift, and go to state 28
 
-    expr      go to state 162
+    expr      go to state 165
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -2778,14 +2420,14 @@ state 151
     monop     go to state 38
 
 
-state 152
+state 155
 
    57 while: WHILE BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts . CURLY_BRACKET_R
 
-    CURLY_BRACKET_R  shift, and go to state 163
+    CURLY_BRACKET_R  shift, and go to state 166
 
 
-state 153
+state 156
 
    27 vardecl: type ID . LET exprs expr SEMICOLON vardecl
    28        | type ID . LET exprs expr SEMICOLON
@@ -2796,25 +2438,25 @@ state 153
    33        | type ID . LET SEMICOLON vardecl
    34        | type ID . SEMICOLON
 
-    SEMICOLON  shift, and go to state 126
-    LET        shift, and go to state 127
+    SEMICOLON  shift, and go to state 129
+    LET        shift, and go to state 130
 
 
-state 154
+state 157
 
    30 vardecl: type ID LET expr SEMICOLON vardecl .
 
     $default  reduce using rule 30 (vardecl)
 
 
-state 155
+state 158
 
    29 vardecl: type ID LET exprs SEMICOLON vardecl .
 
     $default  reduce using rule 29 (vardecl)
 
 
-state 156
+state 159
 
    27 vardecl: type ID LET exprs expr SEMICOLON . vardecl
    28        | type ID LET exprs expr SEMICOLON .
@@ -2828,25 +2470,25 @@ state 156
     BOOL_TYPE   [reduce using rule 28 (vardecl)]
     $default    reduce using rule 28 (vardecl)
 
-    vardecl  go to state 164
-    type     go to state 143
+    vardecl  go to state 167
+    type     go to state 146
 
 
-state 157
+state 160
 
    48 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE . CURLY_BRACKET_L CURLY_BRACKET_R
 
-    CURLY_BRACKET_L  shift, and go to state 165
+    CURLY_BRACKET_L  shift, and go to state 168
 
 
-state 158
+state 161
 
    50 block: CURLY_BRACKET_L stmts CURLY_BRACKET_R .
 
     $default  reduce using rule 50 (block)
 
 
-state 159
+state 162
 
    50 block: CURLY_BRACKET_L . stmts CURLY_BRACKET_R
 
@@ -2855,103 +2497,30 @@ state 159
     NOT        shift, and go to state 23
     TRUEVAL    shift, and go to state 24
     FALSEVAL   shift, and go to state 25
-    RETURN     shift, and go to state 71
-    IF         shift, and go to state 72
-    FOR        shift, and go to state 73
-    DO         shift, and go to state 74
-    WHILE      shift, and go to state 75
+    RETURN     shift, and go to state 72
+    IF         shift, and go to state 73
+    FOR        shift, and go to state 74
+    DO         shift, and go to state 75
+    WHILE      shift, and go to state 76
     NUM        shift, and go to state 26
     FLOAT      shift, and go to state 27
-    ID         shift, and go to state 76
+    ID         shift, and go to state 77
 
-    stmts     go to state 148
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
+    stmts     go to state 151
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
     exprs     go to state 33
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-
-
-state 160
-
-   46 ifelse: IF BRACKET_L expr BRACKET_R block ELSE block .
-
-    $default  reduce using rule 46 (ifelse)
-
-
-state 161
-
-   52 for: FOR BRACKET_L type ID LET expr COMMA . expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-   53    | FOR BRACKET_L type ID LET expr COMMA . expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-   54    | FOR BRACKET_L type ID LET expr COMMA . expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
-   55    | FOR BRACKET_L type ID LET expr COMMA . expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
-
-    BRACKET_L  shift, and go to state 21
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 166
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 33
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-
-
-state 162
-
-   56 dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr . BRACKET_R SEMICOLON
-   71 exprs: expr .
-   72      | expr . exprs
-
-    BRACKET_L  shift, and go to state 21
-    BRACKET_R  shift, and go to state 167
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    BRACKET_L  [reduce using rule 71 (exprs)]
-    BRACKET_R  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
     constant  go to state 34
     floatval  go to state 35
     intval    go to state 36
@@ -2961,174 +2530,119 @@ state 162
 
 state 163
 
+   46 ifelse: IF BRACKET_L expr BRACKET_R block ELSE block .
+
+    $default  reduce using rule 46 (ifelse)
+
+
+state 164
+
+   52 for: FOR BRACKET_L type ID LET expr COMMA . expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+   53    | FOR BRACKET_L type ID LET expr COMMA . expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+   54    | FOR BRACKET_L type ID LET expr COMMA . expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   55    | FOR BRACKET_L type ID LET expr COMMA . expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   72 exprs: expr COMMA . exprs
+
+    BRACKET_L  shift, and go to state 21
+    MINUS      shift, and go to state 22
+    NOT        shift, and go to state 23
+    TRUEVAL    shift, and go to state 24
+    FALSEVAL   shift, and go to state 25
+    NUM        shift, and go to state 26
+    FLOAT      shift, and go to state 27
+    ID         shift, and go to state 28
+
+    expr      go to state 169
+    cast      go to state 30
+    funcall   go to state 31
+    arrexpr   go to state 32
+    exprs     go to state 70
+    constant  go to state 34
+    floatval  go to state 35
+    intval    go to state 36
+    boolval   go to state 37
+    monop     go to state 38
+
+
+state 165
+
+   56 dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr . BRACKET_R SEMICOLON
+   71 exprs: expr .
+   72      | expr . COMMA exprs
+
+    BRACKET_R  shift, and go to state 170
+    COMMA      shift, and go to state 46
+
+    BRACKET_R  [reduce using rule 71 (exprs)]
+    COMMA      [reduce using rule 71 (exprs)]
+
+
+state 166
+
    57 while: WHILE BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R .
 
     $default  reduce using rule 57 (while)
 
 
-state 164
+state 167
 
    27 vardecl: type ID LET exprs expr SEMICOLON vardecl .
 
     $default  reduce using rule 27 (vardecl)
 
 
-state 165
+state 168
 
    48 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L . CURLY_BRACKET_R
 
-    CURLY_BRACKET_R  shift, and go to state 168
+    CURLY_BRACKET_R  shift, and go to state 171
 
 
-state 166
+state 169
 
    52 for: FOR BRACKET_L type ID LET expr COMMA expr . BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    53    | FOR BRACKET_L type ID LET expr COMMA expr . COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
    54    | FOR BRACKET_L type ID LET expr COMMA expr . BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
    55    | FOR BRACKET_L type ID LET expr COMMA expr . COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
    71 exprs: expr .
-   72      | expr . exprs
+   72      | expr . COMMA exprs
 
-    BRACKET_L  shift, and go to state 21
-    BRACKET_R  shift, and go to state 169
-    COMMA      shift, and go to state 170
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
+    BRACKET_R  shift, and go to state 172
+    COMMA      shift, and go to state 173
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
     BRACKET_R  [reduce using rule 71 (exprs)]
     COMMA      [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 48
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
 
 
-state 167
+state 170
 
    56 dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R . SEMICOLON
 
-    SEMICOLON  shift, and go to state 171
+    SEMICOLON  shift, and go to state 174
 
 
-state 168
+state 171
 
    48 ifelse: IF BRACKET_L expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R ELSE CURLY_BRACKET_L CURLY_BRACKET_R .
 
     $default  reduce using rule 48 (ifelse)
 
 
-state 169
+state 172
 
    52 for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R . CURLY_BRACKET_L CURLY_BRACKET_R
    54    | FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R . CURLY_BRACKET_L stmts CURLY_BRACKET_R
 
-    CURLY_BRACKET_L  shift, and go to state 172
-
-
-state 170
-
-   53 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA . expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-   55    | FOR BRACKET_L type ID LET expr COMMA expr COMMA . expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
-
-    BRACKET_L  shift, and go to state 21
-    MINUS      shift, and go to state 22
-    NOT        shift, and go to state 23
-    TRUEVAL    shift, and go to state 24
-    FALSEVAL   shift, and go to state 25
-    NUM        shift, and go to state 26
-    FLOAT      shift, and go to state 27
-    ID         shift, and go to state 28
-
-    expr      go to state 173
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 33
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
-
-
-state 171
-
-   56 dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON .
-
-    $default  reduce using rule 56 (dowhile)
-
-
-state 172
-
-   52 for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L . CURLY_BRACKET_R
-   54    | FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L . stmts CURLY_BRACKET_R
-
-    BRACKET_L        shift, and go to state 21
-    MINUS            shift, and go to state 22
-    NOT              shift, and go to state 23
-    TRUEVAL          shift, and go to state 24
-    FALSEVAL         shift, and go to state 25
-    CURLY_BRACKET_R  shift, and go to state 174
-    RETURN           shift, and go to state 71
-    IF               shift, and go to state 72
-    FOR              shift, and go to state 73
-    DO               shift, and go to state 74
-    WHILE            shift, and go to state 75
-    NUM              shift, and go to state 26
-    FLOAT            shift, and go to state 27
-    ID               shift, and go to state 76
-
-    stmts     go to state 175
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
-    cast      go to state 30
-    funcall   go to state 31
-    arrexpr   go to state 32
-    exprs     go to state 33
-    constant  go to state 34
-    floatval  go to state 35
-    intval    go to state 36
-    boolval   go to state 37
-    monop     go to state 38
+    CURLY_BRACKET_L  shift, and go to state 175
 
 
 state 173
 
-   53 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA expr . BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-   55    | FOR BRACKET_L type ID LET expr COMMA expr COMMA expr . BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
-   71 exprs: expr .
-   72      | expr . exprs
+   53 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA . expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+   55    | FOR BRACKET_L type ID LET expr COMMA expr COMMA . expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   72 exprs: expr COMMA . exprs
 
     BRACKET_L  shift, and go to state 21
-    BRACKET_R  shift, and go to state 176
     MINUS      shift, and go to state 22
     NOT        shift, and go to state 23
     TRUEVAL    shift, and go to state 24
@@ -3137,21 +2651,11 @@ state 173
     FLOAT      shift, and go to state 27
     ID         shift, and go to state 28
 
-    BRACKET_L  [reduce using rule 71 (exprs)]
-    BRACKET_R  [reduce using rule 71 (exprs)]
-    MINUS      [reduce using rule 71 (exprs)]
-    NOT        [reduce using rule 71 (exprs)]
-    TRUEVAL    [reduce using rule 71 (exprs)]
-    FALSEVAL   [reduce using rule 71 (exprs)]
-    NUM        [reduce using rule 71 (exprs)]
-    FLOAT      [reduce using rule 71 (exprs)]
-    ID         [reduce using rule 71 (exprs)]
-
-    expr      go to state 47
+    expr      go to state 176
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
-    exprs     go to state 48
+    exprs     go to state 70
     constant  go to state 34
     floatval  go to state 35
     intval    go to state 36
@@ -3161,64 +2665,42 @@ state 173
 
 state 174
 
-   52 for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R .
+   56 dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON .
 
-    $default  reduce using rule 52 (for)
+    $default  reduce using rule 56 (dowhile)
 
 
 state 175
 
-   54 for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts . CURLY_BRACKET_R
-
-    CURLY_BRACKET_R  shift, and go to state 177
-
-
-state 176
-
-   53 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R . CURLY_BRACKET_L CURLY_BRACKET_R
-   55    | FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R . CURLY_BRACKET_L stmts CURLY_BRACKET_R
-
-    CURLY_BRACKET_L  shift, and go to state 178
-
-
-state 177
-
-   54 for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R .
-
-    $default  reduce using rule 54 (for)
-
-
-state 178
-
-   53 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L . CURLY_BRACKET_R
-   55    | FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L . stmts CURLY_BRACKET_R
+   52 for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L . CURLY_BRACKET_R
+   54    | FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L . stmts CURLY_BRACKET_R
 
     BRACKET_L        shift, and go to state 21
     MINUS            shift, and go to state 22
     NOT              shift, and go to state 23
     TRUEVAL          shift, and go to state 24
     FALSEVAL         shift, and go to state 25
-    CURLY_BRACKET_R  shift, and go to state 179
-    RETURN           shift, and go to state 71
-    IF               shift, and go to state 72
-    FOR              shift, and go to state 73
-    DO               shift, and go to state 74
-    WHILE            shift, and go to state 75
+    CURLY_BRACKET_R  shift, and go to state 177
+    RETURN           shift, and go to state 72
+    IF               shift, and go to state 73
+    FOR              shift, and go to state 74
+    DO               shift, and go to state 75
+    WHILE            shift, and go to state 76
     NUM              shift, and go to state 26
     FLOAT            shift, and go to state 27
-    ID               shift, and go to state 76
+    ID               shift, and go to state 77
 
-    stmts     go to state 180
-    stmt      go to state 81
-    return    go to state 82
-    ifelse    go to state 83
-    assign    go to state 84
-    for       go to state 85
-    dowhile   go to state 86
-    while     go to state 87
-    exprstmt  go to state 88
-    varlet    go to state 89
-    expr      go to state 90
+    stmts     go to state 178
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
     cast      go to state 30
     funcall   go to state 31
     arrexpr   go to state 32
@@ -3230,21 +2712,106 @@ state 178
     monop     go to state 38
 
 
+state 176
+
+   53 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA expr . BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
+   55    | FOR BRACKET_L type ID LET expr COMMA expr COMMA expr . BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
+   71 exprs: expr .
+   72      | expr . COMMA exprs
+
+    BRACKET_R  shift, and go to state 179
+    COMMA      shift, and go to state 46
+
+    BRACKET_R  [reduce using rule 71 (exprs)]
+    COMMA      [reduce using rule 71 (exprs)]
+
+
+state 177
+
+   52 for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R .
+
+    $default  reduce using rule 52 (for)
+
+
+state 178
+
+   54 for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts . CURLY_BRACKET_R
+
+    CURLY_BRACKET_R  shift, and go to state 180
+
+
 state 179
+
+   53 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R . CURLY_BRACKET_L CURLY_BRACKET_R
+   55    | FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R . CURLY_BRACKET_L stmts CURLY_BRACKET_R
+
+    CURLY_BRACKET_L  shift, and go to state 181
+
+
+state 180
+
+   54 for: FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R .
+
+    $default  reduce using rule 54 (for)
+
+
+state 181
+
+   53 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L . CURLY_BRACKET_R
+   55    | FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L . stmts CURLY_BRACKET_R
+
+    BRACKET_L        shift, and go to state 21
+    MINUS            shift, and go to state 22
+    NOT              shift, and go to state 23
+    TRUEVAL          shift, and go to state 24
+    FALSEVAL         shift, and go to state 25
+    CURLY_BRACKET_R  shift, and go to state 182
+    RETURN           shift, and go to state 72
+    IF               shift, and go to state 73
+    FOR              shift, and go to state 74
+    DO               shift, and go to state 75
+    WHILE            shift, and go to state 76
+    NUM              shift, and go to state 26
+    FLOAT            shift, and go to state 27
+    ID               shift, and go to state 77
+
+    stmts     go to state 183
+    stmt      go to state 82
+    return    go to state 83
+    ifelse    go to state 84
+    assign    go to state 85
+    for       go to state 86
+    dowhile   go to state 87
+    while     go to state 88
+    exprstmt  go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    cast      go to state 30
+    funcall   go to state 31
+    arrexpr   go to state 32
+    exprs     go to state 33
+    constant  go to state 34
+    floatval  go to state 35
+    intval    go to state 36
+    boolval   go to state 37
+    monop     go to state 38
+
+
+state 182
 
    53 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R .
 
     $default  reduce using rule 53 (for)
 
 
-state 180
+state 183
 
    55 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts . CURLY_BRACKET_R
 
-    CURLY_BRACKET_R  shift, and go to state 181
+    CURLY_BRACKET_R  shift, and go to state 184
 
 
-state 181
+state 184
 
    55 for: FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R .
 

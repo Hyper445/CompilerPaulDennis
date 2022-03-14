@@ -216,6 +216,12 @@
                         <a href="#Stmts">N_stmts</a>
                       </li>
                       <li>
+                        <a href="#Symboltable">N_symboltable</a>
+                      </li>
+                      <li>
+                        <a href="#SymboltableEntry">N_symboltableentry</a>
+                      </li>
+                      <li>
                         <a href="#Var">N_var</a>
                       </li>
                       <li>
@@ -269,7 +275,7 @@
       <ul><li><a href="#Expr">{Expr}</a></li><li><a href="#Stmt">{Stmt}</a></li><li><a href="#Decl">{Decl}</a></li></ul></li>
         <li>
       Nodes
-      <ul><li><a href="#ArrExpr">N_arrexpr</a></li><li><a href="#Assign">N_assign</a></li><li><a href="#BinOp">N_binop</a></li><li><a href="#Bool">N_bool</a></li><li><a href="#Cast">N_cast</a></li><li><a href="#Decls">N_decls</a></li><li><a href="#DoWhile">N_dowhile</a></li><li><a href="#Error">N_error</a></li><li><a href="#ExprStmt">N_exprstmt</a></li><li><a href="#Exprs">N_exprs</a></li><li><a href="#Float">N_float</a></li><li><a href="#For">N_for</a></li><li><a href="#FunBody">N_funbody</a></li><li><a href="#FunCall">N_funcall</a></li><li><a href="#FunDef">N_fundef</a></li><li><a href="#FunDefs">N_fundefs</a></li><li><a href="#GlobDecl">N_globdecl</a></li><li><a href="#GlobDef">N_globdef</a></li><li><a href="#Ids">N_ids</a></li><li><a href="#IfElse">N_ifelse</a></li><li><a href="#MonOp">N_monop</a></li><li><a href="#Num">N_num</a></li><li><a href="#Param">N_param</a></li><li><a href="#Program">N_program</a></li><li><a href="#Return">N_return</a></li><li><a href="#Stmts">N_stmts</a></li><li><a href="#Var">N_var</a></li><li><a href="#VarDecl">N_vardecl</a></li><li><a href="#VarLet">N_varlet</a></li><li><a href="#While">N_while</a></li></ul></li>
+      <ul><li><a href="#ArrExpr">N_arrexpr</a></li><li><a href="#Assign">N_assign</a></li><li><a href="#BinOp">N_binop</a></li><li><a href="#Bool">N_bool</a></li><li><a href="#Cast">N_cast</a></li><li><a href="#Decls">N_decls</a></li><li><a href="#DoWhile">N_dowhile</a></li><li><a href="#Error">N_error</a></li><li><a href="#ExprStmt">N_exprstmt</a></li><li><a href="#Exprs">N_exprs</a></li><li><a href="#Float">N_float</a></li><li><a href="#For">N_for</a></li><li><a href="#FunBody">N_funbody</a></li><li><a href="#FunCall">N_funcall</a></li><li><a href="#FunDef">N_fundef</a></li><li><a href="#FunDefs">N_fundefs</a></li><li><a href="#GlobDecl">N_globdecl</a></li><li><a href="#GlobDef">N_globdef</a></li><li><a href="#Ids">N_ids</a></li><li><a href="#IfElse">N_ifelse</a></li><li><a href="#MonOp">N_monop</a></li><li><a href="#Num">N_num</a></li><li><a href="#Param">N_param</a></li><li><a href="#Program">N_program</a></li><li><a href="#Return">N_return</a></li><li><a href="#Stmts">N_stmts</a></li><li><a href="#Symboltable">N_symboltable</a></li><li><a href="#SymboltableEntry">N_symboltableentry</a></li><li><a href="#Var">N_var</a></li><li><a href="#VarDecl">N_vardecl</a></li><li><a href="#VarLet">N_varlet</a></li><li><a href="#While">N_while</a></li></ul></li>
       </ul>
       <h1>Tables</h1>
     </div>
@@ -1961,6 +1967,135 @@
             <tr>
               <td>Next</td>
               <td> <a href="#Stmts">N_stmts</a></td>
+              <td class="ccode"></td>
+              <td></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td class="toclink">
+          <a href="#toc" class="toclink">top</a>
+        </td>
+      </tr>
+    </table>
+    <a name="Symboltable" id="Symboltable"></a>
+    <table>
+      <tr>
+        <td class="title">N_symboltable</td>
+      </tr>
+      <tr>
+        <td class="heading">
+          Make Function
+        </td>
+      </tr>
+      <tr>
+        <td class="ccode">node *TBmakeSymboltable( char* Name ,node* Decl ,node * Entries)</td>
+      </tr>
+      <tr>
+        <td class="heading">Sons</td>
+      </tr>
+      <tr>
+        <td>
+          <table class="hidden">
+            <tr>
+              <td class="subheading">Name</td>
+              <td class="subheading">Possible Target Nodes</td>
+              <td class="subheading">Default</td>
+              <td class="subheading">Comment</td>
+            </tr>
+            <tr>
+              <td>Entries</td>
+              <td> <a href="#SymboltableEntry">N_symboltableentry</a></td>
+              <td class="ccode"></td>
+              <td></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td class="heading">Permanent Attributes</td>
+      </tr>
+      <tr>
+        <td>
+          <table class="hidden">
+            <tr>
+              <td class="subheading">Name</td>
+              <td class="subheading">Type</td>
+              <td class="subheading">Default</td>
+              <td class="subheading">Comment</td>
+            </tr>
+            <tr>
+              <td>Name</td>
+              <td>
+                <div class="type"><a href="#atype_String">String</a> (  ) </div>
+              </td>
+              <td class="ccode"></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Decl</td>
+              <td>
+                <div class="type"><a href="#atype_Link">Link</a> (  ) </div>
+              </td>
+              <td class="ccode"></td>
+              <td></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td class="toclink">
+          <a href="#toc" class="toclink">top</a>
+        </td>
+      </tr>
+    </table>
+    <a name="SymboltableEntry" id="SymboltableEntry"></a>
+    <table>
+      <tr>
+        <td class="title">N_symboltableentry</td>
+      </tr>
+      <tr>
+        <td class="heading">
+          Make Function
+        </td>
+      </tr>
+      <tr>
+        <td class="ccode">node *TBmakeSymboltableentry( char* Name ,type Type ,int NestingLevel)</td>
+      </tr>
+      <tr>
+        <td class="heading">Permanent Attributes</td>
+      </tr>
+      <tr>
+        <td>
+          <table class="hidden">
+            <tr>
+              <td class="subheading">Name</td>
+              <td class="subheading">Type</td>
+              <td class="subheading">Default</td>
+              <td class="subheading">Comment</td>
+            </tr>
+            <tr>
+              <td>Name</td>
+              <td>
+                <div class="type"><a href="#atype_String">String</a> (  ) </div>
+              </td>
+              <td class="ccode"></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Type</td>
+              <td>
+                <div class="type"><a href="#atype_Type">Type</a> (  ) </div>
+              </td>
+              <td class="ccode"></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>NestingLevel</td>
+              <td>
+                <div class="type"><a href="#atype_Int">Int</a> (  ) </div>
+              </td>
               <td class="ccode"></td>
               <td></td>
             </tr>

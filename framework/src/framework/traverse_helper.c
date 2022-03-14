@@ -136,6 +136,11 @@ TRAVsons(node * arg_node, info * arg_info)
 	case N_var:
 		TRAV(VAR_INDICES(arg_node), arg_info);
 		break;
+	case N_symboltable:
+		TRAV(SYMBOLTABLE_ENTRIES(arg_node), arg_info);
+		break;
+	case N_symboltableentry:
+		break;
 	case N_num:
 		break;
 	case N_float:
@@ -239,6 +244,12 @@ TRAVnumSons(node * node)
 		break;
 	case N_var:
 		result = 1;
+		break;
+	case N_symboltable:
+		result = 1;
+		break;
+	case N_symboltableentry:
+		result = 0;
 		break;
 	case N_num:
 		result = 0;
@@ -559,6 +570,21 @@ TRAVgetSon(int no, node * parent)
 		case 0:
 			result = VAR_INDICES(parent);
 			break;
+		default:
+			DBUG_ASSERT((FALSE), "index out of range!");
+			break;
+		} break;
+	case N_symboltable:
+		switch (no) {
+		case 0:
+			result = SYMBOLTABLE_ENTRIES(parent);
+			break;
+		default:
+			DBUG_ASSERT((FALSE), "index out of range!");
+			break;
+		} break;
+	case N_symboltableentry:
+		switch (no) {
 		default:
 			DBUG_ASSERT((FALSE), "index out of range!");
 			break;

@@ -365,13 +365,13 @@ expr: constant
   }
   ;
 
-cast: BRACKET_L type BRACKET_R expr
+cast: BRACKET_L type BRACKET_R expr SEMICOLON
   {
     $$ = TBmakeCast($2, $4);
   }
   ;
 
-funcall: ID BRACKET_L exprs BRACKET_R
+funcall: ID BRACKET_L exprs BRACKET_R SEMICOLON
   {
     $$ = TBmakeFuncall($1, NULL, $3);
   }
@@ -387,13 +387,13 @@ arrexpr: exprs
   }
   ;
 
-exprs: expr 
+exprs: expr
   {
     $$ = TBmakeExprs($1, NULL);
   }
-  | expr exprs
+  | expr COMMA exprs
   {
-    $$ = TBmakeExprs($1, $2);
+    $$ = TBmakeExprs($1, $3);
   }
   ;
 

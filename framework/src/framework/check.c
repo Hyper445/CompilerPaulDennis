@@ -1367,6 +1367,83 @@ node           *CHKstmts(node * arg_node, info * arg_info) {
 }
 /** <!--******************************************************************-->
  *
+ * @fn CHKsymboltable
+ *
+ * @brief Check the node and its sons/attributes
+ *
+ * @param arg_node Symboltable node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node           *CHKsymboltable(node * arg_node, info * arg_info) {
+	DBUG_ENTER("CHKsymboltable");
+
+	/*
+	 * Son check: SYMBOLTABLE_ENTRIES
+	 */
+	if ((FALSE) || (TRUE)) {
+		if (SYMBOLTABLE_ENTRIES(arg_node) != NULL) {
+			if (!((FALSE) || (NODE_TYPE(SYMBOLTABLE_ENTRIES(arg_node)) == N_symboltableentry))) {
+				CHKcorrectTypeInsertError(arg_node, "SYMBOLTABLE_ENTRIES hasnt the right type." " It should be: " "N_symboltableentry");
+			}
+		}
+	} else {
+		CHKnotExist(SYMBOLTABLE_ENTRIES(arg_node), arg_node, "attribute SYMBOLTABLE_ENTRIES must be NULL");
+	}
+
+	/*
+	 * Attribute check: SYMBOLTABLE_DECL
+	 */
+	if ((FALSE) || (TRUE)) {
+		CHKexistAttribute(SYMBOLTABLE_DECL(arg_node), arg_node, "mandatory attribute SYMBOLTABLE_DECL is NULL");
+	} else {
+		CHKnotExist(SYMBOLTABLE_DECL(arg_node), arg_node, "attribute SYMBOLTABLE_DECL must be NULL");
+	}
+
+	/*
+	 * Attribute check: SYMBOLTABLE_NAME
+	 */
+	if ((FALSE) || (TRUE)) {
+		CHKexistAttribute(SYMBOLTABLE_NAME(arg_node), arg_node, "mandatory attribute SYMBOLTABLE_NAME is NULL");
+	} else {
+		CHKnotExist(SYMBOLTABLE_NAME(arg_node), arg_node, "attribute SYMBOLTABLE_NAME must be NULL");
+	}
+
+	/*
+	 * trav functions: to get all sons
+	 */
+	if (SYMBOLTABLE_ENTRIES(arg_node) != NULL) {
+		SYMBOLTABLE_ENTRIES(arg_node) = TRAVdo(SYMBOLTABLE_ENTRIES(arg_node), arg_info);
+	} DBUG_RETURN(arg_node);
+}
+/** <!--******************************************************************-->
+ *
+ * @fn CHKsymboltableentry
+ *
+ * @brief Check the node and its sons/attributes
+ *
+ * @param arg_node SymboltableEntry node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node           *CHKsymboltableentry(node * arg_node, info * arg_info) {
+	DBUG_ENTER("CHKsymboltableentry");
+
+	/*
+	 * Attribute check: SYMBOLTABLEENTRY_NAME
+	 */
+	if ((FALSE) || (TRUE)) {
+		CHKexistAttribute(SYMBOLTABLEENTRY_NAME(arg_node), arg_node, "mandatory attribute SYMBOLTABLEENTRY_NAME is NULL");
+	} else {
+		CHKnotExist(SYMBOLTABLEENTRY_NAME(arg_node), arg_node, "attribute SYMBOLTABLEENTRY_NAME must be NULL");
+	} DBUG_RETURN(arg_node);
+}
+/** <!--******************************************************************-->
+ *
  * @fn CHKvar
  *
  * @brief Check the node and its sons/attributes
@@ -1624,6 +1701,8 @@ typedef enum {
 	CHK_monop_op,
 	CHK_num_value,
 	CHK_param_type,
+	CHK_symboltable_name,
+	CHK_symboltableentry_name,
 	CHK_var_name,
 	CHK_vardecl_type,
 	CHK_varlet_name,

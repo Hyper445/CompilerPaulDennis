@@ -51,6 +51,7 @@ static info *FreeInfo( info *info)
   return info;
 }
 
+extern node *PRTsymboltable (node * arg_node, info * arg_info){return arg_node;}
 
 extern node *PRTdeclarations (node * arg_node, info * arg_info){return arg_node;}
 

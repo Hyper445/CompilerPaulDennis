@@ -542,6 +542,44 @@ node           *CHKMstmts(node * arg_node, info * arg_info) {
 }
 /** <!--******************************************************************-->
  *
+ * @fn CHKMsymboltable
+ *
+ * @brief Touched the node and its sons/attributes
+ *
+ * @param arg_node Symboltable node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node           *CHKMsymboltable(node * arg_node, info * arg_info) {
+	DBUG_ENTER("CHKMsymboltable");
+	NODE_ERROR(arg_node) = CHKMTRAV(NODE_ERROR(arg_node), arg_info);
+	SYMBOLTABLE_NAME(arg_node) = CHKMattribString(SYMBOLTABLE_NAME(arg_node), arg_info);
+	SYMBOLTABLE_DECL(arg_node) = CHKMattribLink(SYMBOLTABLE_DECL(arg_node), arg_info);
+	SYMBOLTABLE_ENTRIES(arg_node) = CHKMTRAV(SYMBOLTABLE_ENTRIES(arg_node), arg_info);
+	DBUG_RETURN(arg_node);
+}
+/** <!--******************************************************************-->
+ *
+ * @fn CHKMsymboltableentry
+ *
+ * @brief Touched the node and its sons/attributes
+ *
+ * @param arg_node SymboltableEntry node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node           *CHKMsymboltableentry(node * arg_node, info * arg_info) {
+	DBUG_ENTER("CHKMsymboltableentry");
+	NODE_ERROR(arg_node) = CHKMTRAV(NODE_ERROR(arg_node), arg_info);
+	SYMBOLTABLEENTRY_NAME(arg_node) = CHKMattribString(SYMBOLTABLEENTRY_NAME(arg_node), arg_info);
+	DBUG_RETURN(arg_node);
+}
+/** <!--******************************************************************-->
+ *
  * @fn CHKMvar
  *
  * @brief Touched the node and its sons/attributes
