@@ -254,7 +254,7 @@ stmt: assign
   {
     $$ = $1;
   }
-  | exprstmt
+  | exprstmt SEMICOLON
   {
     $$ = $1;
   }
@@ -370,18 +370,18 @@ expr: constant
   }
   ;
 
-cast: BRACKET_L type BRACKET_R expr SEMICOLON
+cast: BRACKET_L type BRACKET_R expr
   {
     $$ = TBmakeCast($2, $4);
   }
   ;
 
 
-funcall: ID BRACKET_L exprs BRACKET_R SEMICOLON
+funcall: ID BRACKET_L exprs BRACKET_R
   {
     $$ = TBmakeFuncall($1, NULL, $3);
   }
-  | ID BRACKET_L BRACKET_R SEMICOLON
+  | ID BRACKET_L BRACKET_R
   {
     $$ = TBmakeFuncall($1, NULL, NULL);
   }

@@ -83,7 +83,19 @@ extern node *PRTfuncall (node * arg_node, info * arg_info){
   DBUG_RETURN(arg_node);
   }
 
-extern node *PRTcast (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTcast (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTcast");
+
+  printf("(");
+  print_type(CAST_TYPE(arg_node));
+  printf(") ");
+
+  CAST_EXPR(arg_node) = TRAVdo( CAST_EXPR(arg_node), arg_info);
+
+  printf("\n");
+
+  DBUG_RETURN(arg_node);
+  }
 
 extern node *PRTdowhile (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTdowhile");
@@ -100,7 +112,7 @@ extern node *PRTglobdecl (node * arg_node, info * arg_info){
 
   printf("extern ");
   print_type(GLOBDECL_TYPE(arg_node));
-  printf("%s\n", GLOBDECL_NAME(arg_node));
+  printf("%s;\n", GLOBDECL_NAME(arg_node));
 
   GLOBDECL_DIMS(arg_node) = TRAVopt( GLOBDECL_DIMS( arg_node), arg_info);
 
@@ -690,6 +702,7 @@ node
  * @}
  */
 
+// A helper function that prints the type of a variable.
 void print_type(int type) {
   switch(type) {
     case 0 :
