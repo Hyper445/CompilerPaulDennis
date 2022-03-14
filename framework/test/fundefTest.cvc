@@ -8,7 +8,7 @@ int test(int a) {
     float x;
 
     if (4) {
-        x = -3;
+        (int)x = -3;
     } else {
         x = 4;
     }

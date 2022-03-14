@@ -49,7 +49,7 @@ static int yyerror( char *errname);
 %type <node> stmts stmt assign varlet
 
 %type <node> program decls decl fundefs globdecl globdef fundef param block ids funbody vardecl ifelse return 
-%type <node> for doWhile while
+%type <node> for dowhile while exprstmt arrexpr funcall cast
 
 %type <cbinop> binop
 %type <ctype> type
@@ -241,11 +241,15 @@ stmt: assign
   {
     $$ = $1;
   }
-  | doWhile
+  | dowhile
   {
     $$ = $1;
   }
   | while
+  {
+    $$ = $1;
+  }
+  | exprstmt
   {
     $$ = $1;
   }
@@ -309,7 +313,7 @@ assign: varlet LET expr SEMICOLON
   }
   ;
 
-  doWhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
+  dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
   {
     $$ = TBmakeDowhile( $7, $3);
   }
@@ -317,6 +321,11 @@ assign: varlet LET expr SEMICOLON
   while: WHILE BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
   {
     $$ = TBmakeWhile( $3, $6);
+  }
+
+exprstmt: expr
+  {
+    $$ = TBmakeExprstmt($1);
   }
 
 varlet: ID
@@ -342,8 +351,41 @@ expr: constant
   {
     $$ = TBmakeBinop( $3, $2, $4);
   }
+  | cast
+  {
+    $$ = $1;
+  }
+  | funcall
+  {
+    $$ = $1;
+  }
+  | arrexpr
+  {
+    $$ = $1;
+  }
+  ;
+
+cast: BRACKET_L type BRACKET_R expr
+  {
+    $$ = TBmakeCast($2, $4);
+  }
+  ;
+
+funcall: ID BRACKET_L exprs BRACKET_R
+  {
+    $$ = TBmakeFuncall($1, NULL, $3);
+  }
+  | ID BRACKET_L BRACKET_R
+  {
+    $$ = TBmakeFuncall($1, NULL, NULL);
+  }
   ;
   
+arrexpr: exprs
+  {
+    TBmakeArrexpr($1);
+  }
+  ;
 
 exprs: expr 
   {
