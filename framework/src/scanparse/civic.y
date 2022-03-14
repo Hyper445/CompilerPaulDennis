@@ -290,7 +290,7 @@ stmt: assign
   {
     $$ = $1;
   }
-  | exprstmt SEMICOLON
+  | expr SEMICOLON
   {
     $$ = TBmakeExprstmt($1);
   }
