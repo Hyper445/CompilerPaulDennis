@@ -28,13 +28,17 @@
       <traversal id="FREE" name="Free Syntax Tree" default="user" include="free_node.h" />
       <traversal id="CHK" name="Check Syntax Tree" default="user" include="check.h" />
 
-      <!-- <traversal id="SO" name="Store operators" default="sons" include="store_operators.h">
+      <traversal id="MT" name="Making symbol tables" default="sons" include="make_table.h">
         <travuser>
-          <node name="BinOp" />
+          <node name="Program" />
+          <node name="FunDef" />
+          <node name="GlobDecl" />
+          <node name="GlobDef" />
+          <node name="VarDecl" />
         </travuser>
       </traversal>
 
-      <traversal id="IS" name="Identifiers storer" default="sons" include="identifiers_storer.h">
+      <!-- <traversal id="IS" name="Identifiers storer" default="sons" include="identifiers_storer.h">
         <travuser>
           <node name="Var" />
           <node name="Varlet" />
