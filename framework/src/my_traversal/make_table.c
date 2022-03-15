@@ -82,6 +82,10 @@ node *MTprogram (node *arg_node, info *arg_info) {
 node *MTfundef (node *arg_node, info *arg_info){
   
   DBUG_ENTER("MTfundef");
+
+  
+
+
   DBUG_RETURN(arg_node);
   
 }

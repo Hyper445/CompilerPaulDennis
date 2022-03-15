@@ -62,7 +62,7 @@ static int yyerror( char *errname);
 
 program: decls
   {
-    parseresult = $1;      
+    parseresult = TBmakeProgram($1, NULL);      
   }
   ;
 
@@ -128,27 +128,27 @@ globdef: EXPORT type ID LET expr COMMA exprs SEMICOLON
 
 fundef: EXPORT type ID BRACKET_L BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
   {
-    $$ = TBmakeFundef($2, STRcpy($3), NULL, NULL);
+    $$ = TBmakeFundef($2, STRcpy($3), NULL, NULL, NULL);
   } 
   | EXPORT type ID BRACKET_L BRACKET_R funbody
   {
-    $$ = TBmakeFundef($2, STRcpy($3), NULL, $6);
+    $$ = TBmakeFundef($2, STRcpy($3), NULL, $6, NULL);
   }
   | EXPORT type ID BRACKET_L param BRACKET_R funbody
   {
-    $$ = TBmakeFundef($2, STRcpy($3), $5, $7);
+    $$ = TBmakeFundef($2, STRcpy($3), $5, $7, NULL);
   }
   | type ID BRACKET_L BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
   {
-    $$ = TBmakeFundef($1, STRcpy($2), NULL, NULL);
+    $$ = TBmakeFundef($1, STRcpy($2), NULL, NULL, NULL);
   } 
   | type ID BRACKET_L BRACKET_R funbody
   {
-    $$ = TBmakeFundef($1, STRcpy($2), NULL, $5);
+    $$ = TBmakeFundef($1, STRcpy($2), NULL, $5, NULL);
   }
   | type ID BRACKET_L param BRACKET_R funbody
   {
-    $$ = TBmakeFundef($1, STRcpy($2), $4, $6);
+    $$ = TBmakeFundef($1, STRcpy($2), $4, $6, NULL);
   }
   ;
 

@@ -2,11 +2,11 @@ int x;
 
 int x = 3;
 
-int test(int a) { 
-    
-    
+int test(int a) {   
     float x;
     (int) x;
+
+    array [3]
 
     test(3, 4);
 
