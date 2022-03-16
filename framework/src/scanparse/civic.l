@@ -63,8 +63,6 @@
 
 "return"                   { FILTER( RETURN);}
 
-"int"                      { FILTER( INT_TYPE);  }
-
 "<="                       { FILTER( LE);    }
 "<"                        { FILTER( LT);    } 
 ">="                       { FILTER( GE);    }

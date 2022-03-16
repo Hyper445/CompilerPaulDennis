@@ -56,6 +56,8 @@ static int yyerror( char *errname);
 %type <ctype> type
 %type <cmonop> monop
 
+
+
 %start program
 
 %%
@@ -126,11 +128,7 @@ globdef: EXPORT type ID LET expr COMMA exprs SEMICOLON
   }
   ;
 
-fundef: EXPORT type ID BRACKET_L BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-  {
-    $$ = TBmakeFundef($2, STRcpy($3), NULL, NULL, NULL);
-  } 
-  | EXPORT type ID BRACKET_L BRACKET_R funbody
+fundef: EXPORT type ID BRACKET_L BRACKET_R funbody
   {
     $$ = TBmakeFundef($2, STRcpy($3), NULL, $6, NULL);
   }
@@ -138,10 +136,6 @@ fundef: EXPORT type ID BRACKET_L BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
   {
     $$ = TBmakeFundef($2, STRcpy($3), $5, $7, NULL);
   }
-  | type ID BRACKET_L BRACKET_R CURLY_BRACKET_L CURLY_BRACKET_R
-  {
-    $$ = TBmakeFundef($1, STRcpy($2), NULL, NULL, NULL);
-  } 
   | type ID BRACKET_L BRACKET_R funbody
   {
     $$ = TBmakeFundef($1, STRcpy($2), NULL, $5, NULL);
@@ -223,33 +217,17 @@ funbody: CURLY_BRACKET_L vardecl fundefs stmts CURLY_BRACKET_R
   }
   ;
 
-vardecl: type ID LET exprs expr SEMICOLON vardecl
+vardecl: vardecl type ID LET expr SEMICOLON
   {
-    $$ = TBmakeVardecl($1, STRcpy($2), $4, $5, $7);
-  }
-  | type ID LET exprs expr SEMICOLON
-  {
-    $$ = TBmakeVardecl($1, STRcpy($2), $4, $5, NULL);
-  }
-  | type ID LET exprs SEMICOLON vardecl
-  {
-    $$ = TBmakeVardecl($1, STRcpy($2), $4, NULL, $6);
-  }
-  | type ID LET expr SEMICOLON vardecl
-  {
-    $$ = TBmakeVardecl($1, STRcpy($2), NULL, $4, $6);
-  }
-  | type ID LET exprs SEMICOLON
-  {
-    $$ = TBmakeVardecl($1, STRcpy($2), $4, NULL, NULL);
+    $$ = TBmakeVardecl($2, STRcpy($3), NULL, $5, $1);
   }
   | type ID LET expr SEMICOLON
   {
     $$ = TBmakeVardecl($1, STRcpy($2), NULL, $4, NULL);
   }
-  | type ID LET SEMICOLON vardecl
+  | vardecl type ID SEMICOLON
   {
-    $$ = TBmakeVardecl($1, STRcpy($2), NULL, NULL, $5);
+    $$ = TBmakeVardecl($2, STRcpy($3), NULL, NULL, $1);
   }
   | type ID SEMICOLON
   {

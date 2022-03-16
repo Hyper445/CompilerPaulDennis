@@ -100,36 +100,36 @@ void addSymbol(char* name, type type, info* arg_info) {
  * Traversal functions
  */
 
-node *MTprogram (node *arg_node, info *arg_info) {
+// node *MTprogram (node *arg_node, info *arg_info) {
   
-  DBUG_ENTER("MTprogram");
+//   DBUG_ENTER("MTprogram");
 
-  printf("Test33333");
+//   printf("Test33333");
 
-  //INFO_ST(arg_info) = TBmakeSymboltable("Global", NULL);
-  if (PROGRAM_DECLS(arg_node) == NULL) {
-    printf("\nis null!! \n\n");
-  } else {
+//   //INFO_ST(arg_info) = TBmakeSymboltable("Global", NULL);
+//   if (PROGRAM_DECLS(arg_node) == NULL) {
+//     printf("\nis null!! \n\n");
+//   } else {
 
-    switch (NODE_TYPE(DECLS_DECL(PROGRAM_DECLS(arg_node))))
-    {
-      case N_fundef:
-        printf("fundef");
-        break;
+//     switch (NODE_TYPE(DECLS_DECL(PROGRAM_DECLS(arg_node))))
+//     {
+//       case N_fundef:
+//         printf("fundef");
+//         break;
       
-      case N_globdecl:
-        printf("globdecl");
-        break;
+//       case N_globdecl:
+//         printf("globdecl");
+//         break;
 
-      case N_globdef:
-        printf("def");
-        break;
-    }
-  }
+//       case N_globdef:
+//         printf("def");
+//         break;
+//     }
+//   }
 
-  DBUG_RETURN(arg_node);
+//   DBUG_RETURN(arg_node);
   
-}
+// }
 
 node *MTfundef (node *arg_node, info *arg_info){
   
@@ -137,26 +137,26 @@ node *MTfundef (node *arg_node, info *arg_info){
   
   printf("Test123");
 
-  // When reaching a function definition, add this to the current symbol table
-  char* name = FUNDEF_NAME(arg_node);
-  type type = FUNDEF_TYPE(arg_node);
-  addSymbol(name, type, arg_info);
+  // // When reaching a function definition, add this to the current symbol table
+  // char* name = FUNDEF_NAME(arg_node);
+  // type type = FUNDEF_TYPE(arg_node);
+  // addSymbol(name, type, arg_info);
 
-  node* current_table = INFO_ST(arg_info);
+  // node* current_table = INFO_ST(arg_info);
 
-  // Then create a new symbol table for the function.
-  INFO_ST(arg_info) = TBmakeSymboltable(name, NULL);
+  // // Then create a new symbol table for the function.
+  // INFO_ST(arg_info) = TBmakeSymboltable(name, NULL);
 
-  // Add the params to the new symbol table
-  if (FUNDEF_PARAMS(arg_node)) {
-    node* current_param = FUNDEF_PARAMS(arg_node);
-    while (current_param) {
-      name = PARAM_NAME(current_param);
-      type = PARAM_TYPE(current_param);
-      addSymbol(name, type, arg_info);
-      current_param = PARAM_NEXT(current_param); 
-    }
-  }
+  // // Add the params to the new symbol table
+  // if (FUNDEF_PARAMS(arg_node)) {
+  //   node* current_param = FUNDEF_PARAMS(arg_node);
+  //   while (current_param) {
+  //     name = PARAM_NAME(current_param);
+  //     type = PARAM_TYPE(current_param);
+  //     addSymbol(name, type, arg_info);
+  //     current_param = PARAM_NEXT(current_param); 
+  //   }
+  // }
 
   // If the function has a body, traverse the funbody with the new table
   //FUNDEF_FUNBODY(arg_node) = TRAVopt(arg_node, arg_info);
@@ -172,11 +172,11 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
 
   DBUG_ENTER("MTglobdecl");
 
-  char* name = GLOBDECL_NAME(arg_node);
-  type type = GLOBDECL_TYPE(arg_node);
-  addSymbol(name, type, arg_info);
+  // char* name = GLOBDECL_NAME(arg_node);
+  // type type = GLOBDECL_TYPE(arg_node);
+  // addSymbol(name, type, arg_info);
 
-  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+  // //printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
   
   DBUG_RETURN(arg_node);
   
@@ -185,11 +185,11 @@ node *MTglobdef (node *arg_node, info *arg_info) {
   
   DBUG_ENTER("MTglobdef");
 
-  char* name = GLOBDEF_NAME(arg_node);
-  type type = GLOBDEF_TYPE(arg_node);
-  addSymbol(name, type, arg_info);
+  // char* name = GLOBDEF_NAME(arg_node);
+  // type type = GLOBDEF_TYPE(arg_node);
+  // addSymbol(name, type, arg_info);
   
-  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+  // printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
 
   DBUG_RETURN(arg_node);
 
@@ -200,11 +200,11 @@ node *MTvardecl (node *arg_node, info *arg_info) {
   
   DBUG_ENTER("MTvardecl");
 
-  char* name = VARDECL_NAME(arg_node);
-  type type = VARDECL_TYPE(arg_node);
-  addSymbol(name, type, arg_info);
+  // char* name = VARDECL_NAME(arg_node);
+  // type type = VARDECL_TYPE(arg_node);
+  // addSymbol(name, type, arg_info);
 
-  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+  // printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
 
   DBUG_RETURN(arg_node);
   
