@@ -49,6 +49,7 @@ struct INFO {
  * INFO functions
  */
 
+
 static info *MakeInfo(void)
 {
   info *result;
@@ -57,7 +58,7 @@ static info *MakeInfo(void)
 
   result = (info *)MEMmalloc(sizeof(info));
 
-  INFO_ST(result) = NULL;
+  INFO_ST(result) = TBmakeSymboltable("Global", NULL, NULL);
   INFO_NEXT(result) = NULL;
 
   DBUG_RETURN( result);
@@ -100,69 +101,36 @@ void addSymbol(char* name, type type, info* arg_info) {
  * Traversal functions
  */
 
-// node *MTprogram (node *arg_node, info *arg_info) {
-  
-//   DBUG_ENTER("MTprogram");
-
-//   printf("Test33333");
-
-//   //INFO_ST(arg_info) = TBmakeSymboltable("Global", NULL);
-//   if (PROGRAM_DECLS(arg_node) == NULL) {
-//     printf("\nis null!! \n\n");
-//   } else {
-
-//     switch (NODE_TYPE(DECLS_DECL(PROGRAM_DECLS(arg_node))))
-//     {
-//       case N_fundef:
-//         printf("fundef");
-//         break;
-      
-//       case N_globdecl:
-//         printf("globdecl");
-//         break;
-
-//       case N_globdef:
-//         printf("def");
-//         break;
-//     }
-//   }
-
-//   DBUG_RETURN(arg_node);
-  
-// }
 
 node *MTfundef (node *arg_node, info *arg_info){
   
   DBUG_ENTER("MTfundef");
   
-  printf("Test123");
+  // When reaching a function definition, add this to the current symbol table
+  char* name = FUNDEF_NAME(arg_node);
+  type type = FUNDEF_TYPE(arg_node);
+  addSymbol(name, type, arg_info);
 
-  // // When reaching a function definition, add this to the current symbol table
-  // char* name = FUNDEF_NAME(arg_node);
-  // type type = FUNDEF_TYPE(arg_node);
-  // addSymbol(name, type, arg_info);
+  node* parent_table = INFO_ST(arg_info);
 
-  // node* current_table = INFO_ST(arg_info);
+  // Then create a new symbol table for the function.
+  INFO_ST(arg_info) = TBmakeSymboltable(name, NULL, parent_table);
 
-  // // Then create a new symbol table for the function.
-  // INFO_ST(arg_info) = TBmakeSymboltable(name, NULL);
+  // Add the params to the new symbol table
+  if (FUNDEF_PARAMS(arg_node)) {
+    node* current_param = FUNDEF_PARAMS(arg_node);
+    while (current_param) {
+      name = PARAM_NAME(current_param);
+      type = PARAM_TYPE(current_param);
+      addSymbol(name, type, arg_info);
+      current_param = PARAM_NEXT(current_param); 
+    }
+  }
 
-  // // Add the params to the new symbol table
-  // if (FUNDEF_PARAMS(arg_node)) {
-  //   node* current_param = FUNDEF_PARAMS(arg_node);
-  //   while (current_param) {
-  //     name = PARAM_NAME(current_param);
-  //     type = PARAM_TYPE(current_param);
-  //     addSymbol(name, type, arg_info);
-  //     current_param = PARAM_NEXT(current_param); 
-  //   }
-  // }
+  //If the function has a body, traverse the funbody with the new table
+  FUNDEF_FUNBODY(arg_node) = TRAVopt(arg_node, arg_info);
 
-  // If the function has a body, traverse the funbody with the new table
-  //FUNDEF_FUNBODY(arg_node) = TRAVopt(arg_node, arg_info);
-
-  // Maak nieuwe symbol table --> Sla daar params en alle variabelen in de funbody op.
-
+  INFO_ST(arg_info) = parent_table;
 
   DBUG_RETURN(arg_node);
   

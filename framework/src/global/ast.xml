@@ -1038,6 +1038,16 @@
                     </target>
                 </targets>
             </son>
+            <son name="Parent">
+                <targets>
+                    <target mandatory="no">
+                        <node name="Symboltable"/>
+                        <phases>
+                            <all/>
+                        </phases>
+                    </target>
+                </targets>
+            </son>
         </sons>
         <attributes>
             <attribute name="Name">
