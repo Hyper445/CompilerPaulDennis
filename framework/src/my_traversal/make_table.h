@@ -8,6 +8,8 @@ extern node *MTfundef (node *arg_node, info *arg_info);
 extern node *MTglobdecl (node *arg_node, info *arg_info);
 extern node *MTglobdef (node *arg_node, info *arg_info);
 extern node *MTvardecl (node *arg_node, info *arg_info);
+extern node *MTvar (node *arg_node, info *arg_info);
+
 extern node *MTdoMakeTable( node *syntaxtree);
 
 #endif

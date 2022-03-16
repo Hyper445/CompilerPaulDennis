@@ -1,18 +1,14 @@
-int x;
+float b = 3;
 
-int x = 3;
+int test(int a) {
 
-int test(int a) {   
-    float x;
-    (int) x;
+    int x = 2;
 
-    array [3]
-
-    test(3, 4);
 
     if (4) {
         x = -3;
     } else {
         x = 4;
     }
+
 }
