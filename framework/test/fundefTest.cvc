@@ -12,6 +12,7 @@ int test(int a) {
     }
 
     if (4) {
+	int test_Var = 9;
         x = -3;
     } else {
         x = 4;

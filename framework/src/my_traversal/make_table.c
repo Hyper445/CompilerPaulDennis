@@ -105,11 +105,29 @@ void addSymbol(char* name, type type, info* arg_info) {
 
 }
 
-
 /*
  * Traversal functions
  */
 
+node *MTifelse (node *arg_node, info *arg_info) {
+  DBUG_ENTER("MTifelse");
+
+  char* name = "ifelse";
+
+  node* parent_table = INFO_ST(arg_info);
+
+  // Creates new scope. Current scope stored in arg_info is set to this new scope
+  INFO_ST(arg_info) = TBmakeSymboltable(name, NULL, parent_table);
+
+  // Traverse through both the 'then' and 'else' block.
+  IFELSE_THEN(arg_node) = TRAVopt(IFELSE_THEN(arg_node), arg_info);
+  IFELSE_ELSE(arg_node) = TRAVopt(IFELSE_ELSE(arg_node), arg_info);
+
+  // The scope in arg_info is set back to the scope of the parent.
+  INFO_ST(arg_info) = parent_table;
+
+  DBUG_RETURN(arg_node);
+}
 
 node *MTfundef (node *arg_node, info *arg_info){
   
@@ -124,6 +142,7 @@ node *MTfundef (node *arg_node, info *arg_info){
 
   // Then create a new symbol table for the function.
   INFO_ST(arg_info) = TBmakeSymboltable(name, NULL, parent_table);
+
   // Add the params to the new symbol table
   if (FUNDEF_PARAMS(arg_node)) {
     node* current_param = FUNDEF_PARAMS(arg_node);

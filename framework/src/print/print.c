@@ -308,10 +308,13 @@ extern node *PRTifelse (node * arg_node, info * arg_info)
 
   DBUG_ENTER("PRTifelse");
 
+  printf("if (");
   IFELSE_COND( arg_node) = TRAVdo( IFELSE_COND(arg_node), arg_info);
+  printf("){\n");
   IFELSE_THEN( arg_node) = TRAVopt( IFELSE_THEN(arg_node), arg_info);
+  printf("}\nelse {\n");
   IFELSE_ELSE( arg_node) = TRAVopt( IFELSE_ELSE(arg_node), arg_info);
-
+  printf("}");
   DBUG_RETURN( arg_node);
 
 }
