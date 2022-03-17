@@ -286,9 +286,14 @@ extern node *PRTvardecl (node * arg_node, info * arg_info)
 {
   
   print_type(VARDECL_TYPE( arg_node));
-  printf("%s = ", VARDECL_NAME( arg_node));
 
-  VARDECL_INIT( arg_node) = TRAVopt( VARDECL_INIT(arg_node), arg_info);
+  if (VARDECL_INIT( arg_node)) {
+    printf("%s = ", VARDECL_NAME( arg_node));
+    VARDECL_INIT( arg_node) = TRAVopt( VARDECL_INIT(arg_node), arg_info);
+
+  } else {
+    printf("%s;", VARDECL_NAME( arg_node));
+  }
 
   VARDECL_DIMS( arg_node) = TRAVopt( VARDECL_DIMS(arg_node), arg_info);
 

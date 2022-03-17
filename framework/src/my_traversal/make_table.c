@@ -201,6 +201,7 @@ node *MTvardecl (node *arg_node, info *arg_info) {
   
   }
 
+
 /*
  * Traversal start function
  */
