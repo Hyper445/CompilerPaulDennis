@@ -75,6 +75,9 @@ static info *FreeInfo( info *info)
 
 void addSymbol(char* name, type type, info* arg_info) {
 
+
+  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+
   int nestinglevel = 0;
   node* currentSymbolEntry = INFO_NEXT(arg_info);
 
@@ -154,9 +157,6 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
 
   char* name = GLOBDECL_NAME(arg_node);
   type type = GLOBDECL_TYPE(arg_node);
-
-  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
-
   addSymbol(name, type, arg_info);
   
   DBUG_RETURN(arg_node);
@@ -168,9 +168,6 @@ node *MTglobdef (node *arg_node, info *arg_info) {
 
   char* name = GLOBDEF_NAME(arg_node);
   type type = GLOBDEF_TYPE(arg_node);
-  
-  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
-
   addSymbol(name, type, arg_info);
   
   DBUG_RETURN(arg_node);
@@ -185,9 +182,6 @@ node *MTvardecl (node *arg_node, info *arg_info) {
 
   char* name = VARDECL_NAME(arg_node);
   type type = VARDECL_TYPE(arg_node);
-
-  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
-
   addSymbol(name, type, arg_info);
 
   DBUG_RETURN(arg_node);

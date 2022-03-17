@@ -4,8 +4,22 @@ int test(int a) {
 
 
     int x = 2;
+    int l = 1;
     int y = 3;
+    int z = 12;
 
+    int hoi(int a, int nog1) {
+        
+        
+        int l = 2;
+        int c = 4;
+        int d = 3;
+
+
+        float hallo(float c) {
+            float d = 3;
+        }
+    }
 
     if (4) {
         x = -3;
