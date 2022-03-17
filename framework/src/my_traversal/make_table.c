@@ -79,7 +79,7 @@ void addSymbol(char* name, type type, info* arg_info) {
   printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
 
   int nestinglevel = 0;
-  node* currentSymbolEntry = INFO_NEXT(arg_info);
+  node* currentSymbolEntry = SYMBOLTABLE_ENTRIES(INFO_ST(arg_info));
 
   if (currentSymbolEntry) {
     // Go to the last entry in the symbol table
@@ -94,7 +94,7 @@ void addSymbol(char* name, type type, info* arg_info) {
   } else {
 
     node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, NULL);
-    INFO_NEXT(arg_info) = symbolEntry;
+    SYMBOLTABLE_ENTRIES(INFO_ST(arg_info)) = symbolEntry;
 
   }
 }
@@ -131,18 +131,6 @@ node *MTfundef (node *arg_node, info *arg_info){
   }
 
   //If the function has a body, traverse the funbody with the new table
-  if (FUNDEF_FUNBODY(arg_node)){
-
-
-    if (FUNBODY_LOCALFUNDEFS(FUNDEF_FUNBODY(arg_node))) {
-      printf("Hij heeft blijkbaar nog meer fundefs!! \n");
-    } else {
-      printf("Geen fundefs\n");
-    }
-    printf("%s = vardecl name\n", VARDECL_NAME(FUNBODY_VARDECLS(FUNDEF_FUNBODY(arg_node))));
-
-  }
-  
   FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
   INFO_ST(arg_info) = parent_table;
