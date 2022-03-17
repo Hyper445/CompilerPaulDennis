@@ -77,22 +77,15 @@ static info *FreeInfo( info *info)
 void addNode(node* assign, node* funbody) {
 
     node* current_stmt = FUNBODY_STMTS(funbody);
-    printf("Current statement uit body gehaald\n");
 
     if (current_stmt) {
         while (STMTS_NEXT(current_stmt) != NULL) {
-            printf("next\n");
             current_stmt = STMTS_NEXT(current_stmt);
-            printf("next2\n");
         }
-        printf("Hier toevoegen aan stmts next\n");
         STMTS_NEXT(current_stmt) = TBmakeStmts(assign, NULL);
-        printf("hoi\n");
     } else {
         FUNBODY_STMTS(funbody) = TBmakeStmts(assign, NULL);
-        printf("hallo\n");
     }
-
 
 }
 
@@ -108,34 +101,24 @@ node *VAfunbody (node *arg_node, info *arg_info){
 
   while (current_vardecl) {
 
-      printf("%s = vardecl name \n", VARDECL_NAME(current_vardecl));
-
       if(VARDECL_INIT(current_vardecl)) {
           
-          printf("%s is nu in INIT\n", VARDECL_NAME(current_vardecl));
-          //Get all the information needed to make the assign node
-          node* expression = VARDECL_INIT(current_vardecl);
-          char* name = VARDECL_NAME(current_vardecl);
-          char* temporaryName = STRcat("temp", name);
+        //Get all the information needed to make the assign node
+        node* expression = VARDECL_INIT(current_vardecl);
+        char* name = STRcpy(VARDECL_NAME(current_vardecl));
+        char* temporaryName = STRcat("temp", name);
 
-          // Update current vardecl node.
-          VARDECL_NAME(current_vardecl) = temporaryName;
-          VARDECL_INIT(current_vardecl) = NULL;
-          node* varlet = TBmakeVarlet(temporaryName, NULL, NULL);
-          node* assign = TBmakeAssign(varlet, expression);
+        // Update current vardecl node.
+        VARDECL_NAME(current_vardecl) = STRcpy(temporaryName);
+        VARDECL_INIT(current_vardecl) = NULL;
+        node* varlet = TBmakeVarlet(temporaryName, NULL, NULL);
+        node* assign = TBmakeAssign(varlet, expression);
 
-        //   // Add the newly made assign to the funbody
-          addNode(assign, arg_node);
-          printf("%s is nu aan het einde van INIT\n", VARDECL_NAME(current_vardecl));
+        // Add the newly made assign to the funbody
+        addNode(assign, arg_node);
 
       }
       
-      printf("Checken op een next\n");
-      if (VARDECL_NEXT(current_vardecl)) {
-          printf("Wel een next\n\n");
-      } else {
-          printf("geen next\n\n");
-      }
       current_vardecl = VARDECL_NEXT(current_vardecl);
   }
 
