@@ -128,7 +128,19 @@ node *MTfundef (node *arg_node, info *arg_info){
   }
 
   //If the function has a body, traverse the funbody with the new table
-  FUNDEF_FUNBODY(arg_node) = TRAVopt(arg_node, arg_info);
+  if (FUNDEF_FUNBODY(arg_node)){
+
+
+    if (FUNBODY_LOCALFUNDEFS(FUNDEF_FUNBODY(arg_node))) {
+      printf("Hij heeft blijkbaar nog meer fundefs!! \n");
+    } else {
+      printf("Geen fundefs\n");
+    }
+    printf("%s = vardecl name\n", VARDECL_NAME(FUNBODY_VARDECLS(FUNDEF_FUNBODY(arg_node))));
+
+  }
+  
+  FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
   INFO_ST(arg_info) = parent_table;
 
@@ -140,11 +152,12 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
 
   DBUG_ENTER("MTglobdecl");
 
-  // char* name = GLOBDECL_NAME(arg_node);
-  // type type = GLOBDECL_TYPE(arg_node);
-  // addSymbol(name, type, arg_info);
+  char* name = GLOBDECL_NAME(arg_node);
+  type type = GLOBDECL_TYPE(arg_node);
 
-  // //printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+
+  addSymbol(name, type, arg_info);
   
   DBUG_RETURN(arg_node);
   
@@ -153,12 +166,13 @@ node *MTglobdef (node *arg_node, info *arg_info) {
   
   DBUG_ENTER("MTglobdef");
 
-  // char* name = GLOBDEF_NAME(arg_node);
-  // type type = GLOBDEF_TYPE(arg_node);
-  // addSymbol(name, type, arg_info);
+  char* name = GLOBDEF_NAME(arg_node);
+  type type = GLOBDEF_TYPE(arg_node);
   
-  // printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
 
+  addSymbol(name, type, arg_info);
+  
   DBUG_RETURN(arg_node);
 
 }
@@ -168,11 +182,13 @@ node *MTvardecl (node *arg_node, info *arg_info) {
   
   DBUG_ENTER("MTvardecl");
 
-  // char* name = VARDECL_NAME(arg_node);
-  // type type = VARDECL_TYPE(arg_node);
-  // addSymbol(name, type, arg_info);
 
-  // printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+  char* name = VARDECL_NAME(arg_node);
+  type type = VARDECL_TYPE(arg_node);
+
+  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+
+  addSymbol(name, type, arg_info);
 
   DBUG_RETURN(arg_node);
   
