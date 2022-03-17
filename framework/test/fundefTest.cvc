@@ -2,21 +2,10 @@ float b = 3;
 
 int test(int a) {
 
-
     int x = 2;
     int y = 3;
+    int a = 1;
 
-    int hoi(int a, int nog1) {
-        
-        int d = 3;
-    }
-
-    if (4) {
-	int test_Var = 9;
-        x = -3;
-    } else {
-        x = 4;
-    }
 
 }
 
