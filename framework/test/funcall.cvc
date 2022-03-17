@@ -1,3 +1,25 @@
-int test(int a, float b) {
-    testA();
+int x = 4;
+int y = 3;
+
+int testA(int a, int b) {
+    int c = (a + b);
+    x = 3;
+    return c;
 }
+
+int testB(int a, int b) {
+    int c = (a * b);
+    y = 1;
+    return c;
+}
+
+int test(int a, int b) {
+    int g = testB();
+    int c = testA();
+    int d = testA();
+    int e = testA();
+    int f = testB();
+    
+}
+
+

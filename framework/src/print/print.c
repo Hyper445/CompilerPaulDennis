@@ -78,7 +78,7 @@ extern node *PRTfuncall (node * arg_node, info * arg_info){
 
   FUNCALL_ARGS( arg_node) = TRAVopt( FUNCALL_ARGS( arg_node), arg_info);
 
-  printf(");\n");
+  printf(");");
 
   DBUG_RETURN(arg_node);
   }
@@ -123,7 +123,7 @@ extern node *PRTglobdef (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTglobdef");
 
   print_type(GLOBDEF_TYPE(arg_node));
-  printf("%s ", GLOBDEF_NAME(arg_node));
+  printf("%s = ", GLOBDEF_NAME(arg_node));
 
   GLOBDEF_INIT( arg_node) = TRAVopt( GLOBDEF_INIT( arg_node), arg_info);
 
@@ -215,7 +215,7 @@ extern node *PRTfundef (node * arg_node, info * arg_info)
 
   FUNDEF_FUNBODY( arg_node) = TRAVopt( FUNDEF_FUNBODY( arg_node), arg_info);
   
-  
+  printf("}\n");
 
 
   DBUG_RETURN( arg_node);
@@ -262,7 +262,7 @@ extern node *PRTfunbody (node * arg_node, info * arg_info)
 
   FUNBODY_STMTS( arg_node) = TRAVopt( FUNBODY_STMTS( arg_node), arg_info);
 
-  printf("\n}");
+  printf("\n");
 
   DBUG_RETURN(arg_node);
 
