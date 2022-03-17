@@ -75,16 +75,19 @@ static info *FreeInfo( info *info)
 
 void addSymbol(char* name, type type, info* arg_info) {
 
+  node* currentSymbolTable = INFO_ST(arg_info);
+  node* currentSymbolEntry = SYMBOLTABLE_ENTRIES(currentSymbolTable);
 
-  printf("Entering symbol %s in symbol table with the name: %s \n", name, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
-
+  // Gets the correct nesting level.
   int nestinglevel = 0;
-  node* currentSymbolEntry = SYMBOLTABLE_ENTRIES(INFO_ST(arg_info));
+  while (SYMBOLTABLE_PARENT(currentSymbolTable) != NULL) {
+    nestinglevel ++;
+    currentSymbolTable = SYMBOLTABLE_PARENT(currentSymbolTable);
+  }
 
   if (currentSymbolEntry) {
     // Go to the last entry in the symbol table
     while (SYMBOLTABLEENTRY_NEXT(currentSymbolEntry) != NULL) {
-      nestinglevel++;
       currentSymbolEntry = SYMBOLTABLEENTRY_NEXT(currentSymbolEntry);
     }
     
@@ -97,6 +100,9 @@ void addSymbol(char* name, type type, info* arg_info) {
     SYMBOLTABLE_ENTRIES(INFO_ST(arg_info)) = symbolEntry;
 
   }
+
+  printf("Symbol %s, nesting %d -> tabel %s \n", name, nestinglevel, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+
 }
 
 
@@ -118,7 +124,6 @@ node *MTfundef (node *arg_node, info *arg_info){
 
   // Then create a new symbol table for the function.
   INFO_ST(arg_info) = TBmakeSymboltable(name, NULL, parent_table);
-
   // Add the params to the new symbol table
   if (FUNDEF_PARAMS(arg_node)) {
     node* current_param = FUNDEF_PARAMS(arg_node);
@@ -176,17 +181,6 @@ node *MTvardecl (node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
   
   }
-
-node * MTvar(node *arg_node, info *arg_info) {
-
-  DBUG_ENTER("MTvar");
-
-  printf("Hoi\n");
-
-  DBUG_RETURN(arg_node);
-
-}
-
 
 /*
  * Traversal start function

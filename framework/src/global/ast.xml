@@ -35,7 +35,6 @@
           <node name="GlobDecl" />
           <node name="GlobDef" />
           <node name="VarDecl" />
-          <node name="Var" />
         </travuser>
       </traversal>
 
