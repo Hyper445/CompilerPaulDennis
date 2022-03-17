@@ -179,10 +179,11 @@ node *MTvardecl (node *arg_node, info *arg_info) {
   
   DBUG_ENTER("MTvardecl");
 
-
   char* name = VARDECL_NAME(arg_node);
   type type = VARDECL_TYPE(arg_node);
   addSymbol(name, type, arg_info);
+
+  VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
   
