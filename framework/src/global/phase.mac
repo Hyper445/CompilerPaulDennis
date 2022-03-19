@@ -46,6 +46,12 @@ SUBPHASE( va,
           ALWAYS,
           pet)
 
+SUBPHASE( bj,
+          "Boolean Junctions",
+          BJdoBooleanJunction,
+          ALWAYS,
+          pet)
+
 // SUBPHASE( ri, 
 //           "Rename identifiers",
 //           RIdoRenameIdentifiers, 

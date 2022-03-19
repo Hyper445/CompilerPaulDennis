@@ -64,6 +64,23 @@ extern node *PRTexprs (node * arg_node, info * arg_info){
   DBUG_RETURN(arg_node);
 }
 extern node *PRTarrexpr (node * arg_node, info * arg_info){return arg_node;}
+
+extern node *PRTcondexpr (node * arg_node, info * arg_info){
+  DBUG_ENTER ("PRTexprstmt"); 
+  
+  bool x;
+
+  if (CONDEXPR_THEN(arg_node)) {
+
+    x = BOOL_VALUE(CONDEXPR_THEN(arg_node));
+    printf(x ? "true" : "false");
+
+  }
+  
+  DBUG_RETURN(arg_node);
+}
+
+
 extern node *PRTexprstmt (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTexprstmt");
 

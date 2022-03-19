@@ -6,6 +6,9 @@ int test(int a) {
     int y = 3;
     int a = 1;
 
+    bool a = (true || false);
+
+
 
 }
 
