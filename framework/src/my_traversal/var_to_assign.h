@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// extern node *MTprogram (node *arg_node, info *arg_info);
+extern node *VAprogram (node *arg_node, info *arg_info);
 extern node *VAfunbody (node *arg_node, info *arg_info);
 extern node *VAdoVariableToAssign( node *syntaxtree);
 

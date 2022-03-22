@@ -43,6 +43,7 @@
 
       <traversal id="VA" name="Variable Initialisation to Regular Assignment" default="sons" include="var_to_assign.h">
         <travuser>
+            <node name="Program" />
             <node name="FunBody" />
         </travuser>
       </traversal>

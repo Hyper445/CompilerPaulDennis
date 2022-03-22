@@ -2,19 +2,9 @@ float b = 3;
 
 int test(int a) {
 
-    int x = 2;
-    int y = 3;
-    int a = 1;
+    int test3(int b) {
 
-    bool a = (true || false);
-
-
-
+        int e = 3;
+    }
 }
 
-
-int test2(int a2) {
-
-
-    int x2 = 4;
-}

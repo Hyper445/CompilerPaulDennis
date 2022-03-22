@@ -82,19 +82,18 @@ node *BJbinop (node *arg_node, info *arg_info){
   
   DBUG_ENTER("BJbinop");
 
-
     if (BINOP_OP(arg_node) == BO_and) {
-        node* bool_true = TBmakeBool(TRUE);
-        node* cond_expression = TBmakeCondexpr(BINOP_LEFT(arg_node), BINOP_RIGHT(arg_node), bool_true);
-        arg_node = cond_expression;
-        
+      
+      node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), BINOP_RIGHT(arg_node), TBmakeBool(FALSE));
+      arg_node = condexpr;
+
     } else if (BINOP_OP(arg_node) == BO_or) {
-        node* bool_false = TBmakeBool(FALSE);
-        node* cond_expression = TBmakeCondexpr(BINOP_LEFT(arg_node), bool_false, BINOP_RIGHT(arg_node));
-        arg_node = cond_expression;
+
+      node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), TBmakeBool(TRUE), BINOP_RIGHT(arg_node));
+      arg_node = condexpr;
+
     }
-
-
+    
 
   DBUG_RETURN(arg_node);
   

@@ -68,14 +68,12 @@ extern node *PRTarrexpr (node * arg_node, info * arg_info){return arg_node;}
 extern node *PRTcondexpr (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTexprstmt"); 
   
-  bool x;
+  CONDEXPR_PRED(arg_node) = TRAVopt(CONDEXPR_PRED(arg_node), arg_info);
+  printf("?");
+  CONDEXPR_THEN(arg_node) = TRAVopt(CONDEXPR_THEN(arg_node), arg_info);
+  printf(":");
+  CONDEXPR_ELSE(arg_node) = TRAVopt(CONDEXPR_ELSE(arg_node), arg_info);
 
-  if (CONDEXPR_THEN(arg_node)) {
-
-    x = BOOL_VALUE(CONDEXPR_THEN(arg_node));
-    printf(x ? "true" : "false");
-
-  }
   
   DBUG_RETURN(arg_node);
 }
@@ -140,9 +138,12 @@ extern node *PRTglobdef (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTglobdef");
 
   print_type(GLOBDEF_TYPE(arg_node));
-  printf("%s = ", GLOBDEF_NAME(arg_node));
+  printf("%s", GLOBDEF_NAME(arg_node));
 
-  GLOBDEF_INIT( arg_node) = TRAVopt( GLOBDEF_INIT( arg_node), arg_info);
+  if (GLOBDEF_INIT(arg_node)) {
+    printf(" =");
+    GLOBDEF_INIT( arg_node) = TRAVopt( GLOBDEF_INIT( arg_node), arg_info);
+  }
 
   printf(";\n");
 
