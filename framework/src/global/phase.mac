@@ -52,6 +52,12 @@ SUBPHASE( bj,
           ALWAYS,
           pet)
 
+SUBPHASE( bc,
+          "Boolean Casts",
+          BCdoBooleanCast,
+          ALWAYS,
+          pet)
+
 // SUBPHASE( ri, 
 //           "Rename identifiers",
 //           RIdoRenameIdentifiers, 

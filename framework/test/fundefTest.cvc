@@ -3,9 +3,8 @@ float c = 2;
 
 int test(int a) {
 
-    int test3(int b) {
+    bool a = (true || true);
+    int c = (float)false;
 
-        int e = 3;
-    }
 }
 

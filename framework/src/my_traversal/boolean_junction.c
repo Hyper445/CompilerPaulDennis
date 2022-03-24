@@ -27,54 +27,6 @@
 
 
 /*
- * INFO structure
- */
-
-struct INFO {
-  node* Symboltable;
-  node* self;
-  node* next;
-};
-
-
-
-/*
- * INFO macros
- */
-
-#define INFO_ST(n) ((n)->Symboltable)
-#define INFO_NEXT(n) ((n)->next)
-
-
-/*
- * INFO functions
- */
-
-
-static info *MakeInfo(void)
-{
-  info *result;
-
-  DBUG_ENTER( "MakeInfo");
-
-  result = (info *)MEMmalloc(sizeof(info));
-
-  INFO_ST(result) = TBmakeSymboltable("Global", NULL, NULL);
-  INFO_NEXT(result) = NULL;
-
-  DBUG_RETURN( result);
-}
-
-static info *FreeInfo( info *info)
-{
-  DBUG_ENTER ("FreeInfo");
-
-  info = MEMfree( info);
-
-  DBUG_RETURN( info);
-}
-
-/*
  * Traversal functions
  */
 
@@ -82,16 +34,26 @@ node *BJbinop (node *arg_node, info *arg_info){
   
   DBUG_ENTER("BJbinop");
 
+
     if (BINOP_OP(arg_node) == BO_and) {
       
-      node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), BINOP_RIGHT(arg_node), TBmakeBool(FALSE));
-      arg_node = condexpr;
+      if (BOOL_VALUE(BINOP_LEFT(arg_node)) == TRUE) {
+        node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), BINOP_RIGHT(arg_node), TBmakeBool(FALSE));
+        arg_node = condexpr;
+      } else if(BOOL_VALUE(BINOP_LEFT(arg_node)) == FALSE) {
+        node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), TBmakeBool(FALSE), BINOP_RIGHT(arg_node));
+        arg_node = condexpr;
+      }
 
     } else if (BINOP_OP(arg_node) == BO_or) {
 
-      node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), TBmakeBool(TRUE), BINOP_RIGHT(arg_node));
-      arg_node = condexpr;
-
+      if (BOOL_VALUE(BINOP_LEFT(arg_node)) == TRUE) {
+        node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), TBmakeBool(TRUE), BINOP_RIGHT(arg_node));
+        arg_node = condexpr;
+      } else if (BOOL_VALUE(BINOP_LEFT(arg_node)) == FALSE) {
+        node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), TBmakeBool(FALSE), BINOP_RIGHT(arg_node));
+        arg_node = condexpr;
+      }
     }
     
 
@@ -106,11 +68,9 @@ node *BJbinop (node *arg_node, info *arg_info){
 
 node *BJdoBooleanJunction( node *syntaxtree)
 {
-  info *arg_info;
+  info *arg_info = NULL;
 
-  DBUG_ENTER("VAdoVariableToAssign");
-
-  arg_info = MakeInfo();
+  DBUG_ENTER("BJdoBooleanJunction");
 
   TRAVpush( TR_bj);
   syntaxtree = TRAVdo( syntaxtree, arg_info);

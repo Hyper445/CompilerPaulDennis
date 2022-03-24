@@ -163,13 +163,6 @@ node *VAprogram( node* arg_node, info * arg_info) {
   node* top_decl_next = DECLS_NEXT(top_decl);
   DECLS_NEXT(top_decl) = TBmakeDecls(fundef, top_decl_next);
 
-
-  // node* new_top_decl = TBmakeDecls(fundef, top_decl);
-  // PROGRAM_DECLS(arg_node) = new_top_decl;
-
-
-  //addNodeFundef(fundef, arg_node);
-
   DBUG_RETURN(arg_node);
 
 }

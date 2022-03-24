@@ -54,6 +54,11 @@
         </travuser>
       </traversal>
 
+      <traversal id="BC" name="Boolean Cast" default="sons" include="boolean_cast.h">
+        <travuser>
+            <node name="Cast" />
+        </travuser>
+      </traversal>
 
       <!-- <traversal id="IS" name="Identifiers storer" default="sons" include="identifiers_storer.h">
         <travuser>
