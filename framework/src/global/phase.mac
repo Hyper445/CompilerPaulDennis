@@ -58,44 +58,11 @@ SUBPHASE( bc,
           ALWAYS,
           pet)
 
-// SUBPHASE( ri, 
-//           "Rename identifiers",
-//           RIdoRenameIdentifiers, 
-//           ALWAYS,
-//           pet)      
-
-// SUBPHASE( si, 
-//           "Sum Integers",
-//           SIdoSumInts, 
-//           ALWAYS,
-//           pet)   
-   
-// SUBPHASE( os, 
-//           "Optimise subtraction",
-//           OSdoOptSub, 
-//           ALWAYS,
-//           pet)  
-
-/* My traversal */
-// SUBPHASE( rs, 
-//           "Reduce Strength",
-//           RSdoReduceStrength, 
-//           ALWAYS,
-//           pet) 
-
-// /*My traversal */
-// SUBPHASE( so, 
-//         "Store operators", 
-//         SOdoStoreOperators, 
-//         ALWAYS, 
-//         pet) 
-
-// /*My traversal */
-// SUBPHASE( IS, 
-//         "Identifiers storer", 
-//         ISdoIdentifiersStorer, 
-//         ALWAYS, 
-//         pet) 
+SUBPHASE( cg,
+          "Generating Code",
+          CGdoCodeGeneration,
+          ALWAYS,
+          pet)
 
       
 ENDPHASE( pet) 

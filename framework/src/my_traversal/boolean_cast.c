@@ -1,13 +1,14 @@
 /*****************************************************************************
  *
- * Module: enter_symbol_table
+ * Module: boolean_cast
  *
- * Prefix: EST
+ * Prefix: BC
  *
  * Description:
  *
- * This module implements a demo traversal of the abstract syntax tree that 
- * sums up all integer constants and prints the result at the end of the traversal.
+ * Whenever a cast is executed on a boolean, this traversal transforms it into a
+ * conditional expression that returns ints 1-0 for Boolean values true-false 
+ * respectively, or float 1.0-0.0
  *
  *****************************************************************************/
 
@@ -34,24 +35,16 @@ node *BCcast(node* arg_node, info* arg_info) {
     DBUG_ENTER("BCcast");
 
     if (NODE_TYPE(CAST_EXPR(arg_node)) == N_bool)
-        printf("hooooi\n");
 
         if (CAST_TYPE(arg_node) == T_int) {
-
-            printf("1\n");
-
             node* condexpr = TBmakeCondexpr(CAST_EXPR(arg_node), TBmakeNum(1), TBmakeNum(0));
             arg_node = condexpr;
 
         } else if (CAST_TYPE(arg_node) == T_float) {
-
-            printf("2\n");
             node* condexpr = TBmakeCondexpr(CAST_EXPR(arg_node), TBmakeFloat(1.0), TBmakeFloat(0.0));
             arg_node = condexpr;
 
         }
-
-
 
     DBUG_RETURN(arg_node);
   
