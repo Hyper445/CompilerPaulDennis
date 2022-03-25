@@ -89,7 +89,8 @@ node *CGprogram(node* arg_node, info* arg_info) {
 
     printf("\n\n\n testje \n\n\n");
 
-    PROGRAM_DECLS(arg_node) = TRAVdo(PROGRAM_DECLS(arg_node), arg_info);
+    PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
+
 
     DBUG_RETURN(arg_node);
   

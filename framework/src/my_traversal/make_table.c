@@ -13,6 +13,7 @@
 
 
 #include "make_table.h"
+#include "make_table_helper.h"
 
 #include "lookup_table.h"
 #include "types.h"
@@ -56,7 +57,7 @@ static info *MakeInfo(void)
 
   result = (info *)MEMmalloc(sizeof(info));
 
-  INFO_ST(result) = TBmakeSymboltable("Global", NULL, NULL);
+  INFO_ST(result) = TBmakeSymboltable(STRcpy("Global"), NULL, NULL);
 
   DBUG_RETURN( result);
 }
@@ -70,63 +71,7 @@ static info *FreeInfo( info *info)
   DBUG_RETURN( info);
 }
 
-void addSymbol(char* name, type type, info* arg_info) {
 
-  node* currentSymbolTable = INFO_ST(arg_info);
-  node* currentSymbolEntry = SYMBOLTABLE_ENTRIES(currentSymbolTable);
-
-  // Gets the correct nesting level.
-  int nestinglevel = 0;
-  while (SYMBOLTABLE_PARENT(currentSymbolTable) != NULL) {
-    nestinglevel ++;
-    currentSymbolTable = SYMBOLTABLE_PARENT(currentSymbolTable);
-  }
-
-  if (currentSymbolEntry) {
-    // Go to the last entry in the symbol table
-    while (SYMBOLTABLEENTRY_NEXT(currentSymbolEntry) != NULL) {
-      currentSymbolEntry = SYMBOLTABLEENTRY_NEXT(currentSymbolEntry);
-    }
-    
-    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, NULL);
-    SYMBOLTABLEENTRY_NEXT(currentSymbolEntry) = symbolEntry;
-
-  } else {
-
-    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, NULL);
-    SYMBOLTABLE_ENTRIES(INFO_ST(arg_info)) = symbolEntry;
-
-  }
-
-  printf("Symbol %s \t, nesting %d \t-> tabel %s \n", name, nestinglevel, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
-
-}
-
-node* get_entry(char* name, info* arg_info) {
-  DBUG_ENTER("addLink");
-
-  // gets ST and it's first entry.
-  node* current_ST = INFO_ST(arg_info);
-  node* current_ST_entry;
-
-  // Loops through the symboltables until the function decleration has been found.
-  while(current_ST != NULL) {
-    current_ST_entry = SYMBOLTABLE_ENTRIES(current_ST);
-    // loops through all entries at current nesting.
-    while(current_ST_entry != NULL) {
-      // If the decleration has been found. A link to the decleration is added to the funcall.
-      if (STReq(name, SYMBOLTABLEENTRY_NAME(current_ST_entry))) {
-        return current_ST_entry;
-      }
-
-    current_ST_entry = SYMBOLTABLEENTRY_NEXT(current_ST_entry);
-    }
-
-  current_ST = SYMBOLTABLE_PARENT(current_ST);
-  }
-
-  return NULL;
-}
 
 /*
  * Traversal functions
@@ -135,7 +80,7 @@ node* get_entry(char* name, info* arg_info) {
 node *MTifelse (node *arg_node, info *arg_info) {
   DBUG_ENTER("MTifelse");
 
-  char* name = "ifelse";
+  char* name = STRcpy("ifelse");
 
   node* parent_table = INFO_ST(arg_info);
 
@@ -157,7 +102,7 @@ node *MTfundef (node *arg_node, info *arg_info){
   DBUG_ENTER("MTfundef");
   
   // When reaching a function definition, add this to the current symbol table
-  char* name = FUNDEF_NAME(arg_node);
+  char* name = STRcpy(FUNDEF_NAME(arg_node));
   type type = FUNDEF_TYPE(arg_node);
   addSymbol(name, type, arg_info);
 
@@ -170,7 +115,7 @@ node *MTfundef (node *arg_node, info *arg_info){
   if (FUNDEF_PARAMS(arg_node)) {
     node* current_param = FUNDEF_PARAMS(arg_node);
     while (current_param) {
-      name = PARAM_NAME(current_param);
+      name = STRcpy(PARAM_NAME(current_param));
       type = PARAM_TYPE(current_param);
       addSymbol(name, type, arg_info);
       current_param = PARAM_NEXT(current_param); 
@@ -181,6 +126,7 @@ node *MTfundef (node *arg_node, info *arg_info){
   FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
   INFO_ST(arg_info) = parent_table;
+  FUNDEF_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
 
   DBUG_RETURN(arg_node);
   
@@ -190,7 +136,7 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
 
   DBUG_ENTER("MTglobdecl");
 
-  char* name = GLOBDECL_NAME(arg_node);
+  char* name = STRcpy(GLOBDECL_NAME(arg_node));
   type type = GLOBDECL_TYPE(arg_node);
   addSymbol(name, type, arg_info);
   
@@ -202,7 +148,7 @@ node *MTglobdef (node *arg_node, info *arg_info) {
   
   DBUG_ENTER("MTglobdef");
 
-  char* name = GLOBDEF_NAME(arg_node);
+  char* name = STRcpy(GLOBDEF_NAME(arg_node));
   type type = GLOBDEF_TYPE(arg_node);
   addSymbol(name, type, arg_info);
 
@@ -214,7 +160,7 @@ node *MTvardecl (node *arg_node, info *arg_info) {
   
   DBUG_ENTER("MTvardecl");
 
-  char* name = VARDECL_NAME(arg_node);
+  char* name = STRcpy(VARDECL_NAME(arg_node));
   type type = VARDECL_TYPE(arg_node);
   addSymbol(name, type, arg_info);
 
@@ -230,7 +176,7 @@ node *MTvardecl (node *arg_node, info *arg_info) {
 node *MTfuncall(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTfuncall");
 
-  char* name = FUNCALL_NAME(arg_node);
+  char* name = STRcpy(FUNCALL_NAME(arg_node));
   node* ST_entry = get_entry(name, arg_info);
   
   if(ST_entry != NULL) {
@@ -252,7 +198,7 @@ node *MTfuncall(node *arg_node, info *arg_info) {
 node *MTvarlet(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTvarlet");
 
-  char* name = VARLET_NAME(arg_node);
+  char* name = STRcpy(VARLET_NAME(arg_node));
   node* ST_entry = get_entry(name, arg_info);
 
   if(ST_entry != NULL) {
@@ -270,7 +216,7 @@ node *MTvarlet(node *arg_node, info *arg_info) {
 node *MTvar(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTvar");
   
-  char* name = VAR_NAME(arg_node);
+  char* name = STRcpy(VAR_NAME(arg_node));
   node* ST_entry = get_entry(name, arg_info);
 
   if(ST_entry != NULL) {
@@ -300,6 +246,8 @@ node *MTdoMakeTable( node *syntaxtree)
   TRAVpush( TR_mt);
   syntaxtree = TRAVdo( syntaxtree, arg_info);
   TRAVpop();
+
+  PROGRAM_SYMBOLTABLE(syntaxtree) = INFO_ST(arg_info);
 
   DBUG_RETURN( syntaxtree);
 }
