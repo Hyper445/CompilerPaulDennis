@@ -57,7 +57,7 @@ static info *MakeInfo(void)
 
   result = (info *)MEMmalloc(sizeof(info));
 
-  INFO_ST(result) = TBmakeSymboltable(STRcpy("Global"), NULL, NULL);
+  INFO_ST(result) = NULL;
 
   DBUG_RETURN( result);
 }
@@ -76,6 +76,19 @@ static info *FreeInfo( info *info)
 /*
  * Traversal functions
  */
+
+node* MTprogram(node *arg_node, info *arg_info) {
+
+  DBUG_ENTER("MTprogram");
+
+  INFO_ST(arg_info) = TBmakeSymboltable(STRcpy("Global"), NULL, NULL);
+
+  PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
+
+  PROGRAM_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
+  DBUG_RETURN(arg_node);
+
+}
 
 node *MTifelse (node *arg_node, info *arg_info) {
   DBUG_ENTER("MTifelse");
@@ -109,7 +122,8 @@ node *MTfundef (node *arg_node, info *arg_info){
   node* parent_table = INFO_ST(arg_info);
 
   // Then create a new symbol table for the function.
-  INFO_ST(arg_info) = TBmakeSymboltable(name, NULL, parent_table);
+  INFO_ST(arg_info) = TBmakeSymboltable(STRcpy(FUNDEF_NAME(arg_node)), NULL, parent_table);
+  FUNDEF_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
 
   // Add the params to the new symbol table
   if (FUNDEF_PARAMS(arg_node)) {
@@ -122,12 +136,11 @@ node *MTfundef (node *arg_node, info *arg_info){
     }
   }
 
+
   //If the function has a body, traverse the funbody with the new table
   FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
   INFO_ST(arg_info) = parent_table;
-  FUNDEF_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
-
   DBUG_RETURN(arg_node);
   
 }
@@ -246,8 +259,6 @@ node *MTdoMakeTable( node *syntaxtree)
   TRAVpush( TR_mt);
   syntaxtree = TRAVdo( syntaxtree, arg_info);
   TRAVpop();
-
-  PROGRAM_SYMBOLTABLE(syntaxtree) = INFO_ST(arg_info);
 
   DBUG_RETURN( syntaxtree);
 }
