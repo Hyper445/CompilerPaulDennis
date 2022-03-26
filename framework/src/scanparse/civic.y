@@ -92,9 +92,9 @@ decl: fundef
   }
   ;
 
-globdecl: EXTERN type ID ids SEMICOLON
+globdecl: EXTERN type ID COMMA ids SEMICOLON
   {
-    $$ = TBmakeGlobdecl($2, STRcpy($3), $4);
+    $$ = TBmakeGlobdecl($2, STRcpy($3), $5);
   }
   | EXTERN type ID SEMICOLON
   {
@@ -225,9 +225,9 @@ vardecl: type ID LET expr SEMICOLON vardecl
   {
     $$ = TBmakeVardecl($1, STRcpy($2), NULL, $4, NULL);
   }
-  | vardecl type ID SEMICOLON
+  | type ID SEMICOLON vardecl
   {
-    $$ = TBmakeVardecl($2, STRcpy($3), NULL, NULL, $1);
+    $$ = TBmakeVardecl($1, STRcpy($2), NULL, NULL, $4);
   }
   | type ID SEMICOLON
   {

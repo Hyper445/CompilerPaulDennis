@@ -31,9 +31,7 @@
  */
 
 struct INFO {
-  node* Symboltable;
-  node* self;
-  node* next;
+  int tempAmount;
 };
 
 
@@ -42,8 +40,7 @@ struct INFO {
  * INFO macros
  */
 
-#define INFO_ST(n) ((n)->Symboltable)
-#define INFO_NEXT(n) ((n)->next)
+#define INFO_TEMP(n) ((n)->tempAmount)
 
 
 /*
@@ -59,8 +56,7 @@ static info *MakeInfo(void)
 
   result = (info *)MEMmalloc(sizeof(info));
 
-  INFO_ST(result) = TBmakeSymboltable("Global", NULL, NULL);
-  INFO_NEXT(result) = NULL;
+  INFO_TEMP(result) = 0;
 
   DBUG_RETURN( result);
 }
@@ -74,7 +70,7 @@ static info *FreeInfo( info *info)
   DBUG_RETURN( info);
 }
 
-void addNode(node* assign, node* funbody) {
+void addNodeStatements(node* assign, node* funbody) {
 
     node* current_stmt = FUNBODY_STMTS(funbody);
 
@@ -89,13 +85,92 @@ void addNode(node* assign, node* funbody) {
 
 }
 
+void addNodeFundef(node* assign, node* program) {
+    
+    node* current_stmt = PROGRAM_DECLS(program);
+
+    if (current_stmt) {
+        while (DECLS_NEXT(current_stmt) != NULL) {
+            current_stmt = DECLS_NEXT(current_stmt);
+        }
+
+        DECLS_NEXT(current_stmt) = TBmakeDecls(assign, NULL);
+    } else {
+        PROGRAM_DECLS(program) = TBmakeDecls(assign, NULL);
+    }
+
+}
+
 /*
  * Traversal functions
  */
 
+
+node *VAprogram( node* arg_node, info * arg_info) {
+
+  DBUG_ENTER("VAprogram");
+
+  node* funbody = TBmakeFunbody(NULL, NULL, NULL);
+  node *current_decl = NULL;
+  node *decls = PROGRAM_DECLS(arg_node);
+
+  while (decls) {
+
+    if (NODE_TYPE(DECLS_DECL(decls)) == N_globdef) { 
+      current_decl = decls;
+      break;
+    }
+
+    decls = DECLS_NEXT(decls);
+  }
+
+  while (current_decl) {
+    if(NODE_TYPE(DECLS_DECL(current_decl)) == N_globdef && GLOBDEF_INIT(DECLS_DECL(current_decl))) {
+
+        node* expression = GLOBDEF_INIT(DECLS_DECL(current_decl));
+        char* name = STRcpy(GLOBDEF_NAME(DECLS_DECL(current_decl)));
+        char* temporaryName = STRcat("temp_", STRitoa(INFO_TEMP(arg_info)));
+        INFO_TEMP(arg_info)++;
+
+        // Update current vardecl node to no initiation.
+        GLOBDEF_NAME(DECLS_DECL(current_decl)) = STRcpy(temporaryName);
+        GLOBDEF_INIT(DECLS_DECL(current_decl)) = NULL;
+
+        node* varlet = TBmakeVarlet(temporaryName, NULL, NULL);
+        node* assign = TBmakeAssign(varlet, expression);
+
+        addNodeStatements(assign, funbody);
+
+    }
+
+    current_decl = DECLS_NEXT(current_decl);
+  }
+  
+  node* fundef = TBmakeFundef(T_void, STRcpy("__init"), NULL, funbody, NULL);
+
+  node* top_decl = PROGRAM_DECLS(arg_node);
+  if (top_decl) {
+  
+    while (NODE_TYPE(DECLS_DECL(DECLS_NEXT(top_decl))) == N_globdef) {
+      
+      top_decl = DECLS_NEXT(top_decl);
+
+    }
+  }
+
+  node* top_decl_next = DECLS_NEXT(top_decl);
+  DECLS_NEXT(top_decl) = TBmakeDecls(fundef, top_decl_next);
+
+  PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
+
+
+  DBUG_RETURN(arg_node);
+
+}
+
 node *VAfunbody (node *arg_node, info *arg_info){
   
-  DBUG_ENTER("MTfundef");
+  DBUG_ENTER("MTfunbody");
   
   node* current_vardecl = FUNBODY_VARDECLS(arg_node);
 
@@ -106,7 +181,8 @@ node *VAfunbody (node *arg_node, info *arg_info){
         //Get all the information needed to make the assign node
         node* expression = VARDECL_INIT(current_vardecl);
         char* name = STRcpy(VARDECL_NAME(current_vardecl));
-        char* temporaryName = STRcat("temp", name);
+        char* temporaryName = STRcat("temp_", STRitoa(INFO_TEMP(arg_info)));
+        INFO_TEMP(arg_info)++;
 
         // Update current vardecl node.
         VARDECL_NAME(current_vardecl) = STRcpy(temporaryName);
@@ -115,12 +191,15 @@ node *VAfunbody (node *arg_node, info *arg_info){
         node* assign = TBmakeAssign(varlet, expression);
 
         // Add the newly made assign to the funbody
-        addNode(assign, arg_node);
+        addNodeStatements(assign, arg_node);
 
       }
       
       current_vardecl = VARDECL_NEXT(current_vardecl);
   }
+
+
+  FUNBODY_LOCALFUNDEFS(arg_node) = TRAVopt(FUNBODY_LOCALFUNDEFS(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
   

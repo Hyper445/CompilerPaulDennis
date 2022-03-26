@@ -30,6 +30,7 @@
 
       <traversal id="MT" name="Making symbol tables" default="sons" include="make_table.h">
         <travuser>
+          <node name="Program" />
           <node name="FunDef" />
           <node name="GlobDecl" />
           <node name="GlobDef" />
@@ -43,10 +44,12 @@
 
       <traversal id="VA" name="Variable Initialisation to Regular Assignment" default="sons" include="var_to_assign.h">
         <travuser>
+            <node name="Program" />
             <node name="FunBody" />
         </travuser>
       </traversal>
 
+<<<<<<< HEAD
       <traversal id="TC" name="Type Check" default="sons" include="type_check.h">
         <travuser>
             <node name="BinOp" />
@@ -64,41 +67,40 @@
       </traversal>
 
       <!-- <traversal id="IS" name="Identifiers storer" default="sons" include="identifiers_storer.h">
+=======
+      <traversal id="BJ" name="Boolean Junction" default="sons" include="boolean_junction.h">
+>>>>>>> f9a4b43713836be07b80ba6c06ad672177312d07
         <travuser>
-          <node name="Var" />
-          <node name="Varlet" />
+            <node name="BinOp" />
         </travuser>
-      </traversal> -->
-<!-- 
-      <traversal id="RI" name="Rename identifiers" default="sons" include="rename_identifiers.h">
-        <travuser>
-          <node name="Var" />
-          <node name="Varlet" />        
-        </travuser>
-      </traversal> -->
-<!-- 
-      <traversal id="SI" name="Sum ints" default="sons" include="sum_ints.h">
-        <travuser>
-          <node name="Num" />
-        </travuser>
-      </traversal> -->
-<!-- 
-      <traversal id="RS" name="Reduce strength" default="sons" include="reduce_strength.h">
-        <travuser>
-          <node name="BinOp" />
-        </travuser>
-      </traversal> -->
+      </traversal>
 
-      <!-- <traversal id="OS" name="Optimise subtraction" default="sons" include="opt_sub.h">
+      <traversal id="BC" name="Boolean Cast" default="sons" include="boolean_cast.h">
         <travuser>
-          <node name="BinOp" />
+            <node name="Cast" />
         </travuser>
-      </traversal> -->
+      </traversal>
+
+      <traversal id="CG" name="Generate code" default="sons" include="code_generation.h">
+        <travuser>
+            <node name="Program" />
+            <node name="Fundef" />
+            <node name="Assign" />
+            <node name="BinOp" />
+            <node name="Var" />
+            <node name="Num"/>
+            <node name="Float"/>
+        </travuser>
+      </traversal>
+
+
+
     </general>
 </phases>
 <nodesets>
     <nodeset name="Expr">
         <target>
+            <node name="CondExpr"/>
             <node name="BinOp"/>
             <node name="MonOp"/>
             <node name="FunCall"/>
@@ -638,6 +640,44 @@
         <flags>
         </flags>
     </node>
+
+    <node name="CondExpr">
+        <sons>
+            <son name="Pred">
+                <targets>
+                    <target mandatory="yes">
+                        <set name="Expr"/>
+                        <phases>
+                            <all/>
+                        </phases>
+                    </target>
+                </targets>
+            </son>            
+            <son name="Then">
+                <targets>
+                    <target mandatory="no">
+                        <set name="Expr"/>
+                        <phases>
+                            <all/>
+                        </phases>
+                    </target>
+                </targets>
+            </son>            
+            <son name="Else">
+                <targets>
+                    <target mandatory="no">
+                        <set name="Expr"/>
+                        <phases>
+                            <all/>
+                        </phases>
+                    </target>
+                </targets>
+            </son>
+        </sons>
+        <attributes>
+        </attributes>
+    </node>
+
 
     <node name="GlobDecl">
         <sons>

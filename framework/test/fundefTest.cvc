@@ -1,17 +1,10 @@
 float b = 3;
+float c = 2;
 
 int test(int a) {
 
-    int x = 2;
-    int y = 3;
-    int a = 1;
-
+    bool a = (true || true);
+    int d = (float)false;
 
 }
 
-
-int test2(int a2) {
-
-
-    int x2 = 4;
-}
