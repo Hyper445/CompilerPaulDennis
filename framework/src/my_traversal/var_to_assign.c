@@ -129,7 +129,7 @@ node *VAprogram( node* arg_node, info * arg_info) {
 
         node* expression = GLOBDEF_INIT(DECLS_DECL(current_decl));
         char* name = STRcpy(GLOBDEF_NAME(DECLS_DECL(current_decl)));
-        char* temporaryName = STRcat("temp_", STRitoa(INFO_TEMP(arg_info)));
+        char* temporaryName = STRcat(STRcpy("temp_"), STRitoa(INFO_TEMP(arg_info)));
         INFO_TEMP(arg_info)++;
 
         // Update current vardecl node to no initiation.
@@ -181,7 +181,7 @@ node *VAfunbody (node *arg_node, info *arg_info){
         //Get all the information needed to make the assign node
         node* expression = VARDECL_INIT(current_vardecl);
         char* name = STRcpy(VARDECL_NAME(current_vardecl));
-        char* temporaryName = STRcat("temp_", STRitoa(INFO_TEMP(arg_info)));
+        char* temporaryName = STRcat(STRcpy("temp_"), STRitoa(INFO_TEMP(arg_info)));
         INFO_TEMP(arg_info)++;
 
         // Update current vardecl node.

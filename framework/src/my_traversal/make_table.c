@@ -85,7 +85,7 @@ node* MTprogram(node *arg_node, info *arg_info) {
 
   PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 
-  PROGRAM_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
+  //PROGRAM_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
   DBUG_RETURN(arg_node);
 
 }
