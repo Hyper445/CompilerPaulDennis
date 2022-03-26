@@ -40,6 +40,12 @@ SUBPHASE( mt,
           ALWAYS,
           pet)
 
+SUBPHASE( tc,
+          "Type Checking",
+          TCdoTypeCheck,
+          ALWAYS,
+          pet)
+
 SUBPHASE( va,
           "Variable Initialisation to Regular Assignment",
           VAdoVariableToAssign,

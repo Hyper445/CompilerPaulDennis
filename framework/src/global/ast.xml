@@ -47,6 +47,22 @@
         </travuser>
       </traversal>
 
+      <traversal id="TC" name="Type Check" default="sons" include="type_check.h">
+        <travuser>
+            <node name="BinOp" />
+            <node name="FunCall" />
+            <node name="Assign" />
+            <node name="VarDecl" />
+            <node name="Num" />
+            <node name="Float" />
+            <node name="Bool" />
+            <node name="Var" />
+            <node name="VarLet" />
+            <node name="MonOp" />
+            <node name="Cast" />
+        </travuser>
+      </traversal>
+
       <!-- <traversal id="IS" name="Identifiers storer" default="sons" include="identifiers_storer.h">
         <travuser>
           <node name="Var" />

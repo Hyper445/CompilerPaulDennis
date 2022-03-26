@@ -217,9 +217,9 @@ funbody: CURLY_BRACKET_L vardecl fundefs stmts CURLY_BRACKET_R
   }
   ;
 
-vardecl: vardecl type ID LET expr SEMICOLON
+vardecl: type ID LET expr SEMICOLON vardecl
   {
-    $$ = TBmakeVardecl($2, STRcpy($3), NULL, $5, $1);
+    $$ = TBmakeVardecl($1, STRcpy($2), NULL, $4, $6);
   }
   | type ID LET expr SEMICOLON
   {
@@ -358,17 +358,17 @@ varlet: ID
   ;
 
 
-expr: constant
+expr: monop expr 
+  {
+    $$ = TBmakeMonop($1, $2);
+  }
+  | constant
   {
     $$ = $1;
   }
   | ID
   {
     $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
-  }
-  | monop expr 
-  {
-    $$ = TBmakeMonop($1, $2);
   }
   | BRACKET_L expr binop expr BRACKET_R
   {

@@ -1,0 +1,19 @@
+int test() {
+    int a = 3;
+    int b = 4;
+    int c = (3 + (1 + 2));
+    bool d = true;
+    int e = (c + (d + b));
+    bool f = false;
+    bool g = (d && f);
+
+    int h = -5;
+    int i = !true;
+
+    int j = ! 5;
+    bool k = - true;
+
+    float l = (float) (4 + 3);
+    float m = (4 + 3);
+
+}

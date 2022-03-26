@@ -1,0 +1,6 @@
+int printFloatVec(float[n] vec) {
+
+	for (int j = 0, n) {
+	    printFloat(vec[j]);
+	}
+}
