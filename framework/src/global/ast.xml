@@ -49,7 +49,7 @@
         </travuser>
       </traversal>
 
-<<<<<<< HEAD
+
       <traversal id="TC" name="Type Check" default="sons" include="type_check.h">
         <travuser>
             <node name="BinOp" />
@@ -66,10 +66,9 @@
         </travuser>
       </traversal>
 
-      <!-- <traversal id="IS" name="Identifiers storer" default="sons" include="identifiers_storer.h">
-=======
+     <!-- <traversal id="IS" name="Identifiers storer" default="sons" include="identifiers_storer.h"> -->
+
       <traversal id="BJ" name="Boolean Junction" default="sons" include="boolean_junction.h">
->>>>>>> f9a4b43713836be07b80ba6c06ad672177312d07
         <travuser>
             <node name="BinOp" />
         </travuser>
