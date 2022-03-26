@@ -4,7 +4,7 @@ float c = 2;
 int test(int a) {
 
     bool a = (true || true);
-    int d = (float)false;
+    int d = (int)false;
 
 }
 

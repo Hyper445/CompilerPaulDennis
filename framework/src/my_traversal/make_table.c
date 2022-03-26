@@ -81,11 +81,11 @@ node* MTprogram(node *arg_node, info *arg_info) {
 
   DBUG_ENTER("MTprogram");
 
-  INFO_ST(arg_info) = TBmakeSymboltable(STRcpy("Global"), NULL, NULL);
+  INFO_ST(arg_info) = TBmakeSymboltable(STRcpy("Global"), NULL, NULL, NULL);
 
   PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 
-  //PROGRAM_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
+  PROGRAM_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
   DBUG_RETURN(arg_node);
 
 }
@@ -98,7 +98,7 @@ node *MTifelse (node *arg_node, info *arg_info) {
   node* parent_table = INFO_ST(arg_info);
 
   // Creates new scope. Current scope stored in arg_info is set to this new scope
-  INFO_ST(arg_info) = TBmakeSymboltable(name, NULL, parent_table);
+  INFO_ST(arg_info) = TBmakeSymboltable(name, parent_table, NULL, NULL);
 
   // Traverse through both the 'then' and 'else' block.
   IFELSE_THEN(arg_node) = TRAVopt(IFELSE_THEN(arg_node), arg_info);
@@ -122,7 +122,12 @@ node *MTfundef (node *arg_node, info *arg_info){
   node* parent_table = INFO_ST(arg_info);
 
   // Then create a new symbol table for the function.
-  INFO_ST(arg_info) = TBmakeSymboltable(STRcpy(FUNDEF_NAME(arg_node)), NULL, parent_table);
+  if (FUNDEF_PARAMS(arg_node)) {
+    INFO_ST(arg_info) = TBmakeSymboltable(STRcpy(FUNDEF_NAME(arg_node)), 
+      parent_table, FUNDEF_PARAMS(arg_node), NULL);
+  } else {
+    INFO_ST(arg_info) = TBmakeSymboltable(STRcpy(FUNDEF_NAME(arg_node)), parent_table, NULL, NULL);
+  }
   FUNDEF_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
 
   // Add the params to the new symbol table

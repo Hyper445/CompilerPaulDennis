@@ -1101,20 +1101,34 @@
                     </target>
                 </targets>
             </son>
-            <son name="Parent">
-                <targets>
-                    <target mandatory="no">
-                        <node name="Symboltable"/>
-                        <phases>
-                            <all/>
-                        </phases>
-                    </target>
-                </targets>
-            </son>
         </sons>
         <attributes>
             <attribute name="Name">
                 <type name="String">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Parent">
+                <type name="Link">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Params">
+                <type name="Link">
                     <targets>
                         <target mandatory="yes">
                             <any/>
