@@ -101,6 +101,7 @@ node *MTifelse (node *arg_node, info *arg_info) {
   INFO_ST(arg_info) = TBmakeSymboltable(name, parent_table, NULL, NULL);
 
   // Traverse through both the 'then' and 'else' block.
+  IFELSE_COND(arg_node) = TRAVdo(IFELSE_COND(arg_node), arg_info);
   IFELSE_THEN(arg_node) = TRAVopt(IFELSE_THEN(arg_node), arg_info);
   IFELSE_ELSE(arg_node) = TRAVopt(IFELSE_ELSE(arg_node), arg_info);
 

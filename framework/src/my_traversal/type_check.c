@@ -73,15 +73,18 @@ node *TCbinop (node *arg_node, info *arg_info) {
     case BO_mod:
       INFO_TYPE(arg_info) = left;
       if(left != T_int || right != T_int) {CTIerrorLine(NODE_LINE(arg_node),"the modulo operator cannot be used on a '%s' and a '%s'.", type_to_string(left), type_to_string(right));}
+      break;
     case BO_lt:
     case BO_le:
     case BO_gt:
     case BO_ge:
       INFO_TYPE(arg_info) = T_bool;
       if(left == T_bool || right == T_bool) {CTIerrorLine(NODE_LINE(arg_node),"the '%s' operator cannot be applied to a boolean.", binop_to_string(operator));}
+      break;
     case BO_eq:
     case BO_ne:
       INFO_TYPE(arg_info) = T_bool;
+      break;
     case BO_and:
     case BO_or:
       INFO_TYPE(arg_info) = T_bool;
@@ -159,6 +162,7 @@ node *TCassign (node *arg_node, info *arg_info) {
 
   ASSIGN_LET(arg_node) = TRAVopt(ASSIGN_LET(arg_node), arg_info);
   type left = INFO_TYPE(arg_info);
+
   ASSIGN_EXPR(arg_node) = TRAVdo(ASSIGN_EXPR(arg_node), arg_info);
   type right = INFO_TYPE(arg_info);
 
@@ -309,13 +313,13 @@ char* binop_to_string(int operator) {
     case BO_mod:
       return "modulo";
     case BO_lt:
-      return "less then";
+      return "less than";
     case BO_le:
-      return "less or equal then";
+      return "less or equal than";
     case BO_gt: 
-      return "greater then";
+      return "greater than";
     case BO_ge:
-      return "greater or equal then";
+      return "greater or equal than";
     case BO_eq:
       return "equality";
     case BO_ne:

@@ -28,10 +28,12 @@
 struct INFO {
   int sum_const;
   int sum_var;
+  int sum_store;
 };
 
 #define INFO_SUM_C(n) ((n)->sum_const)
 #define INFO_SUM_V(n) ((n)->sum_var)
+#define INFO_SUM_S(n) ((n)->sum_store)
 
 static info *MakeInfo(void) {
   info *result;
@@ -41,6 +43,7 @@ static info *MakeInfo(void) {
   result = (info *)MEMmalloc(sizeof(info));
   INFO_SUM_C(result) = 0;
   INFO_SUM_V(result) = 0;
+  INFO_SUM_S(result) = 0;
 
   DBUG_RETURN( result);
 }
@@ -105,8 +108,6 @@ node *CGprogram(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("CGprogram");
 
-    printf("\n\n\n testje \n\n\n");
-
     PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 
 
@@ -119,13 +120,27 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 
     INFO_SUM_C(arg_info) = 0;
     INFO_SUM_V(arg_info) = 0;
+    INFO_SUM_S(arg_info) = 0;
 
-    printf("\n\n\n testje2 \n\n\n");
     FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
     FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
 
     
+    DBUG_RETURN(arg_node);
+}
+
+extern node *CGifelse (node *arg_node, info *arg_info) {
+    DBUG_ENTER("CGifelse");
+
+    IFELSE_COND(arg_node) = TRAVdo(IFELSE_COND(arg_node), arg_info);
+
+    printf("branch_f\n");
+
+    IFELSE_THEN(arg_node) = TRAVopt(IFELSE_THEN(arg_node), arg_info);
+
+    printf("jump\n");
+
     DBUG_RETURN(arg_node);
 }
 
@@ -137,9 +152,8 @@ extern node *CGassign (node *arg_node, info *arg_info) {
 
     printf("%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
 
-    // INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
-
-
+    INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
+    INFO_SUM_S(arg_info) = INFO_SUM_S(arg_info) + 1;
 
     DBUG_RETURN(arg_node);
 }

@@ -40,6 +40,15 @@ SUBPHASE( mt,
           ALWAYS,
           pet)
 
+SUBPHASE( pt,
+          "Printing Symboltable",
+          PTdoPrintTable,
+          ALWAYS,
+          pet)
+
+
+SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)      
+
 SUBPHASE( tc,
           "Type Checking",
           TCdoTypeCheck,

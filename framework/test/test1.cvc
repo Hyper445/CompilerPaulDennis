@@ -1,8 +1,19 @@
-float a = (3 + 2);
+int a = (3 + 2);
 
-int test() {
-    int a = (43-2);
-    bool b = (43 + 6);
-    b = 4;
-    test(a);
+int test(float c) {
+
+    int x = 3;
+    x = 3;
+
+    if (3) {
+		a = 2;
+	}
+
+    float hoi () {}
+
+
+
+
+
+
 }

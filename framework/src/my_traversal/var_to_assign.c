@@ -105,7 +105,6 @@ void addNodeFundef(node* assign, node* program) {
  * Traversal functions
  */
 
-
 node *VAprogram( node* arg_node, info * arg_info) {
 
   DBUG_ENTER("VAprogram");
@@ -136,8 +135,11 @@ node *VAprogram( node* arg_node, info * arg_info) {
         GLOBDEF_NAME(DECLS_DECL(current_decl)) = STRcpy(temporaryName);
         GLOBDEF_INIT(DECLS_DECL(current_decl)) = NULL;
 
-        node* varlet = TBmakeVarlet(temporaryName, GLOBDEF_DECL(current_decl), NULL);
+        //node* varlet = TBmakeVarlet(temporaryName, NULL, NULL);
+        node* varlet = TBmakeVarlet(temporaryName, GLOBDEF_DECL(DECLS_DECL(current_decl)), NULL);
+
         node* assign = TBmakeAssign(varlet, expression);
+        ASSIGN_TYPE(assign) = SYMBOLTABLEENTRY_TYPE(GLOBDEF_DECL(DECLS_DECL(current_decl)));
 
         addNodeStatements(assign, funbody);
 
@@ -153,6 +155,8 @@ node *VAprogram( node* arg_node, info * arg_info) {
     if(DECLS_NEXT(top_decl)) {
       if(NODE_TYPE(DECLS_DECL(DECLS_NEXT(top_decl))) == N_globdef) {
         top_decl = DECLS_NEXT(top_decl);
+      } else {
+        break;
       }
     } else {
       break;
@@ -163,7 +167,6 @@ node *VAprogram( node* arg_node, info * arg_info) {
   DECLS_NEXT(top_decl) = TBmakeDecls(fundef, top_decl_next);
 
   PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
-
 
   DBUG_RETURN(arg_node);
 
@@ -189,7 +192,11 @@ node *VAfunbody (node *arg_node, info *arg_info){
         VARDECL_NAME(current_vardecl) = STRcpy(temporaryName);
         VARDECL_INIT(current_vardecl) = NULL;
         node* varlet = TBmakeVarlet(temporaryName, VARDECL_DECL(current_vardecl), NULL);
+        //node* varlet = TBmakeVarlet(temporaryName, NULL, NULL);
+
         node* assign = TBmakeAssign(varlet, expression);
+        ASSIGN_TYPE(assign) = SYMBOLTABLEENTRY_TYPE(VARDECL_DECL(current_vardecl));
+
 
         // Add the newly made assign to the funbody
         addNodeStatements(assign, arg_node);
