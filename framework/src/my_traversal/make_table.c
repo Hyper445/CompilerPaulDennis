@@ -158,6 +158,17 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
   type type = GLOBDECL_TYPE(arg_node);
   addSymbol(name, type, arg_info);
   
+  node* ST_entry = get_entry(name, arg_info);
+
+  if(ST_entry != NULL) {
+    GLOBDECL_DECL(arg_node) = ST_entry;
+    printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
+  }
+  else {
+    // If decleration was not found, an error is thrown.
+    CTIerror("varlet %s is not in scope\n", name);
+  }
+
   DBUG_RETURN(arg_node);
   
 }
@@ -169,6 +180,18 @@ node *MTglobdef (node *arg_node, info *arg_info) {
   char* name = STRcpy(GLOBDEF_NAME(arg_node));
   type type = GLOBDEF_TYPE(arg_node);
   addSymbol(name, type, arg_info);
+
+  node* ST_entry = get_entry(name, arg_info);
+
+  if(ST_entry != NULL) {
+    GLOBDEF_DECL(arg_node) = ST_entry;
+    printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
+  }
+  else {
+    // If decleration was not found, an error is thrown.
+    CTIerror("varlet %s is not in scope\n", name);
+  }
+
 
   DBUG_RETURN(arg_node);
 
@@ -183,6 +206,17 @@ node *MTvardecl (node *arg_node, info *arg_info) {
   addSymbol(name, type, arg_info);
 
   VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
+
+  node* ST_entry = get_entry(name, arg_info);
+
+  if(ST_entry != NULL) {
+    VARDECL_DECL(arg_node) = ST_entry;
+    printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
+  }
+  else {
+    // If decleration was not found, an error is thrown.
+    CTIerror("varlet %s is not in scope\n", name);
+  }
 
   VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
 

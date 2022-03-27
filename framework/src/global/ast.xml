@@ -63,6 +63,7 @@
             <node name="VarLet" />
             <node name="MonOp" />
             <node name="Cast" />
+            <node name="GlobDef" />
         </travuser>
       </traversal>
 
@@ -716,6 +717,18 @@
                     </targets>
                 </type>
             </attribute>
+            <attribute name="Decl">
+                <type name="Link">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
         </attributes>
         <flags>
         </flags>
@@ -759,6 +772,18 @@
             </attribute>
             <attribute name="Name">
                 <type name="String">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Decl">
+                <type name="Link">
                     <targets>
                         <target mandatory="yes">
                             <any/>
@@ -884,6 +909,18 @@
                     </targets>
                 </type>
             </attribute>
+            <attribute name="Decl">
+                <type name="Link">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
         </attributes>
     </node>
 
@@ -936,7 +973,20 @@
                 </targets>
             </son>
         </sons>
-        <attributes/>
+        <attributes>
+            <attribute name="Type">
+                <type name="Type">
+                    <targets>
+                        <target mandatory="no">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+        </attributes>
     </node>
 
     <node name="BinOp">

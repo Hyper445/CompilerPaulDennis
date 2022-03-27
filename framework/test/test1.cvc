@@ -1,7 +1,8 @@
-float a = (3 + 4);
-bool b = (3 + 3);
-int c = 3;
+float a = (3 + 2);
 
-
-
-
+int test() {
+    int a = (43-2);
+    bool b = (43 + 6);
+    b = 4;
+    test(a);
+}

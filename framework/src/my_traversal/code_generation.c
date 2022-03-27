@@ -132,8 +132,14 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 extern node *CGassign (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGassign");
     
-    ASSIGN_LET(arg_node) = TRAVopt(ASSIGN_LET(arg_node), arg_info);
+    //ASSIGN_LET(arg_node) = TRAVopt(ASSIGN_LET(arg_node), arg_info);
     ASSIGN_EXPR(arg_node) = TRAVdo(ASSIGN_EXPR(arg_node), arg_info);
+
+    printf("%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+
+    // INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
+
+
 
     DBUG_RETURN(arg_node);
 }
@@ -174,6 +180,10 @@ node* CGnum(node* arg_node, info* arg_info) {
 
 node* CGfloat(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGfloat");
+
+    printf("floadc %d\n", INFO_SUM_C(arg_info));
+
+    INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
 
     DBUG_RETURN(arg_node);
 

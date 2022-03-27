@@ -154,8 +154,6 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-
-
 node *TCassign (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCassign");
 
@@ -167,6 +165,7 @@ node *TCassign (node *arg_node, info *arg_info) {
   if (left != right) {
     CTIerrorLine(NODE_LINE(arg_node),"type '%s' does not match type '%s' in assign operation.", type_to_string(left), type_to_string(right));
   }
+  ASSIGN_TYPE(arg_node) = left;
 
   DBUG_RETURN(arg_node);
 }
@@ -190,6 +189,20 @@ node *TCvardecl(node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
+node *TCglobdef(node *arg_node, info *arg_info) {
+  DBUG_ENTER("TCglobdef");
+
+  type left = GLOBDEF_TYPE(arg_node);
+  GLOBDEF_INIT(arg_node) = TRAVopt(GLOBDEF_INIT(arg_node), arg_info);
+  if(GLOBDEF_INIT(arg_node) != NULL) {
+    type right = INFO_TYPE(arg_info);
+    if (left != right) {
+      CTIerrorLine(NODE_LINE(arg_node),"type '%s' does not match type '%s' in assign operation.", type_to_string(left), type_to_string(right));
+    }
+  }
+
+  DBUG_RETURN(arg_node);
+}
 
 node *TCnum(node *arg_node, info *arg_info) {
   DBUG_ENTER("TCnum");
@@ -206,7 +219,6 @@ node *TCfloat(node *arg_node, info *arg_info) {
 
   DBUG_RETURN(arg_node);
 }
-
 
 node *TCbool(node *arg_node, info *arg_info) {
   DBUG_ENTER("TCbool");

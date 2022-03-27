@@ -94,37 +94,37 @@ decl: fundef
 
 globdecl: EXTERN type ID COMMA ids SEMICOLON
   {
-    $$ = TBmakeGlobdecl($2, STRcpy($3), $5);
+    $$ = TBmakeGlobdecl($2, STRcpy($3), NULL, $5);
   }
   | EXTERN type ID SEMICOLON
   {
-    $$ = TBmakeGlobdecl($2, STRcpy($3), NULL);
+    $$ = TBmakeGlobdecl($2, STRcpy($3), NULL, NULL);
   }
   ;
 
 globdef: EXPORT type ID LET expr COMMA exprs SEMICOLON
   {
-    $$ = TBmakeGlobdef($2, STRcpy($3), $7, $5);
+    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, $7, $5);
   } 
   | EXPORT type ID LET expr SEMICOLON
   {
-    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, $5);
+    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, NULL, $5);
   }
   | EXPORT type ID SEMICOLON
   {
-    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, NULL);
+    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, NULL, NULL);
   }
   | type ID LET expr COMMA exprs SEMICOLON
   {
-    $$ = TBmakeGlobdef($1, STRcpy($2), $6, $4);
+    $$ = TBmakeGlobdef($1, STRcpy($2), NULL, $6, $4);
   } 
   | type ID LET expr SEMICOLON
   {
-    $$ = TBmakeGlobdef($1, STRcpy($2), NULL, $4);
+    $$ = TBmakeGlobdef($1, STRcpy($2), NULL, NULL, $4);
   }
   | type ID SEMICOLON
   {
-    $$ = TBmakeGlobdef($1, STRcpy($2), NULL, NULL);
+    $$ = TBmakeGlobdef($1, STRcpy($2), NULL, NULL, NULL);
   }
   ;
 
@@ -219,19 +219,19 @@ funbody: CURLY_BRACKET_L vardecl fundefs stmts CURLY_BRACKET_R
 
 vardecl: type ID LET expr SEMICOLON vardecl
   {
-    $$ = TBmakeVardecl($1, STRcpy($2), NULL, $4, $6);
+    $$ = TBmakeVardecl($1, STRcpy($2), NULL, NULL, $4, $6);
   }
   | type ID LET expr SEMICOLON
   {
-    $$ = TBmakeVardecl($1, STRcpy($2), NULL, $4, NULL);
+    $$ = TBmakeVardecl($1, STRcpy($2), NULL, NULL, $4, NULL);
   }
   | type ID SEMICOLON vardecl
   {
-    $$ = TBmakeVardecl($1, STRcpy($2), NULL, NULL, $4);
+    $$ = TBmakeVardecl($1, STRcpy($2), NULL, NULL, NULL, $4);
   }
   | type ID SEMICOLON
   {
-    $$ = TBmakeVardecl($1, STRcpy($2), NULL, NULL, NULL);
+    $$ = TBmakeVardecl($1, STRcpy($2), NULL, NULL, NULL, NULL);
   }
 
 stmts: stmt stmts

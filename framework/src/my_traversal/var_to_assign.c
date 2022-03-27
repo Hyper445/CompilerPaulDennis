@@ -136,7 +136,7 @@ node *VAprogram( node* arg_node, info * arg_info) {
         GLOBDEF_NAME(DECLS_DECL(current_decl)) = STRcpy(temporaryName);
         GLOBDEF_INIT(DECLS_DECL(current_decl)) = NULL;
 
-        node* varlet = TBmakeVarlet(temporaryName, NULL, NULL);
+        node* varlet = TBmakeVarlet(temporaryName, GLOBDEF_DECL(current_decl), NULL);
         node* assign = TBmakeAssign(varlet, expression);
 
         addNodeStatements(assign, funbody);
@@ -150,9 +150,6 @@ node *VAprogram( node* arg_node, info * arg_info) {
 
   node* top_decl = PROGRAM_DECLS(arg_node);
   while (top_decl) {
-
-    printf("%s = globdef name \n\n", GLOBDEF_NAME(DECLS_DECL(top_decl)));
-
     if(DECLS_NEXT(top_decl)) {
       if(NODE_TYPE(DECLS_DECL(DECLS_NEXT(top_decl))) == N_globdef) {
         top_decl = DECLS_NEXT(top_decl);
@@ -191,7 +188,7 @@ node *VAfunbody (node *arg_node, info *arg_info){
         // Update current vardecl node.
         VARDECL_NAME(current_vardecl) = STRcpy(temporaryName);
         VARDECL_INIT(current_vardecl) = NULL;
-        node* varlet = TBmakeVarlet(temporaryName, NULL, NULL);
+        node* varlet = TBmakeVarlet(temporaryName, VARDECL_DECL(current_vardecl), NULL);
         node* assign = TBmakeAssign(varlet, expression);
 
         // Add the newly made assign to the funbody
