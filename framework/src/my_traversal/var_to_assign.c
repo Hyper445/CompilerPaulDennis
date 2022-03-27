@@ -149,12 +149,16 @@ node *VAprogram( node* arg_node, info * arg_info) {
   node* fundef = TBmakeFundef(T_void, STRcpy("__init"), NULL, funbody, NULL);
 
   node* top_decl = PROGRAM_DECLS(arg_node);
-  if (top_decl) {
-  
-    while (NODE_TYPE(DECLS_DECL(DECLS_NEXT(top_decl))) == N_globdef) {
-      
-      top_decl = DECLS_NEXT(top_decl);
+  while (top_decl) {
 
+    printf("%s = globdef name \n\n", GLOBDEF_NAME(DECLS_DECL(top_decl)));
+
+    if(DECLS_NEXT(top_decl)) {
+      if(NODE_TYPE(DECLS_DECL(DECLS_NEXT(top_decl))) == N_globdef) {
+        top_decl = DECLS_NEXT(top_decl);
+      }
+    } else {
+      break;
     }
   }
 
