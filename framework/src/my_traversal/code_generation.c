@@ -25,6 +25,26 @@
 #include "memory.h"
 #include "ctinfo.h"
 
+struct INFO {
+  int sum_const;
+  int sum_var;
+};
+
+#define INFO_SUM_C(n) ((n)->sum_const)
+#define INFO_SUM_V(n) ((n)->sum_var)
+
+static info *MakeInfo(void) {
+  info *result;
+
+  DBUG_ENTER( "MakeInfo");
+
+  result = (info *)MEMmalloc(sizeof(info));
+  INFO_SUM_C(result) = 0;
+  INFO_SUM_V(result) = 0;
+
+  DBUG_RETURN( result);
+}
+
 /*
  * Traversal functions
  */
@@ -32,16 +52,14 @@
 char* type_to_char(int type) {
 
   switch(type) {
-    case 0 :
-      return("v");
     case 1 :
       return ("b");
     case 2 :
       return("i");
     case 3 :
       return("f");
-    case 4 :
-      return("u");
+    default:
+      CTIerror("undefined type");
   }
 
 }
@@ -71,13 +89,13 @@ char* binop_to_char(binop binop) {
       return("eq");
     case BO_ne :
       return("ne");
+    default:
+      CTIerror("undefined type");
     // case BO_and :
     //   return ("and");
     // case BO_or :
     //   return("or");
-  
   }
-
 }
 
 //TODO: monop to char
@@ -96,15 +114,37 @@ node *CGprogram(node* arg_node, info* arg_info) {
   
 }
 
-extern node *CGfundef (node *arg_node, info *arg_info) { DBUG_ENTER("CGfundef"); printf("\n\n\n testje2 \n\n\n");DBUG_RETURN(arg_node);}
-extern node *CGassign (node *arg_node, info *arg_info) { DBUG_ENTER("CGassign"); DBUG_RETURN(arg_node);}
+extern node *CGfundef (node *arg_node, info *arg_info) {
+    DBUG_ENTER("CGfundef");
+
+    INFO_SUM_C(arg_info) = 0;
+    INFO_SUM_V(arg_info) = 0;
+
+    printf("\n\n\n testje2 \n\n\n");
+    FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
+    FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
+
+
+    
+    DBUG_RETURN(arg_node);
+}
+
+extern node *CGassign (node *arg_node, info *arg_info) {
+    DBUG_ENTER("CGassign");
+    
+    ASSIGN_LET(arg_node) = TRAVopt(ASSIGN_LET(arg_node), arg_info);
+    ASSIGN_EXPR(arg_node) = TRAVdo(ASSIGN_EXPR(arg_node), arg_info);
+
+    DBUG_RETURN(arg_node);
+}
 
 node *CGbinop(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGbinop");
 
+    BINOP_LEFT(arg_node) = TRAVdo(BINOP_LEFT(arg_node), arg_info);
+    BINOP_RIGHT(arg_node) = TRAVdo(BINOP_RIGHT(arg_node), arg_info);
 
-    printf(binop_to_char(BINOP_OP(arg_node)));
-
+    printf("%s%s\n", type_to_char(BINOP_TYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
 
     DBUG_RETURN(arg_node);
 }
@@ -112,12 +152,21 @@ node *CGbinop(node* arg_node, info* arg_info) {
 node *CGvar(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGvar");
 
+    printf("%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), INFO_SUM_V(arg_info));
+
+    INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
+
     DBUG_RETURN(arg_node);
 
 }
 
 node* CGnum(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGnum");
+
+    printf("iloadc %d\n", INFO_SUM_C(arg_info));
+
+    INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
+    
 
     DBUG_RETURN(arg_node);
 
@@ -136,13 +185,13 @@ node* CGfloat(node* arg_node, info* arg_info) {
 
 node *CGdoCodeGeneration( node *syntaxtree)
 {
-  info *arg_info = NULL;
+    info *arg_info;
+    DBUG_ENTER("CGdoCodeGeneration");
+    arg_info = MakeInfo();
 
-  DBUG_ENTER("CGdoCodeGeneration");
+    TRAVpush( TR_cg);
+    syntaxtree = TRAVdo( syntaxtree, arg_info);
+    TRAVpop();
 
-  TRAVpush( TR_cg);
-  syntaxtree = TRAVdo( syntaxtree, arg_info);
-  TRAVpop();
-
-  DBUG_RETURN( syntaxtree);
+    DBUG_RETURN( syntaxtree);
 }

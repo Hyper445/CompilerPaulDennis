@@ -83,7 +83,7 @@
       <traversal id="CG" name="Generate code" default="sons" include="code_generation.h">
         <travuser>
             <node name="Program" />
-            <node name="Fundef" />
+            <node name="FunDef" />
             <node name="Assign" />
             <node name="BinOp" />
             <node name="Var" />
@@ -975,6 +975,18 @@
                     </targets>
                 </type>
             </attribute>
+            <attribute name="Type">
+                <type name="Type">
+                    <targets>
+                        <target mandatory="no">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
         </attributes>
     </node>
 
@@ -996,6 +1008,18 @@
                 <type name="MonOp">
                     <targets>
                         <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Type">
+                <type name="Type">
+                    <targets>
+                        <target mandatory="no">
                             <any/>
                             <phases>
                                 <all/>

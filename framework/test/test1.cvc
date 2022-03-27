@@ -1,7 +1,7 @@
 float a = (3 + 4);
 bool b = (3 + 3);
+int c = 3;
 
-int test() {
-    c = 3;
-}
+
+
 

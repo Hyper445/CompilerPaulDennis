@@ -92,6 +92,9 @@ node *TCbinop (node *arg_node, info *arg_info) {
       INFO_TYPE(arg_info) = T_unknown;
   }
 
+  // Sets the binop type to the correct value.
+  BINOP_TYPE(arg_node) = INFO_TYPE(arg_info);
+
   DBUG_RETURN(arg_node);
 
 }
@@ -120,6 +123,9 @@ node *TCmonop (node *arg_node, info *arg_info) {
     CTIerrorLine(NODE_LINE(arg_node),"unknown operator.");
   }
 
+  // Sets the monop type to the correct value.
+  MONOP_TYPE(arg_node) = INFO_TYPE(arg_info);
+
   DBUG_RETURN(arg_node);
 }
 
@@ -137,11 +143,13 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCfuncall");
   
   FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
+  // node *fundecl = FUNCALL_DECL(arg_node);
 
-  //node *arguments = FUNCALL_ARGS(arg_node);
-  //node *fun_declaration = FUNCALL_DECL(arg_node);
-  
-  // TODO
+  // node *params = SYMBOLTABLE_PARAMS(fundecl);
+  // while(params) {
+  //   printf("name = %s\n", PARAM_NAME(params));
+  //   params = PARAM_NEXT(params);
+  // }
 
   DBUG_RETURN(arg_node);
 }
