@@ -88,6 +88,12 @@
         </travuser>
       </traversal>
 
+      <traversal id="TW" name="Transform While-Loops" default="sons" include="transform_while.h">
+        <travuser>
+            <node name="While" />
+        </travuser>
+      </traversal>
+
       <traversal id="CG" name="Generate code" default="sons" include="code_generation.h">
         <travuser>
             <node name="Program" />

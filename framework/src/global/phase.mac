@@ -46,9 +46,6 @@ SUBPHASE( pt,
           ALWAYS,
           pet)
 
-
-SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)      
-
 SUBPHASE( tc,
           "Type Checking",
           TCdoTypeCheck,
@@ -72,6 +69,16 @@ SUBPHASE( bc,
           BCdoBooleanCast,
           ALWAYS,
           pet)
+
+SUBPHASE( tw,
+          "Transforming While - Loops",
+          TWdoTransformWhile,
+          ALWAYS,
+          pet)
+
+
+SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)      
+
 
 SUBPHASE( cg,
           "Generating Code",

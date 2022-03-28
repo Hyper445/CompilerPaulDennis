@@ -114,11 +114,11 @@ extern node *PRTcast (node * arg_node, info * arg_info){
 
 extern node *PRTdowhile (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTdowhile");
-  printf("while{\n");
+  printf("do{\n");
   DOWHILE_BLOCK( arg_node) = TRAVopt( DOWHILE_BLOCK(arg_node), arg_info);
   printf("} while (");
   DOWHILE_COND( arg_node) = TRAVopt( DOWHILE_COND(arg_node), arg_info);
-  printf(")");
+  printf(")\n");
   DBUG_RETURN(arg_node);
   }
 

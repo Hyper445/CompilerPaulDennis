@@ -5,9 +5,9 @@ int test(float c) {
     int x = 3;
     x = 3;
 
-    if (3) {
-		a = 2;
-	}
+    while(true) {
+        x = (x + 1);
+    }
 
     float hoi () {}
 
