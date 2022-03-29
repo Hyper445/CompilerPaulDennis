@@ -1,20 +1,20 @@
 int a = (3 + 2);
 
 int test(float c) {
+    if ((a < 2)) {
+        a = (a + 1);
 
-    int x = 3;
-    x = 3;
+        if ((a < 0)){
+            c = (c + 1.0);
+        }
+        else {
+            c = (c - 1.0);
+        }
 
-    while(true) {
-        x = (x + 1);
+    }
+    else {
+        a = (a + 2);
     }
 
-    float hoi () {}
-
-
-
-
-
-
-
+    a = (a - 3);
 }

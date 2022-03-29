@@ -29,11 +29,13 @@ struct INFO {
   int sum_const;
   int sum_var;
   int sum_store;
+  int sum_labels;
 };
 
 #define INFO_SUM_C(n) ((n)->sum_const)
 #define INFO_SUM_V(n) ((n)->sum_var)
 #define INFO_SUM_S(n) ((n)->sum_store)
+#define INFO_SUM_L(n) ((n)->sum_labels)
 
 static info *MakeInfo(void) {
   info *result;
@@ -44,6 +46,7 @@ static info *MakeInfo(void) {
   INFO_SUM_C(result) = 0;
   INFO_SUM_V(result) = 0;
   INFO_SUM_S(result) = 0;
+  INFO_SUM_L(result) = 0;
 
   DBUG_RETURN( result);
 }
@@ -135,11 +138,21 @@ extern node *CGifelse (node *arg_node, info *arg_info) {
 
     IFELSE_COND(arg_node) = TRAVdo(IFELSE_COND(arg_node), arg_info);
 
-    printf("branch_f\n");
+    int label1 = INFO_SUM_L(arg_info) + 1;
+    int label2 = label1 + 1;
+    INFO_SUM_L(arg_info) = INFO_SUM_S(arg_info) + 2;
+
+    printf("\tbranch_f L%d\n", label1);
 
     IFELSE_THEN(arg_node) = TRAVopt(IFELSE_THEN(arg_node), arg_info);
 
-    printf("jump\n");
+    printf("\tjump L%d\n", label2);
+
+    printf("L%d\n", label1);
+
+    IFELSE_ELSE(arg_node) = TRAVopt(IFELSE_ELSE(arg_node), arg_info);
+
+    printf("L%d\n", label2);
 
     DBUG_RETURN(arg_node);
 }
@@ -150,7 +163,7 @@ extern node *CGassign (node *arg_node, info *arg_info) {
     //ASSIGN_LET(arg_node) = TRAVopt(ASSIGN_LET(arg_node), arg_info);
     ASSIGN_EXPR(arg_node) = TRAVdo(ASSIGN_EXPR(arg_node), arg_info);
 
-    printf("%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+    printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
     INFO_SUM_S(arg_info) = INFO_SUM_S(arg_info) + 1;
@@ -164,7 +177,7 @@ node *CGbinop(node* arg_node, info* arg_info) {
     BINOP_LEFT(arg_node) = TRAVdo(BINOP_LEFT(arg_node), arg_info);
     BINOP_RIGHT(arg_node) = TRAVdo(BINOP_RIGHT(arg_node), arg_info);
 
-    printf("%s%s\n", type_to_char(BINOP_TYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
+    printf("\t%s%s\n", type_to_char(BINOP_TYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
 
     DBUG_RETURN(arg_node);
 }
@@ -172,7 +185,7 @@ node *CGbinop(node* arg_node, info* arg_info) {
 node *CGvar(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGvar");
 
-    printf("%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), INFO_SUM_V(arg_info));
+    printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), INFO_SUM_V(arg_info));
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
 
@@ -183,7 +196,7 @@ node *CGvar(node* arg_node, info* arg_info) {
 node* CGnum(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGnum");
 
-    printf("iloadc %d\n", INFO_SUM_C(arg_info));
+    printf("\tiloadc %d\n", INFO_SUM_C(arg_info));
 
     INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
     
@@ -195,7 +208,7 @@ node* CGnum(node* arg_node, info* arg_info) {
 node* CGfloat(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGfloat");
 
-    printf("floadc %d\n", INFO_SUM_C(arg_info));
+    printf("\tfloadc %d\n", INFO_SUM_C(arg_info));
 
     INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
 
