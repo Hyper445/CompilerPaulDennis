@@ -104,6 +104,7 @@
             <node name="Num"/>
             <node name="Float"/>
             <node name="IfElse" />
+            <node name="DoWhile" />
         </travuser>
       </traversal>
 

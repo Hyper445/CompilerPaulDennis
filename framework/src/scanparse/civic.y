@@ -344,6 +344,11 @@ assign: varlet LET expr SEMICOLON
   {
     $$ = TBmakeDowhile( $7, $3);
   }
+  | DO CURLY_BRACKET_L CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
+  {
+    $$ = TBmakeDowhile( $6, NULL);
+  }
+  ;
 
   while: WHILE BRACKET_L expr BRACKET_R CURLY_BRACKET_L stmts CURLY_BRACKET_R
   {
