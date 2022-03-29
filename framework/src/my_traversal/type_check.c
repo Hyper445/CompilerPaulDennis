@@ -52,6 +52,8 @@ node *TCbinop (node *arg_node, info *arg_info) {
   BINOP_RIGHT(arg_node) = TRAVdo(BINOP_RIGHT(arg_node), arg_info);
   type right = INFO_TYPE(arg_info);
 
+  BINOP_SUBTYPE(arg_node) = left;
+
   if(left == T_unknown || left == T_void || right == T_unknown || right == T_void) {
     CTIerrorLine(NODE_LINE(arg_node), "Binary operators cannot be applied to variables with type 'unknown' or 'void'.");
     DBUG_RETURN(arg_node);
@@ -59,11 +61,14 @@ node *TCbinop (node *arg_node, info *arg_info) {
 
   binop operator = BINOP_OP(arg_node);
 
+  if(!(left == right)) {
+    CTIerrorLine(NODE_LINE(arg_node),"the '%s' operator cannot be applied to type '%s' and type '%s'. Binary Operators can only be applied to two values of the same type.", binop_to_string(operator), type_to_string(left), type_to_string(right));
+  }
+
   switch (operator) {
     case BO_add:
     case BO_mul:
       INFO_TYPE(arg_info) = left;
-      if(!(left == right)) {CTIerrorLine(NODE_LINE(arg_node),"the '%s' operator cannot be applied to type '%s' and type '%s'.", binop_to_string(operator), type_to_string(left), type_to_string(right));}
       break;
     case BO_div:
     case BO_sub:

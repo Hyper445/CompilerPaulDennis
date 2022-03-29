@@ -177,7 +177,7 @@ node *CGbinop(node* arg_node, info* arg_info) {
     BINOP_LEFT(arg_node) = TRAVdo(BINOP_LEFT(arg_node), arg_info);
     BINOP_RIGHT(arg_node) = TRAVdo(BINOP_RIGHT(arg_node), arg_info);
 
-    printf("\t%s%s\n", type_to_char(BINOP_TYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
+    printf("\t%s%s\n", type_to_char(BINOP_SUBTYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
 
     DBUG_RETURN(arg_node);
 }
