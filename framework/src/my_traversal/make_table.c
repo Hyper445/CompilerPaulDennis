@@ -91,7 +91,7 @@ node* MTprogram(node *arg_node, info *arg_info) {
 
       node* fundef = DECLS_DECL(decls);
 
-      addSymbol(FUNDEF_NAME(fundef), FUNDEF_TYPE(fundef), arg_info, FUNDEF_PARAMS(fundef));
+      addSymbol(STRcpy(FUNDEF_NAME(fundef)), FUNDEF_TYPE(fundef), arg_info, FUNDEF_PARAMS(fundef));
 
     }
     decls = DECLS_NEXT(decls);

@@ -16,7 +16,7 @@ int test(int d, int e) {
 
     b = a;
 
-    test(a, c);
+    test(a, a);
 
     return 2;
 
