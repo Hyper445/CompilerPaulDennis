@@ -59,6 +59,8 @@
 
       <traversal id="TC" name="Type Check" default="sons" include="type_check.h">
         <travuser>
+            <node name="Program" />
+            <node name="FunDef" />
             <node name="BinOp" />
             <node name="FunCall" />
             <node name="Assign" />
@@ -1270,6 +1272,18 @@
             </attribute>
             <attribute name="NestingLevel">
                 <type name="Int">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Params">
+                <type name="Link">
                     <targets>
                         <target mandatory="yes">
                             <any/>

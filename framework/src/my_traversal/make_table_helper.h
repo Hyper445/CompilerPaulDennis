@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern void addSymbol(char* name, type type, info* arg_info);
+extern void addSymbol(char* name, type type, info* arg_info, node* params);
 extern node* get_entry(char* name, info* arg_info);
 
 

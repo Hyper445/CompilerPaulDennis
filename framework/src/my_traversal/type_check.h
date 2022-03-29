@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+extern node *TCprogram (node *arg_node, info *arg_info);
+extern node *TCfundef (node *arg_node, info *arg_info);
 extern node *TCbinop (node *arg_node, info *arg_info);
 extern node *TCfuncall (node *arg_node, info *arg_info);
 extern node *TCassign (node *arg_node, info *arg_info);

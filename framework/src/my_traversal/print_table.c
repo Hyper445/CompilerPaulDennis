@@ -14,6 +14,7 @@
 
 #include "print_table.h"
 #include "make_table_helper.h"
+#include "print.h"
 
 #include "lookup_table.h"
 #include "types.h"
@@ -90,7 +91,17 @@ node *PTsymboltable (node *arg_node, info *arg_info) {
 node *PTsymboltableentry (node *arg_node, info *arg_info) {
   DBUG_ENTER("PTsymboltableentry");
 
-  printf("  %s\n", SYMBOLTABLEENTRY_NAME(arg_node));
+  printf("  %s ", SYMBOLTABLEENTRY_NAME(arg_node));
+  if (SYMBOLTABLEENTRY_PARAMS(arg_node)) {
+    printf("with params: ");
+    node* param = SYMBOLTABLEENTRY_PARAMS(arg_node);
+    while (param) {
+      printf("%s ", PARAM_NAME(param));
+      param = PARAM_NEXT(param);
+    }
+
+  }
+  printf("\n");
   SYMBOLTABLEENTRY_NEXT(arg_node) = TRAVopt(SYMBOLTABLEENTRY_NEXT(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);

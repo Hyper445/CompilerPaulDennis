@@ -31,6 +31,7 @@
  */
 
 struct INFO {
+  type type;
   node* Symboltable;
 };
 
@@ -83,6 +84,20 @@ node* MTprogram(node *arg_node, info *arg_info) {
 
   INFO_ST(arg_info) = TBmakeSymboltable(STRcpy("Global"), NULL, NULL, NULL);
 
+  node* decls = PROGRAM_DECLS(arg_node);
+  while (decls) {
+
+    if (NODE_TYPE(DECLS_DECL(decls)) == N_fundef) {
+
+      node* fundef = DECLS_DECL(decls);
+
+      addSymbol(FUNDEF_NAME(fundef), FUNDEF_TYPE(fundef), arg_info, FUNDEF_PARAMS(fundef));
+
+    }
+    decls = DECLS_NEXT(decls);
+
+  }
+
   PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 
   PROGRAM_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
@@ -115,10 +130,10 @@ node *MTfundef (node *arg_node, info *arg_info){
   
   DBUG_ENTER("MTfundef");
   
-  // When reaching a function definition, add this to the current symbol table
-  char* name = STRcpy(FUNDEF_NAME(arg_node));
-  type type = FUNDEF_TYPE(arg_node);
-  addSymbol(name, type, arg_info);
+  // // When reaching a function definition, add this to the current symbol table
+  char* name; // = STRcpy(FUNDEF_NAME(arg_node));
+  type type; // = FUNDEF_TYPE(arg_node);
+  // addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node));
 
   node* parent_table = INFO_ST(arg_info);
 
@@ -137,7 +152,7 @@ node *MTfundef (node *arg_node, info *arg_info){
     while (current_param) {
       name = STRcpy(PARAM_NAME(current_param));
       type = PARAM_TYPE(current_param);
-      addSymbol(name, type, arg_info);
+      addSymbol(name, type, arg_info, NULL);
       current_param = PARAM_NEXT(current_param); 
     }
   }
@@ -157,7 +172,7 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(GLOBDECL_NAME(arg_node));
   type type = GLOBDECL_TYPE(arg_node);
-  addSymbol(name, type, arg_info);
+  addSymbol(name, type, arg_info, NULL);
   
   node* ST_entry = get_entry(name, arg_info);
 
@@ -180,7 +195,7 @@ node *MTglobdef (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(GLOBDEF_NAME(arg_node));
   type type = GLOBDEF_TYPE(arg_node);
-  addSymbol(name, type, arg_info);
+  addSymbol(name, type, arg_info, NULL);
 
   node* ST_entry = get_entry(name, arg_info);
 
@@ -204,7 +219,7 @@ node *MTvardecl (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(VARDECL_NAME(arg_node));
   type type = VARDECL_TYPE(arg_node);
-  addSymbol(name, type, arg_info);
+  addSymbol(name, type, arg_info, NULL);
 
   VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
 

@@ -17,6 +17,7 @@
  */
 
 struct INFO {
+  type type;
   node* Symboltable;
 };
 
@@ -27,7 +28,7 @@ struct INFO {
 #define INFO_ST(n) ((n)->Symboltable)
 #define INFO_NEXT(n) ((n)->next)
 
-void addSymbol(char* name, type type, info* arg_info) {
+void addSymbol(char* name, type type, info* arg_info, node* params) {
 
   node* currentSymbolTable = INFO_ST(arg_info);
   node* currentSymbolEntry = SYMBOLTABLE_ENTRIES(currentSymbolTable);
@@ -45,12 +46,12 @@ void addSymbol(char* name, type type, info* arg_info) {
       currentSymbolEntry = SYMBOLTABLEENTRY_NEXT(currentSymbolEntry);
     }
     
-    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, NULL);
+    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, params, NULL);
     SYMBOLTABLEENTRY_NEXT(currentSymbolEntry) = symbolEntry;
 
   } else {
 
-    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, NULL);
+    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, params, NULL);
     SYMBOLTABLE_ENTRIES(INFO_ST(arg_info)) = symbolEntry;
 
   }
@@ -64,12 +65,14 @@ node* get_entry(char* name, info* arg_info) {
   // gets ST and it's first entry.
   node* current_ST = INFO_ST(arg_info);
   node* current_ST_entry;
-
+  
   // Loops through the symboltables until the function decleration has been found.
   while(current_ST != NULL) {
     current_ST_entry = SYMBOLTABLE_ENTRIES(current_ST);
+
     // loops through all entries at current nesting.
     while(current_ST_entry != NULL) {
+
       // If the decleration has been found. A link to the decleration is added to the funcall.
       if (STReq(name, SYMBOLTABLEENTRY_NAME(current_ST_entry))) {
         return current_ST_entry;
@@ -77,8 +80,8 @@ node* get_entry(char* name, info* arg_info) {
 
     current_ST_entry = SYMBOLTABLEENTRY_NEXT(current_ST_entry);
     }
-
-  current_ST = SYMBOLTABLE_PARENT(current_ST);
+    
+    current_ST = SYMBOLTABLE_PARENT(current_ST);
   }
 
   return NULL;

@@ -136,6 +136,8 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 extern node *CGifelse (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGifelse");
 
+
+
     IFELSE_COND(arg_node) = TRAVdo(IFELSE_COND(arg_node), arg_info);
 
     int label1 = INFO_SUM_L(arg_info) + 1;
