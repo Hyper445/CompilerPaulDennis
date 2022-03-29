@@ -106,6 +106,7 @@
             <node name="Num"/>
             <node name="Float"/>
             <node name="IfElse" />
+            <node name="DoWhile" />
         </travuser>
       </traversal>
 
@@ -1042,6 +1043,18 @@
                 </type>
             </attribute>
             <attribute name="Type">
+                <type name="Type">
+                    <targets>
+                        <target mandatory="no">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="SubType">
                 <type name="Type">
                     <targets>
                         <target mandatory="no">

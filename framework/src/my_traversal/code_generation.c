@@ -159,6 +159,23 @@ extern node *CGifelse (node *arg_node, info *arg_info) {
     DBUG_RETURN(arg_node);
 }
 
+extern node *CGdowhile(node *arg_node, info *arg_info) {
+  DBUG_ENTER("CGdowhile");
+
+  int label = INFO_SUM_L(arg_info) + 1;
+  INFO_SUM_L(arg_info) = INFO_SUM_L(arg_info) + 1;
+
+  printf("L%d\n", label);
+
+  DOWHILE_BLOCK(arg_node) = TRAVopt(DOWHILE_BLOCK(arg_node), arg_info);
+
+  DOWHILE_COND(arg_node) = TRAVdo(DOWHILE_COND(arg_node), arg_info);
+
+  printf("\tbranch_f L%d\n", label);
+
+  DBUG_RETURN(arg_node);
+}
+
 extern node *CGassign (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGassign");
     
@@ -179,7 +196,7 @@ node *CGbinop(node* arg_node, info* arg_info) {
     BINOP_LEFT(arg_node) = TRAVdo(BINOP_LEFT(arg_node), arg_info);
     BINOP_RIGHT(arg_node) = TRAVdo(BINOP_RIGHT(arg_node), arg_info);
 
-    printf("\t%s%s\n", type_to_char(BINOP_TYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
+    printf("\t%s%s\n", type_to_char(BINOP_SUBTYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
 
     DBUG_RETURN(arg_node);
 }
