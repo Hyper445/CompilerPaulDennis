@@ -26,34 +26,73 @@
 #include "ctinfo.h"
 
 struct INFO {
-  int sum_const;
-  int sum_var;
-  int sum_store;
+  lut_t* constTable;
+  lut_t* storeTable;
   int sum_labels;
 };
 
-#define INFO_SUM_C(n) ((n)->sum_const)
-#define INFO_SUM_V(n) ((n)->sum_var)
-#define INFO_SUM_S(n) ((n)->sum_store)
+#define INFO_LUT_C(n) ((n)->constTable)
+#define INFO_LUT_S(n) ((n)->storeTable)
 #define INFO_SUM_L(n) ((n)->sum_labels)
 
-static info *MakeInfo(void) {
+// static info *MakeInfo(void) {
+//   info *result;
+
+//   DBUG_ENTER( "MakeInfo");
+
+//   result = (info *)MEMmalloc(sizeof(info));
+//   INFO_SUM_C(result) = 0;
+//   INFO_SUM_V(result) = 0;
+//   INFO_SUM_S(result) = 0;
+//   INFO_SUM_L(result) = 0;
+
+//   DBUG_RETURN( result);
+// }
+
+static info *MakeInfo(void)
+{
   info *result;
 
   DBUG_ENTER( "MakeInfo");
 
   result = (info *)MEMmalloc(sizeof(info));
-  INFO_SUM_C(result) = 0;
-  INFO_SUM_V(result) = 0;
-  INFO_SUM_S(result) = 0;
+  INFO_LUT_C(result) = LUTgenerateLut();
+  INFO_LUT_S(result) = LUTgenerateLut();
   INFO_SUM_L(result) = 0;
 
   DBUG_RETURN( result);
 }
 
+static info *FreeInfo( info *info)
+{
+  DBUG_ENTER ("FreeInfo");
+
+  INFO_LUT_C(info) = LUTremoveLut(INFO_LUT_C(info));
+  INFO_LUT_S(info) = LUTremoveLut(INFO_LUT_S(info));
+  info = MEMfree( info);
+
+  DBUG_RETURN( info);
+}
+
 /*
  * Traversal functions
  */
+
+void UpdateCurrentLUT(char* identifier, void** value, lut_t* lut) {
+
+  if (value != NULL) {
+    //((struct idval *)*value)->val += 1;
+
+    LUTupdateLutS(lut, identifier, *value, value);
+
+  } else {
+    //struct idval* idval = MakeIdval();
+    //idval->id = identifier;
+    
+    //INFO_LUT_C(arg_info) = LUTinsertIntoLutS(INFO_LUT(arg_info), identifier, idval);
+
+  }
+}
 
 char* type_to_char(int type) {
 
@@ -121,9 +160,7 @@ node *CGprogram(node* arg_node, info* arg_info) {
 extern node *CGfundef (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGfundef");
 
-    INFO_SUM_C(arg_info) = 0;
-    INFO_SUM_V(arg_info) = 0;
-    INFO_SUM_S(arg_info) = 0;
+    //INFO_SUM_S(arg_info) = 0;
 
     printf("%s:\n", FUNDEF_NAME(arg_node));
 
@@ -147,13 +184,11 @@ node* CGfuncall(node* arg_node, info* arg_info) {
 extern node *CGifelse (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGifelse");
 
-
-
     IFELSE_COND(arg_node) = TRAVdo(IFELSE_COND(arg_node), arg_info);
 
     int label1 = INFO_SUM_L(arg_info) + 1;
     int label2 = label1 + 1;
-    INFO_SUM_L(arg_info) = INFO_SUM_S(arg_info) + 2;
+    INFO_SUM_L(arg_info) = INFO_SUM_L(arg_info) + 2;
 
     printf("\tbranch_f L%d\n", label1);
 
@@ -193,10 +228,10 @@ extern node *CGassign (node *arg_node, info *arg_info) {
     //ASSIGN_LET(arg_node) = TRAVopt(ASSIGN_LET(arg_node), arg_info);
     ASSIGN_EXPR(arg_node) = TRAVdo(ASSIGN_EXPR(arg_node), arg_info);
 
-    printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+    printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 3);//, INFO_SUM_V(arg_info));
 
-    INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
-    INFO_SUM_S(arg_info) = INFO_SUM_S(arg_info) + 1;
+    // INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
+    // INFO_SUM_S(arg_info) = INFO_SUM_S(arg_info) + 1;
 
     DBUG_RETURN(arg_node);
 }
@@ -215,9 +250,17 @@ node *CGbinop(node* arg_node, info* arg_info) {
 node *CGvar(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGvar");
 
-    printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), INFO_SUM_V(arg_info));
+    // if (global_index(VAR_NAME(arg_node), arg_info) != -1) {
 
-    INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
+    //   printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+    //     global_index(VAR_NAME(arg_node), arg_info));
+
+    // } else {
+    
+    printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+      SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
+    
+    // }
 
     DBUG_RETURN(arg_node);
 
@@ -226,9 +269,16 @@ node *CGvar(node* arg_node, info* arg_info) {
 node* CGnum(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGnum");
 
-    printf("\tiloadc %d\n", INFO_SUM_C(arg_info));
+    //printf("\tiloadc %d\n", INFO_SUM_C(arg_info));
 
-    INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
+    char* identifier = STRcpy(STRitoa(NUM_VALUE(arg_node)));
+    void** value = LUTsearchInLutS(INFO_LUT_C(arg_info), identifier);
+
+    if (!value) {
+      UpdateCurrentLUT(identifier, value, INFO_LUT_C(arg_info));
+    }
+
+    //INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
     
 
     DBUG_RETURN(arg_node);
@@ -238,9 +288,9 @@ node* CGnum(node* arg_node, info* arg_info) {
 node* CGfloat(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGfloat");
 
-    printf("\tfloadc %d\n", INFO_SUM_C(arg_info));
+    //printf("\tfloadc %d\n", INFO_SUM_C(arg_info));
 
-    INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
+    //INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
 
     DBUG_RETURN(arg_node);
 

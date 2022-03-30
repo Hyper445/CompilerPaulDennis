@@ -1296,6 +1296,18 @@
                     </targets>
                 </type>
             </attribute>
+            <attribute name="IndexLevel">
+                <type name="Int">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
             <attribute name="Params">
                 <type name="Link">
                     <targets>

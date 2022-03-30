@@ -40,18 +40,21 @@ void addSymbol(char* name, type type, info* arg_info, node* params) {
     currentSymbolTable = SYMBOLTABLE_PARENT(currentSymbolTable);
   }
 
+  int indexlevel = 0;
   if (currentSymbolEntry) {
+    indexlevel++;
     // Go to the last entry in the symbol table
     while (SYMBOLTABLEENTRY_NEXT(currentSymbolEntry) != NULL) {
       currentSymbolEntry = SYMBOLTABLEENTRY_NEXT(currentSymbolEntry);
+      indexlevel++;
     }
     
-    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, params, NULL);
+    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, indexlevel, params, NULL);
     SYMBOLTABLEENTRY_NEXT(currentSymbolEntry) = symbolEntry;
 
   } else {
 
-    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, params, NULL);
+    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, indexlevel, params, NULL);
     SYMBOLTABLE_ENTRIES(INFO_ST(arg_info)) = symbolEntry;
 
   }
@@ -80,7 +83,7 @@ node* get_entry(char* name, info* arg_info) {
 
     current_ST_entry = SYMBOLTABLEENTRY_NEXT(current_ST_entry);
     }
-    
+
     current_ST = SYMBOLTABLE_PARENT(current_ST);
   }
 
