@@ -5,10 +5,10 @@ __init:
 
 test:
     esr 1
-    iloadc 0
+    iloadg 0
     istore 2
-    iloadc 0
-    istoreg 0
+    iloadg 0
+    istore 2
     iloadc 1
     ireturn
 

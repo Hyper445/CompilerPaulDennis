@@ -96,6 +96,15 @@
         </travuser>
       </traversal>
 
+      <traversal id="MCT" name="Create Constant Table" default="sons" include="make_constant_table.h">
+        <travuser>
+            <node name="Program" />
+            <node name="VarDecl" />
+            <node name="Num" />
+            <node name="Float" />
+        </travuser>
+      </traversal>
+
       <traversal id="CG" name="Generate code" default="sons" include="code_generation.h">
         <travuser>
             <node name="Program" />
@@ -167,6 +176,16 @@
                 <targets>
                     <target mandatory="no">
                         <node name="Symboltable"/>
+                        <phases>
+                            <all/>
+                        </phases>
+                    </target>
+                </targets>
+            </son>
+            <son name="Constanttable">
+                <targets>
+                    <target mandatory="no">
+                        <node name="Constant"/>
                         <phases>
                             <all/>
                         </phases>
@@ -1180,6 +1199,59 @@
             </attribute>
             <attribute name="Decl">
                 <type name="Link">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+        </attributes>
+    </node>
+
+    <node name="Constant">
+        <sons>
+            <son name="Next">
+                <targets>
+                    <target mandatory="no">
+                        <node name="Constant"/>
+                        <phases>
+                            <all/>
+                        </phases>
+                    </target>
+                </targets>
+            </son>
+        </sons>
+        <attributes>
+            <attribute name="Type">
+                <type name="Type">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Value">
+                <type name="Link">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Index">
+                <type name="Int">
                     <targets>
                         <target mandatory="yes">
                             <any/>

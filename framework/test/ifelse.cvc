@@ -2,9 +2,8 @@ int x = 4;
 int y = 6;
 
 int test() {
-	if (3) {
+	if (4) {
 		y = 2;
 	}
-	x = 7;
 }
 

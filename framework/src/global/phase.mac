@@ -76,9 +76,11 @@ SUBPHASE( tw,
           ALWAYS,
           pet)
 
-
-SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)      
-
+SUBPHASE( mct,
+          "Making Constant Table",
+          MCTdoMakeConstantTable,
+          ALWAYS,
+          pet)
 
 SUBPHASE( cg,
           "Generating Code",

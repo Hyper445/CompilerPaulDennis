@@ -4,11 +4,10 @@ int b = 3;
 
 int test(int d, int e) {
 
-    int a;
-    int c = a;
-    c = 5;
+    int c;
 
-    b = 3;
+    c = b;
+    c = b;
 
 
     return 2;
