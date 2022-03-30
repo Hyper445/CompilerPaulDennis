@@ -107,6 +107,7 @@
             <node name="Float"/>
             <node name="IfElse" />
             <node name="DoWhile" />
+            <node name="FunCall" />
         </travuser>
       </traversal>
 

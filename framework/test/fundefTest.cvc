@@ -1,22 +1,14 @@
 int b = 3;
 float c = 2.0;
 int a = 3;
+int test = 3;
 
 
 int test(int d, int e) {
 
-    if ((a < 0)) {
-        if ((b > 5)) {
-            a = (a + 1);
-        }
-    }
-    else {
-        a = (a * 5);
-    }
-
     b = a;
 
-    test(a, a);
+    test(test, a);
 
     return 2;
 
