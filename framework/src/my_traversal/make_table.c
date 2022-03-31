@@ -129,11 +129,16 @@ node *MTifelse (node *arg_node, info *arg_info) {
 node *MTfundef (node *arg_node, info *arg_info){
   
   DBUG_ENTER("MTfundef");
+  char* name;
+  type type;
   
-  // // When reaching a function definition, add this to the current symbol table
-  char* name; // = STRcpy(FUNDEF_NAME(arg_node));
-  type type; // = FUNDEF_TYPE(arg_node);
-  // addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node));
+  // When reaching a function definition, add this to the current symbol table
+  if (SYMBOLTABLE_NAME(INFO_ST(arg_info)) != "Global") {
+    printf("ST name = %s\n", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+    name = STRcpy(FUNDEF_NAME(arg_node));
+    type = FUNDEF_TYPE(arg_node);
+    addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node));
+  }
 
   node* parent_table = INFO_ST(arg_info);
 
@@ -165,6 +170,7 @@ node *MTfundef (node *arg_node, info *arg_info){
   DBUG_RETURN(arg_node);
   
 }
+
 
 node *MTglobdecl (node *arg_node, info *arg_info) {
 

@@ -9,6 +9,16 @@ int test(int d, int e) {
     c = b;
     c = b;
 
+    int test2(int f, int g) {
+        int x = 3;
+
+    }
+
+
+
+}
+
+int test3(int h) {
 
     return 2;
 
