@@ -112,7 +112,7 @@ node* MCTnum(node* arg_node, info* arg_info) {
   int index = 0;
 
   if (INFO_C(arg_info)) {
-    
+
     node* current_constant = INFO_C(arg_info);
     node* previous_constant = current_constant;
     while (current_constant) {
@@ -141,14 +141,10 @@ node* MCTnum(node* arg_node, info* arg_info) {
       
 
     }
-    printf("Uit node: %d \n", NODE_TYPE(arg_node));
-    printf("constant toevoegen met value = %d\n", NUM_VALUE(arg_node));
+
     CONSTANT_NEXT(previous_constant) = TBmakeConstant(T_int, arg_node, index, NULL);
 
   } else {
-
-    printf("Uit node: %d \n", NODE_TYPE(arg_node));
-    printf("%d = value \n", NUM_VALUE(arg_node));
 
     INFO_C(arg_info) = TBmakeConstant(T_int, arg_node, index, NULL);
 

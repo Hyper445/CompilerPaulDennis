@@ -108,24 +108,8 @@ node *CGprogram(node* arg_node, info* arg_info) {
     INFO_GST(arg_info) = PROGRAM_SYMBOLTABLE(arg_node);
     PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 
-    node* current_constant = INFO_CT(arg_info);
-
-    while (current_constant) {
-
-      switch(NODE_TYPE(CONSTANT_VALUE(current_constant))) {
-        case N_float:
-          printf("\n.constant float %f", FLOAT_VALUE(CONSTANT_VALUE(current_constant)));
-          break;
-
-        case N_num:
-          printf("\n.constant int %d", NUM_VALUE(CONSTANT_VALUE(current_constant)));
-          break;
-
-      }
-      current_constant = CONSTANT_NEXT(current_constant);
-
-    }
-
+    print_constants(INFO_CT(arg_info));
+    print_globals(PROGRAM_SYMBOLTABLE(arg_node));
 
     DBUG_RETURN(arg_node);
   

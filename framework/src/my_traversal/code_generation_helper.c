@@ -14,6 +14,52 @@
 #include "memory.h"
 #include "ctinfo.h"
 
+void print_globals(node* symbolTable) {
+
+    node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
+
+    while (current_entry) {
+
+        if (SYMBOLTABLEENTRY_PARAMS(current_entry)) {
+            //.exportfun "__init" void __init
+            printf(".fun \"%s\" %s %s\n", SYMBOLTABLEENTRY_NAME(current_entry), 
+                type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry)), SYMBOLTABLEENTRY_NAME(current_entry));
+
+        } else {
+            
+            printf(".global %s\n", type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry))); 
+
+        }
+
+        current_entry = SYMBOLTABLEENTRY_NEXT(current_entry);
+
+    }
+
+}
+
+
+
+void print_constants(node* constant) {
+
+    while (constant) {
+
+      switch(NODE_TYPE(CONSTANT_VALUE(constant))) {
+        case N_float:
+          printf(".constant float %f\n", FLOAT_VALUE(CONSTANT_VALUE(constant)));
+          break;
+
+        case N_num:
+          printf(".constant int %d\n", NUM_VALUE(CONSTANT_VALUE(constant)));
+          break;
+
+      }
+      constant = CONSTANT_NEXT(constant);
+
+    }
+
+
+}
+
 node* in_table(node* value_node, node* constant_table) {
 
   if (constant_table) {
@@ -48,6 +94,23 @@ node* in_table(node* value_node, node* constant_table) {
   return NULL;
 
 }
+
+// Helper function. Converts a type to a string.
+char* type_to_string(int type) {
+  switch(type) {
+    case T_bool:
+      return "boolean";
+    case T_float:
+      return "float";
+    case T_int:
+      return "int";
+    case T_void:
+      return "void";
+    default:
+      return "unknown";
+  }
+}
+
 
 char* type_to_char(int type) {
 

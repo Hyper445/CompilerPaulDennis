@@ -12,6 +12,7 @@
 
 #include "make_table.h"
 #include "make_table_helper.h"
+#include "code_generation_helper.h"
 #include "lookup_table.h"
 #include "types.h"
 #include "tree_basic.h"
@@ -423,22 +424,6 @@ type get_type(node* expr, info* arg_info) {
 
   }
 
-}
-
-// Helper function. Converts a type to a string.
-char* type_to_string(int type) {
-  switch(type) {
-    case T_bool:
-      return "boolean";
-    case T_float:
-      return "float";
-    case T_int:
-      return "integer";
-    case T_void:
-      return "void";
-    default:
-      return "unknown";
-  }
 }
 
 // Helper function. Converts an operator to a string.
