@@ -120,7 +120,6 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 
     INFO_SUM_C(arg_info) = 0;
     INFO_SUM_V(arg_info) = 0;
-    INFO_SUM_S(arg_info) = 0;
 
     printf("%s:\n", FUNDEF_NAME(arg_node));
 
@@ -209,8 +208,12 @@ node *CGreturn(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGreturn");
 
     RETURN_EXPR(arg_node) = TRAVopt(RETURN_EXPR(arg_node), arg_info);
+    if (RETURN_EXPR(arg_node)) {
+      printf("\t%sreturn\n", type_to_char(RETURN_TYPE(arg_node)));
 
-    printf("\t%sreturn\n", type_to_char(RETURN_TYPE(arg_node)));
+    } else {
+      printf("\treturn\n");
+    }
 
     DBUG_RETURN(arg_node);
 }

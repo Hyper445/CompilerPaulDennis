@@ -147,6 +147,8 @@ node *VAprogram( node* arg_node, info * arg_info) {
 
     current_decl = DECLS_NEXT(current_decl);
   }
+
+  addNodeStatements(TBmakeReturn(NULL), funbody);
   
   node* fundef = TBmakeFundef(T_void, STRcpy("__init"), NULL, funbody, NULL);
 

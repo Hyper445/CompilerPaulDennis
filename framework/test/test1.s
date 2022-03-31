@@ -1,6 +1,10 @@
 __init:
     iloadc 0
     istoreg 0
+    iloadc 1
+    istoreg 1
+    iloadc 2
+    istoreg 2
     return
 
 test:
@@ -9,8 +13,7 @@ test:
     istore 2
     iloadg 0
     istore 2
-    iloadc 1
-    ireturn
+    return
 
 test4:
     iloadc 1
@@ -18,5 +21,8 @@ test4:
 
 .const int 3
 .const int 2
+.const int 5
 .exportfun "__init" void __init
+.global int
+.global int
 .global int

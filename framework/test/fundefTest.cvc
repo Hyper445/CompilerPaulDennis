@@ -1,4 +1,6 @@
 int b = 3;
+int hoi = 2;
+int doei = 5;
 
 
 void test(int d, int e) {
