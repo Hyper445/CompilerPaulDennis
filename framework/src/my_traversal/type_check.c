@@ -176,7 +176,7 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCfuncall");
 
   node* symboltable = INFO_ST(arg_info);
-  node* fun_entry = get_entry(FUNCALL_NAME(arg_node), arg_info);
+  node* fun_entry = get_entry(FUNCALL_NAME(arg_node), INFO_ST(arg_info));
   node* funcall_params = FUNCALL_ARGS(arg_node);
   node* fun_params;
   
@@ -352,13 +352,13 @@ type get_type(node* expr, info* arg_info) {
       return MONOP_TYPE(expr);
 
     case N_funcall:
-      return SYMBOLTABLEENTRY_TYPE(get_entry(expr, arg_info));
+      return SYMBOLTABLEENTRY_TYPE(get_entry(expr, INFO_ST(arg_info)));
 
     case N_cast:
       return CAST_TYPE(expr);
 
     case N_var:
-      return SYMBOLTABLEENTRY_TYPE(get_entry(STRcpy(VAR_NAME(expr)), arg_info));
+      return SYMBOLTABLEENTRY_TYPE(get_entry(STRcpy(VAR_NAME(expr)), INFO_ST(arg_info)));
 
     case N_num:
       return T_int;

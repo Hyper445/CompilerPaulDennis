@@ -63,10 +63,10 @@ void addSymbol(char* name, type type, info* arg_info, node* params) {
 
 }
 
-node* get_entry(char* name, info* arg_info) {
+node* get_entry(char* name, node* current_ST) {
 
   // gets ST and it's first entry.
-  node* current_ST = INFO_ST(arg_info);
+  // node* current_ST = INFO_ST(arg_info);
   node* current_ST_entry;
   
   // Loops through the symboltables until the function decleration has been found.
