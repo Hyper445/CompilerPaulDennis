@@ -1,24 +1,18 @@
-int b = 3;
-int hoi = 2;
-int doei = 5;
+int b = 10;
 
 
 void test(int d, int e) {
 
-    int c;
+    bool y = true;
+    bool x = false;
 
-    c = b;
+    int c = (5 * (2 * 10));
 
-    c = b;
+    bool z = true;
 
     return;
 
 
 }
 
-int test4(int h) {
-
-    return 2;
-
-}
 

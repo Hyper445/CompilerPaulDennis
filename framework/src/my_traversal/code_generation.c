@@ -108,7 +108,9 @@ node *CGprogram(node* arg_node, info* arg_info) {
     INFO_GST(arg_info) = PROGRAM_SYMBOLTABLE(arg_node);
     PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 
+    printf("\n");
     print_constants(INFO_CT(arg_info));
+    print_funs(PROGRAM_SYMBOLTABLE(arg_node));
     print_globals(PROGRAM_SYMBOLTABLE(arg_node));
 
     DBUG_RETURN(arg_node);
@@ -185,7 +187,22 @@ extern node *CGassign (node *arg_node, info *arg_info) {
     //ASSIGN_LET(arg_node) = TRAVopt(ASSIGN_LET(arg_node), arg_info);
     ASSIGN_EXPR(arg_node) = TRAVdo(ASSIGN_EXPR(arg_node), arg_info);
 
-    printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+    // EVEN EEN MANIER ZIEN TE VINDEN OM ERACHTER TE KOMEN OF ASSIGN_LET EEN GLOBALE VARIABELE IS //
+    if (ASSIGN_LET(arg_node)) {
+
+      if (get_entry(VARLET_NAME(ASSIGN_LET(arg_node)), INFO_GST(arg_info)) == 
+            VARLET_DECL(ASSIGN_LET(arg_node))) {
+        
+        printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+
+      }
+      else {
+        printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+      }
+
+    } else {
+      printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+    }
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
     INFO_SUM_S(arg_info) = INFO_SUM_S(arg_info) + 1;

@@ -8,11 +8,15 @@ __init:
     return
 
 test:
-    esr 1
-    iloadg 0
-    istore 2
-    iloadg 0
-    istore 2
+    esr 4
+    bloadc_t
+    bstore 2
+    bloadc_f
+    bstore 3
+    iloadc 3
+    istore 4
+    bloadc_t
+    bstore 5
     return
 
 test4:
@@ -22,6 +26,7 @@ test4:
 .const int 3
 .const int 2
 .const int 5
+.const int 18
 .exportfun "__init" void __init
 .global int
 .global int

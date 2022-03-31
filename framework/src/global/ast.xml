@@ -112,6 +112,7 @@
         <travuser>
             <node name="Program" />
             <node name="VarDecl" />
+            <node name="BinOp" />
             <node name="Num" />
             <node name="Float" />
         </travuser>

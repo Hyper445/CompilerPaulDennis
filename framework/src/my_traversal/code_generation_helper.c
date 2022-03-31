@@ -14,27 +14,33 @@
 #include "memory.h"
 #include "ctinfo.h"
 
-void print_globals(node* symbolTable) {
+
+void print_funs(node* symbolTable) {
 
     node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
-
     while (current_entry) {
 
         if (SYMBOLTABLEENTRY_PARAMS(current_entry)) {
             //.exportfun "__init" void __init
             printf(".fun \"%s\" %s %s\n", SYMBOLTABLEENTRY_NAME(current_entry), 
                 type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry)), SYMBOLTABLEENTRY_NAME(current_entry));
+        
+        }
+        current_entry = SYMBOLTABLEENTRY_NEXT(current_entry);
+    }
+}
 
-        } else {
+void print_globals(node* symbolTable) {
+
+    node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
+    while (current_entry) {
+        
+        if (!SYMBOLTABLEENTRY_PARAMS(current_entry)) { 
             
             printf(".global %s\n", type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry))); 
-
         }
-
         current_entry = SYMBOLTABLEENTRY_NEXT(current_entry);
-
     }
-
 }
 
 

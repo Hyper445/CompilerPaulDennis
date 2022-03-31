@@ -4,6 +4,7 @@
 #include "types.h"
 
 extern node *MCTprogram (node *arg_node, info *arg_info);
+extern node *MCTbinop (node *arg_node, info *arg_info);
 extern node *MCTvardecl (node *arg_node, info *arg_info);
 extern node *MCTfloat (node *arg_node, info *arg_info);
 extern node *MCTnum (node *arg_node, info *arg_info);

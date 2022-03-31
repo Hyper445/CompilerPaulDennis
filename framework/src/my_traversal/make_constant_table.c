@@ -31,6 +31,8 @@
 
 struct INFO {
   node* constant;
+  int int_result;
+  float float_result;
 };
 
 
@@ -40,6 +42,8 @@ struct INFO {
  */
 
 #define INFO_C(n) ((n)->constant)
+#define INFO_INT(n) ((n)->int_result)
+#define INFO_FLOAT(n) ((n)->float_result)
 
 
 /*
@@ -74,12 +78,68 @@ static info *FreeInfo( info *info)
  * Traversal functions
  */
 
+void addConstant(node* arg_node, info* arg_info) {
+  
+  int index = 0;
+
+  if (INFO_C(arg_info)) {
+
+    node* current_constant = INFO_C(arg_info);
+    node* previous_constant = current_constant;
+    while (current_constant) {
+      
+      if (NODE_TYPE(CONSTANT_VALUE(current_constant)) == NODE_TYPE(arg_node))
+
+        switch (NODE_TYPE(arg_node)) {
+
+          case N_float:
+            if (FLOAT_VALUE(CONSTANT_VALUE(current_constant)) == FLOAT_VALUE(arg_node)) {
+              return;
+            }
+
+          case N_num:
+            if (NUM_VALUE(CONSTANT_VALUE(current_constant)) == NUM_VALUE(arg_node)) {
+              return;
+            }
+
+          default:
+            break;
+
+        }
+      
+      index++;
+      previous_constant = current_constant;
+      current_constant = CONSTANT_NEXT(current_constant);
+      
+
+    }
+
+    printf("%d added value \n", NUM_VALUE(arg_node));
+
+    CONSTANT_NEXT(previous_constant) = TBmakeConstant(NODE_TYPE(arg_node), arg_node, index, NULL);
+
+  } else {
+
+    printf("%d added value \n", NUM_VALUE(arg_node));
+    INFO_C(arg_info) = TBmakeConstant(NODE_TYPE(arg_node), arg_node, index, NULL);
+
+  }
+
+
+}
+
+
 node* MCTprogram(node *arg_node, info *arg_info) {
 
   DBUG_ENTER("MCTprogram");
 
   PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
   PROGRAM_CONSTANTTABLE(arg_node) = INFO_C(arg_info);
+
+  //arg_node = addConstant(TBmakeFloat(INFO_FLOAT(arg_info)), arg_info);
+  addConstant(TBmakeNum(INFO_INT(arg_info)), arg_info);
+
+
   DBUG_RETURN(arg_node);
 
 }
@@ -90,6 +150,51 @@ node *MCTglobdef (node *arg_node, info *arg_info) {
 
   GLOBDEF_INIT(arg_node) = TRAVopt(GLOBDEF_INIT(arg_node), arg_info);
 
+  DBUG_RETURN(arg_node);
+
+}
+
+node *MCTbinop (node* arg_node, info* arg_info) {
+
+  DBUG_ENTER("MCTbinop");
+
+  if (NODE_TYPE(BINOP_LEFT(arg_node)) == NODE_TYPE(BINOP_RIGHT(arg_node))) {
+
+    if (NODE_TYPE(BINOP_LEFT(arg_node)) == N_num) {
+
+      switch (BINOP_OP(arg_node)) {
+
+        case BO_add:
+          INFO_INT(arg_info) = NUM_VALUE(BINOP_LEFT(arg_node)) + NUM_VALUE(BINOP_RIGHT(arg_node));
+          break;
+
+        case BO_mul:
+          printf("Hier moet ie dus zijn\n\n");
+          INFO_INT(arg_info) = NUM_VALUE(BINOP_LEFT(arg_node)) * NUM_VALUE(BINOP_RIGHT(arg_node));
+          printf("%d = resultaat\n", INFO_INT(arg_info));
+          break;
+
+        case BO_div:
+          INFO_INT(arg_info) = NUM_VALUE(BINOP_LEFT(arg_node)) / NUM_VALUE(BINOP_RIGHT(arg_node));
+          break;
+
+        case BO_sub:
+          INFO_INT(arg_info) = NUM_VALUE(BINOP_LEFT(arg_node)) - NUM_VALUE(BINOP_RIGHT(arg_node));
+          break;
+
+        case BO_mod:
+          INFO_INT(arg_info) = NUM_VALUE(BINOP_LEFT(arg_node)) % NUM_VALUE(BINOP_RIGHT(arg_node));
+          break;
+
+      }
+
+    }
+
+  }
+
+  BINOP_LEFT(arg_node) = TRAVopt(BINOP_LEFT(arg_node), arg_info);
+  BINOP_RIGHT(arg_node) = TRAVopt(BINOP_RIGHT(arg_node), arg_info);
+  
   DBUG_RETURN(arg_node);
 
 }
@@ -109,46 +214,8 @@ node* MCTnum(node* arg_node, info* arg_info) {
 
 
   DBUG_ENTER("MCTnum");
-  int index = 0;
 
-  if (INFO_C(arg_info)) {
-
-    node* current_constant = INFO_C(arg_info);
-    node* previous_constant = current_constant;
-    while (current_constant) {
-      
-      if (NODE_TYPE(CONSTANT_VALUE(current_constant)) == NODE_TYPE(arg_node))
-        switch (NODE_TYPE(arg_node)) {
-
-          case N_float:
-            if (FLOAT_VALUE(CONSTANT_VALUE(current_constant)) == FLOAT_VALUE(arg_node)) {
-              DBUG_RETURN(arg_node);;
-            }
-
-          case N_num:
-            if (NUM_VALUE(CONSTANT_VALUE(current_constant)) == NUM_VALUE(arg_node)) {
-              DBUG_RETURN(arg_node);
-            }
-
-          default:
-            break;
-
-        }
-      
-      index++;
-      previous_constant = current_constant;
-      current_constant = CONSTANT_NEXT(current_constant);
-      
-
-    }
-
-    CONSTANT_NEXT(previous_constant) = TBmakeConstant(T_int, arg_node, index, NULL);
-
-  } else {
-
-    INFO_C(arg_info) = TBmakeConstant(T_int, arg_node, index, NULL);
-
-  }
+  addConstant(arg_node, arg_info);
 
   DBUG_RETURN(arg_node);
 
@@ -157,43 +224,8 @@ node* MCTnum(node* arg_node, info* arg_info) {
 node* MCTfloat(node* arg_node, info* arg_info) {
 
   DBUG_ENTER("MCTfloat");
-  int index = 0;
 
-  if (INFO_C(arg_info)) {
-    index++;
-    node* current_constant = INFO_C(arg_info);
-    while (CONSTANT_NEXT(current_constant) != NULL) {
-      
-      if (NODE_TYPE(CONSTANT_VALUE(current_constant)) == NODE_TYPE(arg_node))
-        switch (NODE_TYPE(arg_node)) {
-
-          case N_float:
-            if (FLOAT_VALUE(CONSTANT_VALUE(current_constant)) == FLOAT_VALUE(arg_node)) {
-              DBUG_RETURN(arg_node);;
-            }
-
-          case N_num:
-            if (NUM_VALUE(CONSTANT_VALUE(current_constant)) == NUM_VALUE(arg_node)) {
-              DBUG_RETURN(arg_node);
-            }
-
-          default:
-            break;
-
-        }
-      
-      index++;
-      current_constant = CONSTANT_NEXT(current_constant);
-
-    }
-
-    CONSTANT_NEXT(current_constant) = TBmakeConstant(T_float, arg_node, index, NULL);
-
-  } else {
-
-    INFO_C(arg_info) = TBmakeConstant(T_float, arg_node, index, NULL);
-
-  }
+  addConstant(arg_node, arg_info);
 
   DBUG_RETURN(arg_node);
 
