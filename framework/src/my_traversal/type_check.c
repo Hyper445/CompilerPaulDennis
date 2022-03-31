@@ -214,6 +214,8 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
+// node* TCreturn (node* arg_node, info* arg_info)
+
 node *TCassign (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCassign");
 

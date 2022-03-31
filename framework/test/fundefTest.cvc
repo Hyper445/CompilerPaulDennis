@@ -7,18 +7,15 @@ int test(int d, int e) {
     int c;
 
     c = b;
+
     c = b;
 
-    int test2(int f, int g) {
-        int x = 3;
-
-    }
-
+    return 2;
 
 
 }
 
-int test3(int h) {
+int test4(int h) {
 
     return 2;
 

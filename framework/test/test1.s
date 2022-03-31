@@ -12,6 +12,10 @@ test:
     iloadc 1
     ireturn
 
+test4:
+    iloadc 1
+    ireturn
+
 .const int 3
 .const int 2
 .exportfun "__init" void __init
