@@ -135,6 +135,8 @@ node* in_table(node* value_node, node* constant_table) {
 char* type_to_char(int type) {
 
   switch(type) {
+    case 0:
+      return ("");
     case 1 :
       return ("b");
     case 2 :
@@ -302,6 +304,16 @@ node *CGbinop(node* arg_node, info* arg_info) {
     BINOP_RIGHT(arg_node) = TRAVdo(BINOP_RIGHT(arg_node), arg_info);
 
     printf("\t%s%s\n", type_to_char(BINOP_SUBTYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
+
+    DBUG_RETURN(arg_node);
+}
+
+node *CGreturn(node* arg_node, info* arg_info) {
+    DBUG_ENTER("CGreturn");
+
+    RETURN_EXPR(arg_node) = TRAVopt(RETURN_EXPR(arg_node), arg_info);
+
+    printf("\t%sreturn\n", type_to_char(RETURN_TYPE(arg_node)));
 
     DBUG_RETURN(arg_node);
 }

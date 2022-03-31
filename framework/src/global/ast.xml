@@ -84,6 +84,7 @@
             <node name="MonOp" />
             <node name="Cast" />
             <node name="GlobDef" />
+            <node name="Return" />
         </travuser>
       </traversal>
 
@@ -128,6 +129,7 @@
             <node name="IfElse" />
             <node name="DoWhile" />
             <node name="FunCall" />
+            <node name="Return" />
         </travuser>
       </traversal>
 
@@ -330,6 +332,20 @@
                 </targets>
             </son>
         </sons>
+        <attributes>
+            <attribute name="Type">
+                <type name="Type">
+                    <targets>
+                        <target mandatory="no">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+        </attributes>
     </node>
 
     <node name="FunCall">

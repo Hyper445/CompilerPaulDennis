@@ -10,7 +10,7 @@ int test(int d, int e) {
 
     c = b;
 
-    return 2;
+    return 3;
 
 
 }

@@ -17,6 +17,7 @@ extern node *TCbool (node *arg_node, info *arg_info);
 extern node *TCvar (node *arg_node, info *arg_info);
 extern node *TCvarlet (node *arg_node, info *arg_info);
 extern node *TCmonop (node *arg_node, info *arg_info);
+extern node *TCreturn (node *arg_node, info *arg_info);
 extern node *TCcast (node *arg_node, info *arg_info);
 
 extern node *TCdoTypeCheck( node *syntaxtree);

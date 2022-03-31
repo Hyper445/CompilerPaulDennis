@@ -214,7 +214,31 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// node* TCreturn (node* arg_node, info* arg_info)
+node* TCreturn (node* arg_node, info* arg_info) {
+
+  DBUG_ENTER("TCreturn");
+
+  RETURN_EXPR(arg_node) = TRAVopt(RETURN_EXPR(arg_node), arg_info);
+  type returnType = INFO_TYPE(arg_info);
+
+  // Check if the expr type matches the fundef type
+  node* fundefEntry = get_entry(SYMBOLTABLE_NAME(INFO_ST(arg_info)), INFO_ST(arg_info));
+  
+  type fundefType = SYMBOLTABLEENTRY_TYPE(fundefEntry);
+
+  if (fundefType != returnType) {
+
+    CTIerrorLine(NODE_LINE(arg_node),"function '%s' expects '%s' type.", SYMBOLTABLE_NAME(INFO_ST(arg_info)), type_to_string(fundefType));
+
+  }
+
+  RETURN_TYPE(arg_node) = returnType;
+
+  DBUG_RETURN(arg_node);
+
+
+
+}
 
 node *TCassign (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCassign");
