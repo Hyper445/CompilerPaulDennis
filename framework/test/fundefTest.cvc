@@ -1,8 +1,7 @@
 int b = 3;
 
 
-
-int test(int d, int e) {
+void test(int d, int e) {
 
     int c;
 
@@ -10,7 +9,7 @@ int test(int d, int e) {
 
     c = b;
 
-    return 3;
+    return;
 
 
 }

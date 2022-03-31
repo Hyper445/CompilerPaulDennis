@@ -61,6 +61,27 @@ node *TCfundef(node *arg_node, info* arg_info) {
 
   DBUG_ENTER("TCfundef");
   INFO_ST(arg_info) = FUNDEF_SYMBOLTABLE(arg_node);
+  node* symboltable = FUNDEF_SYMBOLTABLE(arg_node);
+  
+  if (FUNDEF_FUNBODY(arg_node)) {
+    node *funbody = FUNDEF_FUNBODY(arg_node);
+    node *stmts = FUNBODY_STMTS(funbody);
+
+    while (stmts) {
+
+      if (NODE_TYPE(STMTS_STMT(stmts)) == N_return) {
+        break;
+      }
+
+      stmts = STMTS_NEXT(stmts);
+
+    }
+    if (!stmts && SYMBOLTABLEENTRY_TYPE(get_entry(SYMBOLTABLE_NAME(symboltable), symboltable)) != T_void) {
+      CTIerrorLine(NODE_LINE(arg_node), "Function expects return!");
+    }
+
+  }
+
   FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
@@ -223,12 +244,17 @@ node* TCreturn (node* arg_node, info* arg_info) {
 
   // Check if the expr type matches the fundef type
   node* fundefEntry = get_entry(SYMBOLTABLE_NAME(INFO_ST(arg_info)), INFO_ST(arg_info));
-  
+
   type fundefType = SYMBOLTABLEENTRY_TYPE(fundefEntry);
 
-  if (fundefType != returnType) {
+  if (fundefType != returnType && fundefType != T_void) {
 
     CTIerrorLine(NODE_LINE(arg_node),"function '%s' expects '%s' type.", SYMBOLTABLE_NAME(INFO_ST(arg_info)), type_to_string(fundefType));
+
+  } else if (fundefType == T_void && RETURN_EXPR(arg_node)) {
+
+    CTIerrorLine(NODE_LINE(arg_node),"function '%s' doesn't expect a return.", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+
 
   }
 

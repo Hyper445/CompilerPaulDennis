@@ -56,8 +56,9 @@
 "for"                      { FILTER( FOR);}
 
 "int"                      { FILTER ( INT_TYPE);  }
-"float"                      { FILTER ( FLOAT_TYPE);  }
-"bool"                      { FILTER ( BOOL_TYPE);  }
+"void"                     { FILTER ( VOID_TYPE); }
+"float"                    { FILTER ( FLOAT_TYPE);  }
+"bool"                     { FILTER ( BOOL_TYPE);  }
 "do"                       { FILTER( DO);}
 "while"                    { FILTER( WHILE);}
 

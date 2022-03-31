@@ -32,7 +32,7 @@ static int yyerror( char *errname);
  type                ctype;
 }
 
-%token INT_TYPE FLOAT_TYPE BOOL_TYPE
+%token INT_TYPE FLOAT_TYPE BOOL_TYPE VOID_TYPE
 %token BRACKET_L BRACKET_R COMMA SEMICOLON
 %token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND
 %token NOT NEG
@@ -487,6 +487,7 @@ monop: NOT { $$ = MO_not; }
 type: INT_TYPE { $$ = T_int;}
     | FLOAT_TYPE { $$ = T_float;}
     | BOOL_TYPE { $$ = T_bool;}
+    | VOID_TYPE { $$ = T_void;}
 
 
 %%
