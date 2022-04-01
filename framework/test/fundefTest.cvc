@@ -1,20 +1,21 @@
-int b = 1;
+int d = 1;
 
 
 void test(int d, int e) {
 
-    bool y = true;
-    bool x = false;
-
-    float hoi = 3.0;
-    float doei = 1.0;
-
-    int c = (5 * (2 * 10));
-
-    bool z = true;
-
+    int b = 3;
+    int a = (a + 1);
+    test3();
     return;
 
+
+}
+
+int test3() {
+
+    int b = 3;
+
+    return 1;
 
 }
 

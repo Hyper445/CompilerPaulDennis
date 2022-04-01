@@ -138,6 +138,7 @@ node *MTfundef (node *arg_node, info *arg_info){
     name = STRcpy(FUNDEF_NAME(arg_node));
     type = FUNDEF_TYPE(arg_node);
     addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node));
+
   }
 
   node* parent_table = INFO_ST(arg_info);
@@ -157,7 +158,8 @@ node *MTfundef (node *arg_node, info *arg_info){
     while (current_param) {
       name = STRcpy(PARAM_NAME(current_param));
       type = PARAM_TYPE(current_param);
-      addSymbol(name, type, arg_info, NULL);
+      addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node));
+
       current_param = PARAM_NEXT(current_param); 
     }
   }
