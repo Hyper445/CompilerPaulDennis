@@ -273,13 +273,23 @@ node* CGnum(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGnum");
 
     node* constant_table = in_table(arg_node, INFO_CT(arg_info));
-
     if (constant_table) {
-      printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
 
+      printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
+ 
     } else {
-      printf("\tiloadc %d\n", 0);
+
+      char* optimisedCode = optimise(arg_node); 
+      printf("%s\n", optimisedCode);
+    
     }
+
+    // if (constant_table) {
+    //   printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
+
+    // } else {
+    //   printf("\tiloadc %d\n", 0);
+    // }
 
     // printf("\tiloadc %d\n", INFO_SUM_C(arg_info));
     //printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
@@ -294,7 +304,16 @@ node* CGnum(node* arg_node, info* arg_info) {
 node* CGfloat(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGfloat");
 
-    printf("\tfloadc %d\n", INFO_SUM_C(arg_info));
+    node* constant_table = in_table(arg_node, INFO_CT(arg_info));
+    if (constant_table) {
+
+      printf("\tfloadc %d\n", CONSTANT_INDEX(constant_table));
+ 
+    } else {
+      char* optimisedCode = optimise(arg_node); 
+      printf("%s\n", optimisedCode);
+    
+    }
 
     INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
 

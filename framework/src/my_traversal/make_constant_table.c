@@ -114,13 +114,10 @@ void addConstant(node* arg_node, info* arg_info) {
 
     }
 
-    printf("%d added value \n", NUM_VALUE(arg_node));
-
     CONSTANT_NEXT(previous_constant) = TBmakeConstant(NODE_TYPE(arg_node), arg_node, index, NULL);
 
   } else {
 
-    printf("%d added value \n", NUM_VALUE(arg_node));
     INFO_C(arg_info) = TBmakeConstant(NODE_TYPE(arg_node), arg_node, index, NULL);
 
   }
@@ -214,8 +211,10 @@ node* MCTnum(node* arg_node, info* arg_info) {
 
 
   DBUG_ENTER("MCTnum");
-
-  addConstant(arg_node, arg_info);
+  int value = NUM_VALUE(arg_node);
+  if (value != -1 && value != 0 && value != 1) {
+    addConstant(arg_node, arg_info);
+  }
 
   DBUG_RETURN(arg_node);
 
@@ -225,7 +224,12 @@ node* MCTfloat(node* arg_node, info* arg_info) {
 
   DBUG_ENTER("MCTfloat");
 
-  addConstant(arg_node, arg_info);
+  float value = FLOAT_VALUE(arg_node);
+  if (value != 0.0 && value != 1.0) {
+
+    addConstant(arg_node, arg_info);
+
+  }
 
   DBUG_RETURN(arg_node);
 

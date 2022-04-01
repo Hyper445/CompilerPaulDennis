@@ -68,33 +68,60 @@ void print_constants(node* constant) {
 
 node* in_table(node* value_node, node* constant_table) {
 
-  if (constant_table) {
+  while (constant_table) {
+    if (NODE_TYPE(CONSTANT_VALUE(constant_table)) == NODE_TYPE(value_node)) {
+      
+      switch (NODE_TYPE(value_node)) {
 
-    while (constant_table) {
+        case N_float:
+          if (FLOAT_VALUE(CONSTANT_VALUE(constant_table)) == FLOAT_VALUE(value_node)) {
+            return (constant_table);
+          }
+          break;
 
-      if (NODE_TYPE(CONSTANT_VALUE(constant_table)) == NODE_TYPE(value_node))
-        
-        switch (NODE_TYPE(value_node)) {
+        case N_num:
 
-          case N_float:
-            if (FLOAT_VALUE(CONSTANT_VALUE(constant_table)) == FLOAT_VALUE(value_node)) {
-              return (constant_table);
-            }
+          if (NUM_VALUE(CONSTANT_VALUE(constant_table)) == NUM_VALUE(value_node)) {              
+            return (constant_table);
+          }
+          break;
 
-          case N_num:
+        default:
+          break;
 
-            if (NUM_VALUE(CONSTANT_VALUE(constant_table)) == NUM_VALUE(value_node)) {              
-              return (constant_table);
-            }
-
-          default:
-            break;
-
-        }
-
-      constant_table = CONSTANT_NEXT(constant_table);
+      }
 
     }
+    constant_table = CONSTANT_NEXT(constant_table);
+
+  }
+  return NULL;
+
+}
+
+char* optimise(node* arg_node) {
+
+  // If constant isn't in the table, it is one of the optimised numbers
+  switch(NODE_TYPE(arg_node)) {
+    case N_num:
+      if (NUM_VALUE(arg_node) == -1) {
+        return ("\tiloadc_m1");
+      } else if (NUM_VALUE(arg_node) == 0) {
+        return ("\tiloadc_0");
+      } else if (NUM_VALUE(arg_node) == 1) {
+        return ("\tiloadc_1");
+      }
+      break;
+
+    case N_float:
+      printf("1\n");
+      if (FLOAT_VALUE(arg_node) == 0.0) {
+        return ("\tfloadc_0");
+      } else if (FLOAT_VALUE(arg_node) == 1.0) {
+        return ("\tfloadc_1");
+      }
+      break;
+
   }
 
   return NULL;
