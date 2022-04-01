@@ -16,6 +16,7 @@
         "lookup_table.h": "c",
         "opt_sub.h": "c",
         "traverse.h": "c",
-        "make_table_helper.h": "c"
+        "make_table_helper.h": "c",
+        "cstring": "cpp"
     }
 }

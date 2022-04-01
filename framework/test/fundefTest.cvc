@@ -1,13 +1,16 @@
-int d = 1;
+float d = 3.0;
+
+void test(int t, int e) {
 
 
-void test(int d, int e) {
+    void test2(int a) {
+        int x = 3;
+        return;
+    }
 
-    int b = 3;
-    int a = (a + 1);
     test3();
-    return;
 
+    d = 3.0;
 
 }
 

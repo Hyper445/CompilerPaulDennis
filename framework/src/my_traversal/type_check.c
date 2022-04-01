@@ -83,6 +83,7 @@ node *TCfundef(node *arg_node, info* arg_info) {
 
   }
 
+  FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
   FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
@@ -352,7 +353,7 @@ node *TCvar(node *arg_node, info *arg_info) {
   }
   else {
     INFO_TYPE(arg_info) = T_unknown;
-    CTIerror("variable %s is not declared", VAR_NAME(arg_node));
+    CTIerrorLine(NODE_LINE(arg_node), "variable %s is not declared", VAR_NAME(arg_node));
   }
 
   DBUG_RETURN(arg_node);
@@ -370,7 +371,7 @@ node *TCvarlet(node *arg_node, info *arg_info) {
   }
   else {
     INFO_TYPE(arg_info) = T_unknown;
-    CTIerror("variable %s is not declared", VARLET_NAME(arg_node));
+    CTIerrorLine(NODE_LINE(arg_node), "variable %s is not declared", VARLET_NAME(arg_node));
   }
 
   DBUG_RETURN(arg_node);

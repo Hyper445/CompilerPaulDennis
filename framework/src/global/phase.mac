@@ -40,11 +40,11 @@ SUBPHASE( mt,
           ALWAYS,
           pet)
 
-SUBPHASE( al, 
-          "Adding links",
-          ALdoAddLinks, 
-          ALWAYS,
-          pet)
+// SUBPHASE( al, 
+//           "Adding links",
+//           ALdoAddLinks, 
+//           ALWAYS,
+//           pet)
 
 SUBPHASE( pt,
           "Printing Symboltable",
