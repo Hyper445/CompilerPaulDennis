@@ -22,7 +22,7 @@ void print_funs(node* symbolTable) {
 
         if (SYMBOLTABLEENTRY_PARAMS(current_entry)) {
             //.exportfun "__init" void __init
-            printf(".fun \"%s\" %s %s\n", SYMBOLTABLEENTRY_NAME(current_entry), 
+            printf(".exportfun \"%s\" %s %s\n", SYMBOLTABLEENTRY_NAME(current_entry), 
                 type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry)), SYMBOLTABLEENTRY_NAME(current_entry));
         
         }

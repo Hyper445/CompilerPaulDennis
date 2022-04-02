@@ -104,15 +104,21 @@ globdecl: EXTERN type ID COMMA ids SEMICOLON
 
 globdef: EXPORT type ID LET expr COMMA exprs SEMICOLON
   {
-    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, $7, $5);
+    node* globNode= TBmakeGlobdef($2, STRcpy($3), NULL, $7, $5);
+    GLOBDEF_ISEXPORT(globNode) = TRUE;
+    $$ = globNode;
   } 
   | EXPORT type ID LET expr SEMICOLON
   {
-    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, NULL, $5);
+    node* globNode = TBmakeGlobdef($2, STRcpy($3), NULL, NULL, $5);
+    GLOBDEF_ISEXPORT(globNode) = TRUE;
+    $$ = globNode;
   }
   | EXPORT type ID SEMICOLON
   {
-    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, NULL, NULL);
+    node* globNode = TBmakeGlobdef($2, STRcpy($3), NULL, NULL, NULL);
+    GLOBDEF_ISEXPORT(globNode) = TRUE;
+    $$ = globNode;
   }
   | type ID LET expr COMMA exprs SEMICOLON
   {
@@ -130,11 +136,15 @@ globdef: EXPORT type ID LET expr COMMA exprs SEMICOLON
 
 fundef: EXPORT type ID BRACKET_L BRACKET_R funbody
   {
-    $$ = TBmakeFundef($2, STRcpy($3), NULL, $6, NULL);
+    node* funNode = TBmakeFundef($2, STRcpy($3), NULL, $6, NULL);
+    GLOBDEF_ISEXPORT(funNode) = TRUE;
+    $$ = funNode;
   }
   | EXPORT type ID BRACKET_L param BRACKET_R funbody
   {
-    $$ = TBmakeFundef($2, STRcpy($3), $5, $7, NULL);
+    node* funNode = TBmakeFundef($2, STRcpy($3), $5, $7, NULL);;
+    GLOBDEF_ISEXPORT(funNode) = TRUE;
+    $$ = funNode;
   }
   | type ID BRACKET_L BRACKET_R funbody
   {

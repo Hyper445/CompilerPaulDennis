@@ -1,12 +1,19 @@
 float d = 3.0;
+float c = 3.0;
 
 void test(int t, int e) {
 
     int a = 3;
+    int b = 2;
+    bool y = true;
 
 }
 
-int test3() {
+void test2(int a, int b) {
+    return;
+}
+
+int test3(int a) {
 
     int b = 3;
 

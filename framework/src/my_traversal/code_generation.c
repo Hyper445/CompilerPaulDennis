@@ -110,6 +110,25 @@ node *CGprogram(node* arg_node, info* arg_info) {
 
     printf("\n");
     print_constants(INFO_CT(arg_info));
+
+    node *current_decls = PROGRAM_DECLS(arg_node);
+    
+    while (current_decls) {
+      node *current_decl = DECLS_DECL(current_decls);
+      if (current_decl) {
+        if (NODE_TYPE(current_decl) == N_fundef && FUNDEF_ISEXPORT(current_decl) == TRUE) {
+
+          printf(".exportfun \"%s\" %s %s\n", FUNDEF_NAME(current_decl), 
+            type_to_string(FUNDEF_TYPE(current_decl)), FUNDEF_NAME(current_decl));
+
+        }
+
+        current_decls = DECLS_NEXT(current_decls);
+
+      }
+
+    }
+
     print_funs(PROGRAM_SYMBOLTABLE(arg_node));
     print_globals(PROGRAM_SYMBOLTABLE(arg_node));
 

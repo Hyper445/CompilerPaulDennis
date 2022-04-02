@@ -74,7 +74,13 @@ void addNodeStatements(node* assign, node* funbody) {
 
     node* current_stmt = FUNBODY_STMTS(funbody);
 
-    if (current_stmt && NODE_TYPE(assign) == N_return) {
+    // Deze functie zet een assign in de funbody.
+    // De assign moet bovenaan statements staan die geen assign zijn
+
+    // Loop door alle statements totdat je een stmt tegenkomt die geen assign is
+
+
+    if (current_stmt) {
         while (STMTS_NEXT(current_stmt) != NULL) {
             current_stmt = STMTS_NEXT(current_stmt);
         }
@@ -151,6 +157,7 @@ node *VAprogram( node* arg_node, info * arg_info) {
   addNodeStatements(TBmakeReturn(NULL), funbody);
   
   node* fundef = TBmakeFundef(T_void, STRcpy("__init"), NULL, funbody, NULL);
+  FUNDEF_ISEXPORT(fundef) = TRUE;
 
   node* top_decl = PROGRAM_DECLS(arg_node);
   while (top_decl) {
