@@ -137,13 +137,13 @@ globdef: EXPORT type ID LET expr COMMA exprs SEMICOLON
 fundef: EXPORT type ID BRACKET_L BRACKET_R funbody
   {
     node* funNode = TBmakeFundef($2, STRcpy($3), NULL, $6, NULL);
-    GLOBDEF_ISEXPORT(funNode) = TRUE;
+    FUNDEF_ISEXPORT(funNode) = TRUE;
     $$ = funNode;
   }
   | EXPORT type ID BRACKET_L param BRACKET_R funbody
   {
-    node* funNode = TBmakeFundef($2, STRcpy($3), $5, $7, NULL);;
-    GLOBDEF_ISEXPORT(funNode) = TRUE;
+    node* funNode = TBmakeFundef($2, STRcpy($3), $5, $7, NULL);
+    FUNDEF_ISEXPORT(funNode) = TRUE;
     $$ = funNode;
   }
   | type ID BRACKET_L BRACKET_R funbody
