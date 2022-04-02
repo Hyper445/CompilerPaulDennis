@@ -2,15 +2,7 @@ float d = 3.0;
 
 void test(int t, int e) {
 
-
-    void test2(int a) {
-        int x = 3;
-        return;
-    }
-
-    test3();
-
-    d = 3.0;
+    int a = 3;
 
 }
 

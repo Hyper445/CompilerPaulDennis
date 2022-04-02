@@ -74,14 +74,16 @@ void addNodeStatements(node* assign, node* funbody) {
 
     node* current_stmt = FUNBODY_STMTS(funbody);
 
-    if (current_stmt) {
-        while (STMTS_NEXT(current_stmt) != NULL) {
-            current_stmt = STMTS_NEXT(current_stmt);
-        }
-        STMTS_NEXT(current_stmt) = TBmakeStmts(assign, NULL);
-    } else {
-        FUNBODY_STMTS(funbody) = TBmakeStmts(assign, NULL);
-    }
+    FUNBODY_STMTS(funbody) = TBmakeStmts(assign, current_stmt);
+
+    // if (current_stmt) {
+    //     while (STMTS_NEXT(current_stmt) != NULL) {
+    //         current_stmt = STMTS_NEXT(current_stmt);
+    //     }
+    //     STMTS_NEXT(current_stmt) = TBmakeStmts(assign, NULL);
+    // } else {
+    //     FUNBODY_STMTS(funbody) = TBmakeStmts(assign, NULL);
+    // }
 
 }
 
