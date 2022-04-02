@@ -64,6 +64,9 @@ SUBPHASE( va,
           ALWAYS,
           pet)
 
+SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)      
+
+
 SUBPHASE( bj,
           "Boolean Junctions",
           BJdoBooleanJunction,
