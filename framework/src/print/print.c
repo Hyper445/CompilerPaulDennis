@@ -110,7 +110,7 @@ extern node *PRTcast (node * arg_node, info * arg_info){
   DBUG_ENTER ("PRTcast");
 
   printf("(");
-  print_type(CAST_TYPE(arg_node));
+  print_type(CAST_TYPE_LEFT(arg_node));
   printf(") ");
 
   CAST_EXPR(arg_node) = TRAVdo( CAST_EXPR(arg_node), arg_info);

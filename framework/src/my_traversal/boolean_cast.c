@@ -36,11 +36,11 @@ node *BCcast(node* arg_node, info* arg_info) {
 
     if (NODE_TYPE(CAST_EXPR(arg_node)) == N_bool)
 
-        if (CAST_TYPE(arg_node) == T_int) {
+        if (CAST_TYPE_LEFT(arg_node) == T_int) {
             node* condexpr = TBmakeCondexpr(CAST_EXPR(arg_node), TBmakeNum(1), TBmakeNum(0));
             arg_node = condexpr;
 
-        } else if (CAST_TYPE(arg_node) == T_float) {
+        } else if (CAST_TYPE_LEFT(arg_node) == T_float) {
             node* condexpr = TBmakeCondexpr(CAST_EXPR(arg_node), TBmakeFloat(1.0), TBmakeFloat(0.0));
             arg_node = condexpr;
 

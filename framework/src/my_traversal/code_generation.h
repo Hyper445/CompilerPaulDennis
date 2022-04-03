@@ -13,8 +13,9 @@ extern node *CGvar (node *arg_node, info *arg_info);
 extern node *CGnum (node *arg_node, info *arg_info);
 extern node *CGfloat (node *arg_node, info *arg_info);
 extern node *CGdowhile(node *arg_node, info *arg_info);
-extern node* CGfuncall(node* arg_node, info* arg_info);
-extern node* CGreturn(node* arg_node, info* arg_info);
+extern node *CGfuncall(node *arg_node, info *arg_info);
+extern node *CGcast(node *arg_node, info *arg_info);
+extern node *CGreturn(node *arg_node, info *arg_info);
 extern node *CGdoCodeGeneration( node *syntaxtree);
 
 

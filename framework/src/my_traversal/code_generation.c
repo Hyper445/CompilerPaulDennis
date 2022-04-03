@@ -98,7 +98,6 @@ static info *MakeInfo(void) {
 
 // }
 
-
 node *CGprogram(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("CGprogram");
@@ -181,6 +180,18 @@ extern node *CGifelse (node *arg_node, info *arg_info) {
     printf("L%d\n", label2);
 
     DBUG_RETURN(arg_node);
+}
+
+extern node *CGcast(node *arg_node, info *arg_info) {
+  DBUG_ENTER("CGcast");
+
+  CAST_EXPR(arg_node) = TRAVdo(CAST_EXPR(arg_node), arg_info);
+
+  type old_type = CAST_TYPE_RIGHT(arg_node);
+  type new_type = CAST_TYPE_LEFT(arg_node);
+  printf("\t%s2%s\n", type_to_char(old_type), type_to_char(new_type));
+
+  DBUG_RETURN(arg_node);
 }
 
 extern node *CGdowhile(node *arg_node, info *arg_info) {

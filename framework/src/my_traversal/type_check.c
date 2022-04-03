@@ -189,8 +189,9 @@ node *TCcast (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCcast");
 
   CAST_EXPR(arg_node) = TRAVdo(CAST_EXPR(arg_node), arg_info);
+  CAST_TYPE_RIGHT(arg_node) = INFO_TYPE(arg_info);
 
-  INFO_TYPE(arg_info) = CAST_TYPE(arg_node);
+  INFO_TYPE(arg_info) = CAST_TYPE_LEFT(arg_node);
 
   DBUG_RETURN(arg_node);
 }
@@ -409,7 +410,7 @@ type get_type(node* expr, info* arg_info) {
       return SYMBOLTABLEENTRY_TYPE(get_entry(expr, INFO_ST(arg_info)));
 
     case N_cast:
-      return CAST_TYPE(expr);
+      return CAST_TYPE_LEFT(expr);
 
     case N_var:
       return SYMBOLTABLEENTRY_TYPE(get_entry(STRcpy(VAR_NAME(expr)), INFO_ST(arg_info)));

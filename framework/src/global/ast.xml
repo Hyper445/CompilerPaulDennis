@@ -145,6 +145,7 @@
             <node name="DoWhile" />
             <node name="FunCall" />
             <node name="Return" />
+            <node name="Cast" />
         </travuser>
       </traversal>
     </general>
@@ -415,10 +416,22 @@
             </son>
         </sons>
         <attributes>
-            <attribute name="Type">
+            <attribute name="Type_left">
                 <type name="Type">
                     <targets>
                         <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Type_right">
+                <type name="Type">
+                    <targets>
+                        <target mandatory="no">
                             <any/>
                             <phases>
                                 <all/>
