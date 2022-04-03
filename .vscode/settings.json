@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "typeinfo": "c",
-        "ctinfo.h": "c"
+        "ctinfo.h": "c",
+        "tree_basic.h": "c"
     }
 }

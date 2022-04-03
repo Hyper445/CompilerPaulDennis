@@ -1,20 +1,17 @@
 int a = (3 + 2);
 
-int test(float c) {
-    if ((a < 2)) {
-        a = (a + 1);
+int test() {
+    int n = 4;
+    int o = 3;
+    int p = 8;
 
-        if ((a < 0)){
-            c = (c + 1.0);
-        }
-        else {
-            c = (c - 1.0);
-        }
-
+    for (int i = 1, n) {
+        a = 4;
     }
-    else {
-        a = (a + 2);
+    for (int j = 2, o) {
+        a = 5;
     }
-
-    a = (a - 3);
+    for (int k = 3, p) {
+        a = 5;
+    }
 }

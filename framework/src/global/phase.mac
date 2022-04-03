@@ -34,6 +34,12 @@ PHASE( pet,
        "Perform example transformations",
        ALWAYS)
 
+SUBPHASE( RF, 
+          "move the declaration out of the for loop",
+          RFdoRestructureForLoop, 
+          ALWAYS,
+          pet)
+
 SUBPHASE( mt, 
           "Entering symbols in symbol table",
           MTdoMakeTable, 
