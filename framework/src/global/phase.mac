@@ -34,8 +34,14 @@ PHASE( pet,
        "Perform example transformations",
        ALWAYS)
 
+SUBPHASE( cf,
+          "Folding constants",
+          CFdoConstantFolding,
+          ALWAYS,
+          pet)
+
 SUBPHASE( RF, 
-          "move the declaration out of the for loop",
+          "turn the for loop into a while loop",
           RFdoRestructureForLoop, 
           ALWAYS,
           pet)
@@ -83,14 +89,8 @@ SUBPHASE( bc,
           ALWAYS,
           pet)
 
-SUBPHASE( cf,
-          "Folding constants",
-          CFdoConstantFolding,
-          ALWAYS,
-          pet)
-
 SUBPHASE( tw,
-          "Transforming While - Loops",
+          "turn a while loop into a dowhile loop",
           TWdoTransformWhile,
           ALWAYS,
           pet)

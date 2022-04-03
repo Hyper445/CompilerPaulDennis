@@ -41,23 +41,32 @@ node* RFfundef(node* arg_node, info* arg_info) {
     node *body = FUNDEF_FUNBODY(arg_node);
     node *stmts = FUNBODY_STMTS(body);
     
+    // Traverse through body of loop. In case of a for loop in an inner function, that for loop will be changed into a while loop first.
     FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
+    // Loops through all stmts nodes.
     while(stmts != NULL) {
+        printf("test0\n");
         node *current_stmt = STMTS_STMT(stmts);
 
         if (NODE_TYPE(current_stmt) == N_for) {
-            // Create and a the new vardecl.
-            node *start = COPYdoCopy(FOR_START(current_stmt));
-            char *new_name = STRcat("for_",STRcat(FOR_LOOPVAR(current_stmt) , STRitoa(sum)));
-            node *new_vardecl = TBmakeVardecl(T_int, new_name, NULL, NULL, start, FUNBODY_VARDECLS(body));
-            sum = sum + 1;
+            // Create and add the new vardecl.
+            node *vardecl_expr = COPYdoCopy(FOR_START(current_stmt));
+            char *vardecl_name = STRcat("for_",STRcat(FOR_LOOPVAR(current_stmt) , STRitoa(sum)));
+            node *new_vardecl = TBmakeVardecl(T_int, vardecl_name, NULL, NULL, vardecl_expr, FUNBODY_VARDECLS(body));
             FUNBODY_VARDECLS(body) = new_vardecl;
+            sum = sum + 1;
 
             // Create the condition of the while loop.
-            node *left = TBmakeVar(STRcpy(new_name), NULL, NULL);
+            node *left = TBmakeVar(STRcpy(vardecl_name), NULL, NULL);
             node *right = COPYdoCopy(FOR_STOP(current_stmt));
-            node *condition = TBmakeBinop(BO_lt, left, right);
+            node *condition;
+            if(NUM_VALUE(FOR_START(current_stmt)) < NUM_VALUE(FOR_STOP(current_stmt))) {
+                condition = TBmakeBinop(BO_lt, left, right);
+            }
+            else {
+                condition = TBmakeBinop(BO_gt, left, right);
+            }
 
             // Create the block of the while loop.
             node *block = COPYdoCopy(FOR_BLOCK(current_stmt));
@@ -65,32 +74,38 @@ node* RFfundef(node* arg_node, info* arg_info) {
             // Create the while loop.
             node *new_while_loop = TBmakeWhile(condition, block);
 
-            // Get the step expression.
+            // Create the step assign node.
             node *step_for = FOR_STEP(current_stmt);
-            node *step_while;
+            node *step_varlet = TBmakeVarlet(STRcpy(vardecl_name), NULL, NULL);
+            node *step_expr_l = TBmakeVar(STRcpy(vardecl_name), NULL, NULL);
+            node *step_expr_r;
             if (step_for == NULL) {
-                node *step_varlet = TBmakeVarlet(STRcpy(new_name), NULL, NULL);
-                node *step_expr_l = TBmakeVar(STRcpy(new_name), NULL, NULL);
-                node *step_expr_r = TBmakeNum(1);
-                node *step_expr = TBmakeBinop(BO_add, step_expr_l, step_expr_r);
-                step_while = TBmakeAssign(step_varlet, step_expr);
+                step_expr_r = TBmakeNum(1);
             }
             else {
-                node *step_while = COPYdoCopy(FOR_STEP(current_stmt));
+                step_expr_r = COPYdoCopy(FOR_STEP(current_stmt));
             }
-            node *current_block_stmts = FOR_BLOCK(current_stmt);
-            while(current_block_stmts != NULL) {
-                current_block_stmts = STMTS_NEXT(current_block_stmts);
-            }
+            node *step_expr = TBmakeBinop(BO_add, step_expr_l, step_expr_r);
+            node *step_while = TBmakeAssign(step_varlet, step_expr);
+
+            // Add the step assign node at the end of the stmts of the body
+            node *current_block_stmts = block;
             node *step_stmts = TBmakeStmts(step_while, NULL);
-            STMTS_NEXT(current_block_stmts) = step_stmts;
+            if(block == NULL) {
+                printf("if statement entered\n");
+                WHILE_BLOCK(new_while_loop) = step_stmts;
+            }
+            else {
+                printf("else statement entered\n");
+                while(STMTS_NEXT(current_block_stmts) != NULL) {
+                    current_block_stmts = STMTS_NEXT(current_block_stmts);
+                }
+                STMTS_NEXT(current_block_stmts) = step_stmts;
+            }
 
             // Free for loop.
             FREEdoFreeTree(current_stmt);
-
             
-
-
             // Replace the for loop.
             STMTS_STMT(stmts) = new_while_loop;
             
