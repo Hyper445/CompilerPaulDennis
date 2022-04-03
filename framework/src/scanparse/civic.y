@@ -32,7 +32,7 @@ static int yyerror( char *errname);
  type                ctype;
 }
 
-%token INT_TYPE FLOAT_TYPE BOOL_TYPE
+%token INT_TYPE FLOAT_TYPE BOOL_TYPE VOID_TYPE
 %token BRACKET_L BRACKET_R COMMA SEMICOLON
 %token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND
 %token NOT NEG
@@ -64,7 +64,7 @@ static int yyerror( char *errname);
 
 program: decls
   {
-    parseresult = TBmakeProgram($1, NULL);      
+    parseresult = TBmakeProgram($1, NULL, NULL);      
   }
   ;
 
@@ -104,15 +104,21 @@ globdecl: EXTERN type ID COMMA ids SEMICOLON
 
 globdef: EXPORT type ID LET expr COMMA exprs SEMICOLON
   {
-    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, $7, $5);
+    node* globNode= TBmakeGlobdef($2, STRcpy($3), NULL, $7, $5);
+    GLOBDEF_ISEXPORT(globNode) = TRUE;
+    $$ = globNode;
   } 
   | EXPORT type ID LET expr SEMICOLON
   {
-    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, NULL, $5);
+    node* globNode = TBmakeGlobdef($2, STRcpy($3), NULL, NULL, $5);
+    GLOBDEF_ISEXPORT(globNode) = TRUE;
+    $$ = globNode;
   }
   | EXPORT type ID SEMICOLON
   {
-    $$ = TBmakeGlobdef($2, STRcpy($3), NULL, NULL, NULL);
+    node* globNode = TBmakeGlobdef($2, STRcpy($3), NULL, NULL, NULL);
+    GLOBDEF_ISEXPORT(globNode) = TRUE;
+    $$ = globNode;
   }
   | type ID LET expr COMMA exprs SEMICOLON
   {
@@ -130,11 +136,15 @@ globdef: EXPORT type ID LET expr COMMA exprs SEMICOLON
 
 fundef: EXPORT type ID BRACKET_L BRACKET_R funbody
   {
-    $$ = TBmakeFundef($2, STRcpy($3), NULL, $6, NULL);
+    node* funNode = TBmakeFundef($2, STRcpy($3), NULL, $6, NULL);
+    FUNDEF_ISEXPORT(funNode) = TRUE;
+    $$ = funNode;
   }
   | EXPORT type ID BRACKET_L param BRACKET_R funbody
   {
-    $$ = TBmakeFundef($2, STRcpy($3), $5, $7, NULL);
+    node* funNode = TBmakeFundef($2, STRcpy($3), $5, $7, NULL);
+    FUNDEF_ISEXPORT(funNode) = TRUE;
+    $$ = funNode;
   }
   | type ID BRACKET_L BRACKET_R funbody
   {
@@ -487,6 +497,7 @@ monop: NOT { $$ = MO_not; }
 type: INT_TYPE { $$ = T_int;}
     | FLOAT_TYPE { $$ = T_float;}
     | BOOL_TYPE { $$ = T_bool;}
+    | VOID_TYPE { $$ = T_void;}
 
 
 %%

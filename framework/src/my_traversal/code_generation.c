@@ -13,6 +13,9 @@
 
 
 #include "code_generation.h"
+#include "make_table_helper.h"
+#include "code_generation_helper.h"
+#include "print.h"
 
 #include "stdlib.h"
 #include "lookup_table.h"
@@ -30,12 +33,17 @@ struct INFO {
   int sum_var;
   int sum_store;
   int sum_labels;
+  node* constant_table;
+  node* global_st;
+
 };
 
 #define INFO_SUM_C(n) ((n)->sum_const)
 #define INFO_SUM_V(n) ((n)->sum_var)
 #define INFO_SUM_S(n) ((n)->sum_store)
 #define INFO_SUM_L(n) ((n)->sum_labels)
+#define INFO_CT(n) ((n)->constant_table)
+#define INFO_GST(n) ((n)->global_st)
 
 static info *MakeInfo(void) {
   info *result;
@@ -43,6 +51,8 @@ static info *MakeInfo(void) {
   DBUG_ENTER( "MakeInfo");
 
   result = (info *)MEMmalloc(sizeof(info));
+  INFO_CT(result) = NULL;
+  INFO_GST(result) = NULL;
   INFO_SUM_C(result) = 0;
   INFO_SUM_V(result) = 0;
   INFO_SUM_S(result) = 0;
@@ -55,64 +65,72 @@ static info *MakeInfo(void) {
  * Traversal functions
  */
 
-char* type_to_char(int type) {
+// Get the index of the global table
+// global_index(char* name, info* arg_info) {
 
-  switch(type) {
-    case 1 :
-      return ("b");
-    case 2 :
-      return("i");
-    case 3 :
-      return("f");
-    default:
-      CTIerror("undefined type");
-  }
+//   int index = 0;
+//   node* current_st = INFO_ST(arg_info);
 
-}
+//   while (SYMBOLTABLE_PARENT(current_st) != NULL) {
 
-char* binop_to_char(binop binop) {
+//     current_st = SYMBOLTABLE_PARENT(current_st);
 
-  switch(binop) {
-    case BO_add :
-      return("add");
-    case BO_sub :
-      return ("sub");
-    case BO_mul :
-      return("mul");
-    case BO_div :
-      return("div");
-    case BO_mod :
-      return("rem");
-    case BO_lt :
-      return("lt");
-    case BO_le :
-      return ("le");
-    case BO_gt :
-      return("gt");
-    case BO_ge :
-      return("ge");
-    case BO_eq :
-      return("eq");
-    case BO_ne :
-      return("ne");
-    default:
-      CTIerror("undefined type");
-    // case BO_and :
-    //   return ("and");
-    // case BO_or :
-    //   return("or");
-  }
-}
+//   }
 
-//TODO: monop to char
+//   node* entries_st = SYMBOLTABLE_ENTRIES(current_st);
+
+//   while (entries_st) {
+
+//     if (STReq(SYMBOLTABLEENTRY_NAME(entries_st) == name)) {
+
+//       return index;
+
+//     }
+
+//     entries_st = SYMBOLTABLEENTRY_NEXT(entries_st);
+//     index++;
+
+//   }
+
+//   return -1;
+
+
+
+// }
 
 
 node *CGprogram(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("CGprogram");
 
+
+    INFO_CT(arg_info) = PROGRAM_CONSTANTTABLE(arg_node);
+    INFO_GST(arg_info) = PROGRAM_SYMBOLTABLE(arg_node);
     PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 
+    printf("\n");
+    print_constants(INFO_CT(arg_info));
+
+    node *current_decls = PROGRAM_DECLS(arg_node);
+    
+    while (current_decls) {
+      node *current_decl = DECLS_DECL(current_decls);
+      if (current_decl) {
+        if (NODE_TYPE(current_decl) == N_fundef && FUNDEF_ISEXPORT(current_decl) == TRUE) {
+
+          printf(".exportfun \"%s\" %s %s\n", FUNDEF_NAME(current_decl), 
+            type_to_string(FUNDEF_TYPE(current_decl)), FUNDEF_NAME(current_decl));
+
+        }
+
+        current_decls = DECLS_NEXT(current_decls);
+
+      }
+
+    }
+
+    print_funs(PROGRAM_SYMBOLTABLE(arg_node));
+    print_globals(PROGRAM_SYMBOLTABLE(arg_node));
 
     DBUG_RETURN(arg_node);
   
@@ -123,14 +141,22 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 
     INFO_SUM_C(arg_info) = 0;
     INFO_SUM_V(arg_info) = 0;
-    INFO_SUM_S(arg_info) = 0;
+
+    printf("%s:\n", FUNDEF_NAME(arg_node));
 
     FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
     FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
-
-
     
     DBUG_RETURN(arg_node);
+}
+
+node* CGfuncall(node* arg_node, info* arg_info) {
+    DBUG_ENTER("CGfuncall");
+
+    printf("\tjsr %s\n", FUNCALL_NAME(arg_node));
+
+    DBUG_RETURN(arg_node);
+
 }
 
 extern node *CGifelse (node *arg_node, info *arg_info) {
@@ -176,11 +202,26 @@ extern node *CGdowhile(node *arg_node, info *arg_info) {
 
 extern node *CGassign (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGassign");
-    
+
     //ASSIGN_LET(arg_node) = TRAVopt(ASSIGN_LET(arg_node), arg_info);
     ASSIGN_EXPR(arg_node) = TRAVdo(ASSIGN_EXPR(arg_node), arg_info);
 
-    printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+    // EVEN EEN MANIER ZIEN TE VINDEN OM ERACHTER TE KOMEN OF ASSIGN_LET EEN GLOBALE VARIABELE IS //
+    if (ASSIGN_LET(arg_node)) {
+
+      if (get_entry(VARLET_NAME(ASSIGN_LET(arg_node)), INFO_GST(arg_info)) == 
+            VARLET_DECL(ASSIGN_LET(arg_node))) {
+        
+        printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+
+      }
+      else {
+        printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+      }
+
+    } else {
+      printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+    }
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
     INFO_SUM_S(arg_info) = INFO_SUM_S(arg_info) + 1;
@@ -199,12 +240,49 @@ node *CGbinop(node* arg_node, info* arg_info) {
     DBUG_RETURN(arg_node);
 }
 
+node *CGreturn(node* arg_node, info* arg_info) {
+    DBUG_ENTER("CGreturn");
+
+    RETURN_EXPR(arg_node) = TRAVopt(RETURN_EXPR(arg_node), arg_info);
+    if (RETURN_EXPR(arg_node)) {
+      printf("\t%sreturn\n", type_to_char(RETURN_TYPE(arg_node)));
+
+    } else {
+      printf("\treturn\n");
+    }
+
+    DBUG_RETURN(arg_node);
+}
+
 node *CGvar(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGvar");
 
-    printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), INFO_SUM_V(arg_info));
+
+    node* st_entry = get_entry(VAR_NAME(arg_node), INFO_GST(arg_info));
+
+    if (get_entry(VAR_NAME(arg_node), INFO_GST(arg_info)) == VAR_DECL(arg_node)) {
+
+      printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+        SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
+
+    } else {
+      
+      printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+        SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
+
+    }
+
+    // if (global_index(VAR_NAME(arg_node), arg_info) != -1) {
+
+    //   printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+    //     global_index(VAR_NAME(arg_node), arg_info));
+
+    // } else {
+    
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
+    
+    // }
 
     DBUG_RETURN(arg_node);
 
@@ -213,7 +291,27 @@ node *CGvar(node* arg_node, info* arg_info) {
 node* CGnum(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGnum");
 
-    printf("\tiloadc %d\n", INFO_SUM_C(arg_info));
+    node* constant_table = in_table(arg_node, INFO_CT(arg_info));
+    if (constant_table) {
+
+      printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
+ 
+    } else {
+
+      char* optimisedCode = optimise(arg_node); 
+      printf("%s\n", optimisedCode);
+    
+    }
+
+    // if (constant_table) {
+    //   printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
+
+    // } else {
+    //   printf("\tiloadc %d\n", 0);
+    // }
+
+    // printf("\tiloadc %d\n", INFO_SUM_C(arg_info));
+    //printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
 
     INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
     
@@ -225,7 +323,16 @@ node* CGnum(node* arg_node, info* arg_info) {
 node* CGfloat(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGfloat");
 
-    printf("\tfloadc %d\n", INFO_SUM_C(arg_info));
+    node* constant_table = in_table(arg_node, INFO_CT(arg_info));
+    if (constant_table) {
+
+      printf("\tfloadc %d\n", CONSTANT_INDEX(constant_table));
+ 
+    } else {
+      char* optimisedCode = optimise(arg_node); 
+      printf("%s\n", optimisedCode);
+    
+    }
 
     INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
 

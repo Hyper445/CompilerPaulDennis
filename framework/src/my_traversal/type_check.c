@@ -11,7 +11,8 @@
  *****************************************************************************/
 
 #include "make_table.h"
-
+#include "make_table_helper.h"
+#include "code_generation_helper.h"
 #include "lookup_table.h"
 #include "types.h"
 #include "tree_basic.h"
@@ -25,12 +26,16 @@
 char* type_to_string(int type);
 char* binop_to_string(int operator);
 char* monop_to_string(int operator);
+type get_type(node* expr, info* arg_info);
+
 
 struct INFO {
   type type;
+  node* Symboltable;
 };
 
 #define INFO_TYPE(n) ((n)->type)
+#define INFO_ST(n) ((n)->Symboltable)
 
 static info *MakeInfo(void) {
   info *result;
@@ -39,7 +44,50 @@ static info *MakeInfo(void) {
 
   result = (info *)MEMmalloc(sizeof(info));
   INFO_TYPE(result) = T_unknown;
+  INFO_ST(result) = NULL;
   DBUG_RETURN( result);
+}
+node *TCprogram(node *arg_node, info* arg_info) {
+
+  DBUG_ENTER("TCprogram");
+
+  INFO_ST(arg_info) = PROGRAM_SYMBOLTABLE(arg_node);
+  PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info); 
+
+  DBUG_RETURN(arg_node);
+
+}
+
+node *TCfundef(node *arg_node, info* arg_info) {
+
+  DBUG_ENTER("TCfundef");
+  INFO_ST(arg_info) = FUNDEF_SYMBOLTABLE(arg_node);
+  node* symboltable = FUNDEF_SYMBOLTABLE(arg_node);
+  
+  if (FUNDEF_FUNBODY(arg_node)) {
+    node *funbody = FUNDEF_FUNBODY(arg_node);
+    node *stmts = FUNBODY_STMTS(funbody);
+
+    while (stmts) {
+
+      if (NODE_TYPE(STMTS_STMT(stmts)) == N_return) {
+        break;
+      }
+
+      stmts = STMTS_NEXT(stmts);
+
+    }
+    if (!stmts && SYMBOLTABLEENTRY_TYPE(get_entry(SYMBOLTABLE_NAME(symboltable), symboltable)) != T_void) {
+      CTIerrorLine(NODE_LINE(arg_node), "Function expects return!");
+    }
+
+  }
+
+  FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
+  FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
+
+  DBUG_RETURN(arg_node);
+
 }
 
 node *TCbinop (node *arg_node, info *arg_info) {
@@ -111,7 +159,7 @@ node *TCmonop (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCmonop");
 
   MONOP_OPERAND(arg_node) = TRAVdo(MONOP_OPERAND(arg_node), arg_info);
-  type type =  INFO_TYPE(arg_info);
+  type type = INFO_TYPE(arg_info);
   monop operator = MONOP_OP(arg_node);
 
   if(operator == MO_not) {
@@ -149,17 +197,75 @@ node *TCcast (node *arg_node, info *arg_info) {
 
 node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCfuncall");
-  
-  FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
-  // node *fundecl = FUNCALL_DECL(arg_node);
 
-  // node *params = SYMBOLTABLE_PARAMS(fundecl);
-  // while(params) {
-  //   printf("name = %s\n", PARAM_NAME(params));
-  //   params = PARAM_NEXT(params);
-  // }
+  node* symboltable = INFO_ST(arg_info);
+  node* fun_entry = get_entry(FUNCALL_NAME(arg_node), INFO_ST(arg_info));
+  node* funcall_params = FUNCALL_ARGS(arg_node);
+  node* fun_params;
+  
+  if (fun_entry) {
+    fun_params = SYMBOLTABLEENTRY_PARAMS(fun_entry);
+  } 
+
+  while (fun_params && funcall_params) {
+    
+    if (PARAM_TYPE(fun_params) == get_type(EXPRS_EXPR(funcall_params), arg_info)) {
+
+      fun_params = PARAM_NEXT(fun_params);
+      funcall_params = EXPRS_NEXT(funcall_params);
+
+    } else {
+      
+      CTIerror("Types in funcall don't match in actual function!\n");
+      break;
+    
+    }
+  }
+
+  if (!fun_params && funcall_params) { 
+    CTIerror("Too many arguments!\n");
+  }
+    
+  if (fun_params && !funcall_params) {
+    CTIerror("Too few arguments!\n");
+  }
+
+  if (!symboltable) {
+    CTIerror("No function named %s! \n", FUNCALL_NAME(arg_node));
+  }
 
   DBUG_RETURN(arg_node);
+}
+
+node* TCreturn (node* arg_node, info* arg_info) {
+
+  DBUG_ENTER("TCreturn");
+
+  RETURN_EXPR(arg_node) = TRAVopt(RETURN_EXPR(arg_node), arg_info);
+  type returnType = INFO_TYPE(arg_info);
+
+  // Check if the expr type matches the fundef type
+  node* fundefEntry = get_entry(SYMBOLTABLE_NAME(INFO_ST(arg_info)), INFO_ST(arg_info));
+
+  type fundefType = SYMBOLTABLEENTRY_TYPE(fundefEntry);
+
+  if (fundefType != returnType && fundefType != T_void) {
+
+    CTIerrorLine(NODE_LINE(arg_node),"function '%s' expects '%s' type.", SYMBOLTABLE_NAME(INFO_ST(arg_info)), type_to_string(fundefType));
+
+  } else if (fundefType == T_void && RETURN_EXPR(arg_node)) {
+
+    CTIerrorLine(NODE_LINE(arg_node),"function '%s' doesn't expect a return.", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+
+
+  }
+
+  RETURN_TYPE(arg_node) = returnType;
+
+  DBUG_RETURN(arg_node);
+
+
+
 }
 
 node *TCassign (node *arg_node, info *arg_info) {
@@ -247,7 +353,7 @@ node *TCvar(node *arg_node, info *arg_info) {
   }
   else {
     INFO_TYPE(arg_info) = T_unknown;
-    CTIerror("variable %s is not declared", VAR_NAME(arg_node));
+    CTIerrorLine(NODE_LINE(arg_node), "variable %s is not declared", VAR_NAME(arg_node));
   }
 
   DBUG_RETURN(arg_node);
@@ -265,7 +371,7 @@ node *TCvarlet(node *arg_node, info *arg_info) {
   }
   else {
     INFO_TYPE(arg_info) = T_unknown;
-    CTIerror("variable %s is not declared", VARLET_NAME(arg_node));
+    CTIerrorLine(NODE_LINE(arg_node), "variable %s is not declared", VARLET_NAME(arg_node));
   }
 
   DBUG_RETURN(arg_node);
@@ -288,20 +394,37 @@ node *TCdoTypeCheck( node *syntaxtree)
   DBUG_RETURN( syntaxtree);
 }
 
-// Helper function. Converts a type to a string.
-char* type_to_string(int type) {
-  switch(type) {
-    case T_bool:
-      return "boolean";
-    case T_float:
-      return "float";
-    case T_int:
-      return "integer";
-    case T_void:
-      return "void";
-    default:
-      return "unknown";
+
+type get_type(node* expr, info* arg_info) {
+
+  switch (NODE_TYPE(expr)) {
+
+    case N_binop:
+      return BINOP_TYPE(expr);
+
+    case N_monop:
+      return MONOP_TYPE(expr);
+
+    case N_funcall:
+      return SYMBOLTABLEENTRY_TYPE(get_entry(expr, INFO_ST(arg_info)));
+
+    case N_cast:
+      return CAST_TYPE(expr);
+
+    case N_var:
+      return SYMBOLTABLEENTRY_TYPE(get_entry(STRcpy(VAR_NAME(expr)), INFO_ST(arg_info)));
+
+    case N_num:
+      return T_int;
+
+    case N_float:
+      return T_float;
+
+    case N_bool:
+      return T_bool;
+
   }
+
 }
 
 // Helper function. Converts an operator to a string.

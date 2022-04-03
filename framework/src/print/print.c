@@ -21,6 +21,7 @@
 #include "memory.h"
 #include "globals.h"
 
+
 void print_type(int type);
 
 /*
@@ -28,9 +29,13 @@ void print_type(int type);
  */
 struct INFO {
   bool firsterror;
+  int indentation;
+  char* indentationTabs;
 };
 
 #define INFO_FIRSTERROR(n) ((n)->firsterror)
+#define INFO_INDENTATION(n) ((n)->indentation)
+#define INFO_TABS(n) ((n)->indentationTabs)
 
 static info *MakeInfo()
 {
@@ -39,6 +44,8 @@ static info *MakeInfo()
   result = MEMmalloc(sizeof(info));
 
   INFO_FIRSTERROR(result) = FALSE;
+  INFO_INDENTATION(result) = 0;
+  INFO_TABS(result) = "    ";
   
   return result;
 }
@@ -52,6 +59,7 @@ static info *FreeInfo( info *info)
 }
 
 extern node *PRTsymboltable (node * arg_node, info * arg_info){return arg_node;}
+extern node *PRTconstant (node * arg_node, info * arg_info){return arg_node;}
 
 extern node *PRTdeclarations (node * arg_node, info * arg_info){return arg_node;}
 
@@ -66,7 +74,7 @@ extern node *PRTexprs (node * arg_node, info * arg_info){
 extern node *PRTarrexpr (node * arg_node, info * arg_info){return arg_node;}
 
 extern node *PRTcondexpr (node * arg_node, info * arg_info){
-  DBUG_ENTER ("PRTexprstmt"); 
+  DBUG_ENTER ("PRTexprstmt");
   
   CONDEXPR_PRED(arg_node) = TRAVopt(CONDEXPR_PRED(arg_node), arg_info);
   printf("?");
@@ -231,9 +239,10 @@ extern node *PRTfundef (node * arg_node, info * arg_info)
 
   printf(") {\n");
 
+  printf("%s", INFO_TABS(arg_info));
   FUNDEF_FUNBODY( arg_node) = TRAVopt( FUNDEF_FUNBODY( arg_node), arg_info);
   
-  printf("}\n");
+  printf("}\n\n");
 
 
   DBUG_RETURN( arg_node);
@@ -333,11 +342,11 @@ extern node *PRTifelse (node * arg_node, info * arg_info)
 
   printf("if (");
   IFELSE_COND( arg_node) = TRAVdo( IFELSE_COND(arg_node), arg_info);
-  printf("){\n");
+  printf("){\n\n");
   IFELSE_THEN( arg_node) = TRAVopt( IFELSE_THEN(arg_node), arg_info);
-  printf("}\nelse {\n");
+  printf("}\n\nelse {\n\n");
   IFELSE_ELSE( arg_node) = TRAVopt( IFELSE_ELSE(arg_node), arg_info);
-  printf("}");
+  printf("}\n\n");
   DBUG_RETURN( arg_node);
 
 }

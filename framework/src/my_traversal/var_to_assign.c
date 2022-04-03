@@ -72,16 +72,29 @@ static info *FreeInfo( info *info)
 
 void addNodeStatements(node* assign, node* funbody) {
 
-    node* current_stmt = FUNBODY_STMTS(funbody);
+  node* current_stmt = FUNBODY_STMTS(funbody);
+  node* previous_stmt = NULL;
 
-    if (current_stmt) {
-        while (STMTS_NEXT(current_stmt) != NULL) {
-            current_stmt = STMTS_NEXT(current_stmt);
-        }
-        STMTS_NEXT(current_stmt) = TBmakeStmts(assign, NULL);
-    } else {
-        FUNBODY_STMTS(funbody) = TBmakeStmts(assign, NULL);
+  printf("%d adding node type\n", NODE_TYPE(assign));
+
+  if (current_stmt) {
+    
+    while (current_stmt && NODE_TYPE(STMTS_STMT(current_stmt)) == N_assign) {
+        previous_stmt = current_stmt;
+        current_stmt = STMTS_NEXT(current_stmt);
     }
+  
+  }
+
+  if (previous_stmt) {
+    STMTS_NEXT(previous_stmt) = TBmakeStmts(assign, current_stmt);
+
+  } else {
+
+    FUNBODY_STMTS(funbody) = TBmakeStmts(assign, current_stmt);
+
+  }
+
 
 }
 
@@ -147,8 +160,11 @@ node *VAprogram( node* arg_node, info * arg_info) {
 
     current_decl = DECLS_NEXT(current_decl);
   }
+
+  addNodeStatements(TBmakeReturn(NULL), funbody);
   
   node* fundef = TBmakeFundef(T_void, STRcpy("__init"), NULL, funbody, NULL);
+  FUNDEF_ISEXPORT(fundef) = TRUE;
 
   node* top_decl = PROGRAM_DECLS(arg_node);
   while (top_decl) {
