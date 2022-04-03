@@ -105,6 +105,12 @@
         </travuser>
       </traversal>
 
+      <traversal id="CF" name="Folding constants" default="sons" include="constant_folding.h">
+        <travuser>
+            <node name="BinOp" />
+        </travuser>
+      </traversal>
+
       <traversal id="TW" name="Transform While-Loops" default="sons" include="transform_while.h">
         <travuser>
             <node name="While" />
@@ -115,7 +121,6 @@
         <travuser>
             <node name="Program" />
             <node name="VarDecl" />
-            <node name="BinOp" />
             <node name="Num" />
             <node name="Float" />
         </travuser>

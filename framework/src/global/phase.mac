@@ -64,8 +64,6 @@ SUBPHASE( va,
           ALWAYS,
           pet)
 
-SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)      
-
 
 SUBPHASE( bj,
           "Boolean Junctions",
@@ -76,6 +74,12 @@ SUBPHASE( bj,
 SUBPHASE( bc,
           "Boolean Casts",
           BCdoBooleanCast,
+          ALWAYS,
+          pet)
+
+SUBPHASE( cf,
+          "Folding constants",
+          CFdoConstantFolding,
           ALWAYS,
           pet)
 

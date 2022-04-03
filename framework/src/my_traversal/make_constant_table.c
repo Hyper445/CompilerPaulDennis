@@ -134,7 +134,6 @@ node* MCTprogram(node *arg_node, info *arg_info) {
   PROGRAM_CONSTANTTABLE(arg_node) = INFO_C(arg_info);
 
   //arg_node = addConstant(TBmakeFloat(INFO_FLOAT(arg_info)), arg_info);
-  addConstant(TBmakeNum(INFO_INT(arg_info)), arg_info);
 
 
   DBUG_RETURN(arg_node);
@@ -147,51 +146,6 @@ node *MCTglobdef (node *arg_node, info *arg_info) {
 
   GLOBDEF_INIT(arg_node) = TRAVopt(GLOBDEF_INIT(arg_node), arg_info);
 
-  DBUG_RETURN(arg_node);
-
-}
-
-node *MCTbinop (node* arg_node, info* arg_info) {
-
-  DBUG_ENTER("MCTbinop");
-
-  if (NODE_TYPE(BINOP_LEFT(arg_node)) == NODE_TYPE(BINOP_RIGHT(arg_node))) {
-
-    if (NODE_TYPE(BINOP_LEFT(arg_node)) == N_num) {
-
-      switch (BINOP_OP(arg_node)) {
-
-        case BO_add:
-          INFO_INT(arg_info) = NUM_VALUE(BINOP_LEFT(arg_node)) + NUM_VALUE(BINOP_RIGHT(arg_node));
-          break;
-
-        case BO_mul:
-          printf("Hier moet ie dus zijn\n\n");
-          INFO_INT(arg_info) = NUM_VALUE(BINOP_LEFT(arg_node)) * NUM_VALUE(BINOP_RIGHT(arg_node));
-          printf("%d = resultaat\n", INFO_INT(arg_info));
-          break;
-
-        case BO_div:
-          INFO_INT(arg_info) = NUM_VALUE(BINOP_LEFT(arg_node)) / NUM_VALUE(BINOP_RIGHT(arg_node));
-          break;
-
-        case BO_sub:
-          INFO_INT(arg_info) = NUM_VALUE(BINOP_LEFT(arg_node)) - NUM_VALUE(BINOP_RIGHT(arg_node));
-          break;
-
-        case BO_mod:
-          INFO_INT(arg_info) = NUM_VALUE(BINOP_LEFT(arg_node)) % NUM_VALUE(BINOP_RIGHT(arg_node));
-          break;
-
-      }
-
-    }
-
-  }
-
-  BINOP_LEFT(arg_node) = TRAVopt(BINOP_LEFT(arg_node), arg_info);
-  BINOP_RIGHT(arg_node) = TRAVopt(BINOP_RIGHT(arg_node), arg_info);
-  
   DBUG_RETURN(arg_node);
 
 }
