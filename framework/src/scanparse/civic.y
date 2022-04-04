@@ -148,11 +148,15 @@ fundef: EXPORT type ID BRACKET_L BRACKET_R funbody
   }
   | type ID BRACKET_L BRACKET_R funbody
   {
-    $$ = TBmakeFundef($1, STRcpy($2), NULL, $5, NULL);
+    node* funNode = TBmakeFundef($1, STRcpy($2), NULL, $5, NULL);
+    FUNDEF_ISEXPORT(funNode) = FALSE;
+    $$ = funNode;
   }
   | type ID BRACKET_L param BRACKET_R funbody
   {
-    $$ = TBmakeFundef($1, STRcpy($2), $4, $6, NULL);
+    node* funNode = TBmakeFundef($1, STRcpy($2), $4, $6, NULL);
+    FUNDEF_ISEXPORT(funNode) = FALSE;
+    $$ = funNode;
   }
   ;
 
@@ -393,9 +397,9 @@ expr: monop expr
   {
     $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
   }
-  | BRACKET_L expr binop expr BRACKET_R
+  | expr binop expr
   {
-    $$ = TBmakeBinop( $3, $2, $4);
+    $$ = TBmakeBinop( $2, $1, $3);
   }
   | cast
   {
@@ -491,7 +495,8 @@ binop: PLUS      { $$ = BO_add; }
      | GT        { $$ = BO_gt; }
      | EQ        { $$ = BO_eq; }
      | OR        { $$ = BO_or; }
-     | AND       { $$ = BO_and; }
+     | AND       { $$ = BO_and;}
+     | NE        { $$ = BO_ne; }
      ;
 
 monop: NOT { $$ = MO_not; }
