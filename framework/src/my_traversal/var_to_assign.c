@@ -112,6 +112,7 @@ node *VAprogram( node* arg_node, info * arg_info) {
   DBUG_ENTER("VAprogram");
 
   node* funbody = TBmakeFunbody(NULL, NULL, NULL);
+  node* fundef = NULL;
   node *current_decl = NULL;
   node *decls = PROGRAM_DECLS(arg_node);
 
@@ -148,11 +149,12 @@ node *VAprogram( node* arg_node, info * arg_info) {
 
     current_decl = DECLS_NEXT(current_decl);
   }
-
-  addNodeStatements(TBmakeReturn(NULL), funbody);
   
-  node* fundef = TBmakeFundef(T_void, STRcpy("__init"), NULL, funbody, NULL);
-  FUNDEF_ISEXPORT(fundef) = TRUE;
+  if (decls) {
+    addNodeStatements(TBmakeReturn(NULL), funbody);
+    fundef = TBmakeFundef(T_void, STRcpy("__init"), NULL, funbody, NULL);
+    FUNDEF_ISEXPORT(fundef) = TRUE;
+  }
 
   node* top_decl = PROGRAM_DECLS(arg_node);
   while (top_decl) {
@@ -168,7 +170,10 @@ node *VAprogram( node* arg_node, info * arg_info) {
   }
 
   node* top_decl_next = DECLS_NEXT(top_decl);
-  DECLS_NEXT(top_decl) = TBmakeDecls(fundef, top_decl_next);
+  if (fundef) {
+    DECLS_NEXT(top_decl) = TBmakeDecls(fundef, top_decl_next);
+
+  }
 
   PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 

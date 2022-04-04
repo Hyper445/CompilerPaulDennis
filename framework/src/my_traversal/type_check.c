@@ -13,6 +13,7 @@
 #include "make_table.h"
 #include "make_table_helper.h"
 #include "code_generation_helper.h"
+#include "var_to_assign.h"
 #include "lookup_table.h"
 #include "types.h"
 #include "tree_basic.h"
@@ -79,6 +80,12 @@ node *TCfundef(node *arg_node, info* arg_info) {
     }
     if (!stmts && SYMBOLTABLEENTRY_TYPE(get_entry(SYMBOLTABLE_NAME(symboltable), symboltable)) != T_void) {
       CTIerrorLine(NODE_LINE(arg_node), "Function expects return!");
+    } else if (!stmts && SYMBOLTABLEENTRY_TYPE(
+        get_entry(SYMBOLTABLE_NAME(symboltable), symboltable)) == T_void) {
+      addNodeStatements(TBmakeReturn(NULL), FUNDEF_FUNBODY(arg_node));
+    } else if (stmts && SYMBOLTABLEENTRY_TYPE(
+        get_entry(SYMBOLTABLE_NAME(symboltable), symboltable)) == T_void) {
+      addNodeStatements(TBmakeReturn(NULL), FUNDEF_FUNBODY(arg_node));
     }
 
   }
@@ -257,7 +264,6 @@ node* TCreturn (node* arg_node, info* arg_info) {
   } else if (fundefType == T_void && RETURN_EXPR(arg_node)) {
 
     CTIerrorLine(NODE_LINE(arg_node),"function '%s' doesn't expect a return.", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
-
 
   }
 

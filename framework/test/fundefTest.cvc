@@ -1,8 +1,8 @@
-
+int c = 3;
 
 void test(int a) {
 
-    int a = 3;
+    int b = 3;
 
 }
 
