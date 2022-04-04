@@ -1,20 +1,19 @@
-test:
-    isrg
-    jsr 0 test2
+__init:
+    iloadc 0
+    istoreg 0
     return
 
-__test_test3:
-    esr 1
+test:
     iloadc 0
     istore 0
-    iload_0
-    ireturn
+    return
 
 test2:
     esr 1
-    iloadc 1
+    iloadc 0
     istore 0
     return
 
-.const int 4
 .const int 3
+.exportfun "__init" void __init
+.global int
