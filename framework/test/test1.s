@@ -3,17 +3,19 @@ __init:
     istoreg 0
     return
 
-test:
-    iloadc 0
-    istore 0
-    return
-
-test2:
+test1:
     esr 1
     iloadc 0
-    istore 0
-    return
+    istore 2
+    iloadc 1
+    istore 2
+    iloadc 2
+    istore 2
+    iloadc 0
+    ireturn
 
 .const int 3
+.const int 5
+.const int 6
 .exportfun "__init" void __init
 .global int
