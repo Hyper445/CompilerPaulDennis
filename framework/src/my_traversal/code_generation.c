@@ -271,7 +271,7 @@ node *CGvar(node* arg_node, info* arg_info) {
 
     node* st_entry = get_entry(VAR_NAME(arg_node), INFO_GST(arg_info));
 
-    if (get_entry(VAR_NAME(arg_node), INFO_GST(arg_info)) == VAR_DECL(arg_node)) {
+    if (st_entry == VAR_DECL(arg_node)) {
 
       printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
         SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));

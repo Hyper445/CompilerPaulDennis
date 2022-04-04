@@ -121,6 +121,9 @@ node *CFbinop (node* arg_node, info* arg_info) {
         case BO_mod:
           arg_node = TBmakeNum(NUM_VALUE(BINOP_LEFT(arg_node)) % NUM_VALUE(BINOP_RIGHT(arg_node)));
           break;
+        default:
+          CTIerror("unvalid node type (constant_folding)");
+          break;
 
       }
 

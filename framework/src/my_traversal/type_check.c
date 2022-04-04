@@ -407,7 +407,7 @@ type get_type(node* expr, info* arg_info) {
       return MONOP_TYPE(expr);
 
     case N_funcall:
-      return SYMBOLTABLEENTRY_TYPE(get_entry(expr, INFO_ST(arg_info)));
+      return SYMBOLTABLEENTRY_TYPE(get_entry(FUNCALL_NAME(expr), INFO_ST(arg_info)));
 
     case N_cast:
       return CAST_TYPE_LEFT(expr);
@@ -423,6 +423,8 @@ type get_type(node* expr, info* arg_info) {
 
     case N_bool:
       return T_bool;
+    default:
+      return T_unknown;
 
   }
 

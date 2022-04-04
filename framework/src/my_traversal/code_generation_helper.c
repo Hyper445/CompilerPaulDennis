@@ -53,9 +53,11 @@ void print_constants(node* constant) {
         case N_float:
           printf(".constant float %f\n", FLOAT_VALUE(CONSTANT_VALUE(constant)));
           break;
-
         case N_num:
           printf(".constant int %d\n", NUM_VALUE(CONSTANT_VALUE(constant)));
+          break;
+        default:
+          CTIerror("unknown type (code_generation_helper)");
           break;
 
       }
@@ -121,11 +123,12 @@ char* optimise(node* arg_node) {
         return ("\tfloadc_1");
       }
       break;
-
+    default:
+      CTIerror("unknown node type (code_generation_helper)");
+      break;
   }
 
   return NULL;
-
 }
 
 // Helper function. Converts a type to a string.
@@ -158,6 +161,7 @@ char* type_to_char(int type) {
       return("f");
     default:
       CTIerror("undefined type");
+      return("");
   }
 
 }
@@ -189,6 +193,7 @@ char* binop_to_char(binop binop) {
       return("ne");
     default:
       CTIerror("undefined type");
+      return("");
     // case BO_and :
     //   return ("and");
     // case BO_or :

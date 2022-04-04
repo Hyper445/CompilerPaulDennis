@@ -34,7 +34,7 @@ node *BCcast(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("BCcast");
 
-    if (NODE_TYPE(CAST_EXPR(arg_node)) == N_bool)
+    if (NODE_TYPE(CAST_EXPR(arg_node)) == N_bool){
 
         if (CAST_TYPE_LEFT(arg_node) == T_int) {
             node* condexpr = TBmakeCondexpr(CAST_EXPR(arg_node), TBmakeNum(1), TBmakeNum(0));
@@ -45,9 +45,9 @@ node *BCcast(node* arg_node, info* arg_info) {
             arg_node = condexpr;
 
         }
-
+    }
+    
     DBUG_RETURN(arg_node);
-  
 }
 
 

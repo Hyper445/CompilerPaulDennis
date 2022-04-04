@@ -65,17 +65,6 @@ static info *MakeInfo(void)
   DBUG_RETURN( result);
 }
 
-static info *FreeInfo( info *info)
-{
-  DBUG_ENTER ("FreeInfo");
-
-  info = MEMfree( info);
-
-  DBUG_RETURN( info);
-}
-
-
-
 /*
  * Traversal functions
  */

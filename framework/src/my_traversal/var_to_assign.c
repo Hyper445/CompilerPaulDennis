@@ -61,15 +61,6 @@ static info *MakeInfo(void)
   DBUG_RETURN( result);
 }
 
-static info *FreeInfo( info *info)
-{
-  DBUG_ENTER ("FreeInfo");
-
-  info = MEMfree( info);
-
-  DBUG_RETURN( info);
-}
-
 void addNodeStatements(node* assign, node* funbody) {
 
   node* current_stmt = FUNBODY_STMTS(funbody);
@@ -140,7 +131,6 @@ node *VAprogram( node* arg_node, info * arg_info) {
     if(NODE_TYPE(DECLS_DECL(current_decl)) == N_globdef && GLOBDEF_INIT(DECLS_DECL(current_decl))) {
 
         node* expression = GLOBDEF_INIT(DECLS_DECL(current_decl));
-        char* name = STRcpy(GLOBDEF_NAME(DECLS_DECL(current_decl)));
         char* temporaryName = STRcat(STRcpy("temp_"), STRitoa(INFO_TEMP(arg_info)));
         INFO_TEMP(arg_info)++;
 
@@ -200,7 +190,6 @@ node *VAfunbody (node *arg_node, info *arg_info){
           
         //Get all the information needed to make the assign node
         node* expression = VARDECL_INIT(current_vardecl);
-        char* name = STRcpy(VARDECL_NAME(current_vardecl));
         char* temporaryName = STRcat(STRcpy("temp_"), STRitoa(INFO_TEMP(arg_info)));
         INFO_TEMP(arg_info)++;
 
