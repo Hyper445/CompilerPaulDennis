@@ -66,8 +66,6 @@ void addNodeStatements(node* assign, node* funbody) {
   node* current_stmt = FUNBODY_STMTS(funbody);
   node* previous_stmt = NULL;
 
-  printf("%d adding node type\n", NODE_TYPE(assign));
-
   if (current_stmt) {
     
     while (current_stmt && NODE_TYPE(STMTS_STMT(current_stmt)) == N_assign) {

@@ -1,21 +1,20 @@
-__init:
-    floadc 0
-    fstoreg 0
-    floadc 0
-    fstoreg 1
-    return
-
 test:
-    esr 2
-    iloadc 1
-    istore 2
-    iloadc 2
-    istore 3
+    isrg
+    jsr 0 test2
     return
 
-.const float 3.0
-.const int 3
+__test_test3:
+    esr 1
+    iloadc 0
+    istore 0
+    iload_0
+    ireturn
+
+test2:
+    esr 1
+    iloadc 1
+    istore 0
+    return
+
 .const int 4
-.exportfun "__init" void __init
-.global float
-.global float
+.const int 3

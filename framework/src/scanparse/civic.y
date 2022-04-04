@@ -213,6 +213,10 @@ funbody: CURLY_BRACKET_L vardecl fundefs stmts CURLY_BRACKET_R
   {
     $$ = TBmakeFunbody($2, $3, NULL);
   }
+  | CURLY_BRACKET_L stmts fundefs CURLY_BRACKET_R
+  {
+    $$ = TBmakeFunbody(NULL, $3, $2);
+  }
   | CURLY_BRACKET_L vardecl CURLY_BRACKET_R
   {
     $$ = TBmakeFunbody($2, NULL, NULL);

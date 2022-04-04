@@ -33,6 +33,12 @@ void addSymbol(char* name, type type, info* arg_info, node* params) {
   node* currentSymbolTable = INFO_ST(arg_info);
   node* currentSymbolEntry = SYMBOLTABLE_ENTRIES(currentSymbolTable);
 
+  if (get_entry(name, INFO_ST(arg_info))) {
+
+    CTIerror("%s is already declared!", name);
+
+  }
+
   // Gets the correct nesting level.
   int nestinglevel = 0;
   while (SYMBOLTABLE_PARENT(currentSymbolTable) != NULL) {
