@@ -82,7 +82,7 @@ node* MTprogram(node *arg_node, info *arg_info) {
 
       node* fundef = DECLS_DECL(decls);
 
-      addSymbol(STRcpy(FUNDEF_NAME(fundef)), FUNDEF_TYPE(fundef), arg_info, FUNDEF_PARAMS(fundef));
+      addSymbol(STRcpy(FUNDEF_NAME(fundef)), FUNDEF_TYPE(fundef), arg_info, FUNDEF_PARAMS(fundef), TRUE);
 
     }
     decls = DECLS_NEXT(decls);
@@ -138,7 +138,7 @@ node *MTfundef (node *arg_node, info *arg_info){
 
     name = STRcpy(FUNDEF_NAME(arg_node));
     type = FUNDEF_TYPE(arg_node);
-    addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node));
+    addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node), TRUE);
 
   }
 
@@ -159,7 +159,7 @@ node *MTfundef (node *arg_node, info *arg_info){
     while (current_param) {
       name = STRcpy(PARAM_NAME(current_param));
       type = PARAM_TYPE(current_param);
-      addSymbol(name, type, arg_info, NULL);
+      addSymbol(name, type, arg_info, NULL, FALSE);
       current_param = PARAM_NEXT(current_param);
     }
   }
@@ -181,7 +181,7 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(GLOBDECL_NAME(arg_node));
   type type = GLOBDECL_TYPE(arg_node);
-  addSymbol(name, type, arg_info, NULL);
+  addSymbol(name, type, arg_info, NULL, FALSE);
 
   node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
@@ -203,7 +203,7 @@ node *MTglobdef (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(GLOBDEF_NAME(arg_node));
   type type = GLOBDEF_TYPE(arg_node);
-  addSymbol(name, type, arg_info, NULL);
+  addSymbol(name, type, arg_info, NULL, FALSE);
 
   node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
@@ -225,7 +225,7 @@ node *MTvardecl (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(VARDECL_NAME(arg_node));
   type type = VARDECL_TYPE(arg_node);
-  addSymbol(name, type, arg_info, NULL);
+  addSymbol(name, type, arg_info, NULL, FALSE);
 
   VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
 

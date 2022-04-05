@@ -28,15 +28,10 @@ struct INFO {
 #define INFO_ST(n) ((n)->Symboltable)
 #define INFO_NEXT(n) ((n)->next)
 
-void addSymbol(char* name, type type, info* arg_info, node* params) {
+void addSymbol(char* name, type type, info* arg_info, node* params, bool isFunction) {
 
   node* currentSymbolTable = INFO_ST(arg_info);
   node* currentSymbolEntry = SYMBOLTABLE_ENTRIES(currentSymbolTable);
-  bool isFunction = FALSE;
-
-  if (params) {
-    isFunction = TRUE;
-  }
 
   if (get_entry_scope(name, INFO_ST(arg_info), isFunction)) {
   
@@ -60,12 +55,12 @@ void addSymbol(char* name, type type, info* arg_info, node* params) {
       indexlevel++;
     }
     
-    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, indexlevel, params, NULL);
+    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, indexlevel, params, isFunction, NULL);
     SYMBOLTABLEENTRY_NEXT(currentSymbolEntry) = symbolEntry;
 
   } else {
 
-    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, indexlevel, params, NULL);
+    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, indexlevel, params, isFunction, NULL);
     SYMBOLTABLE_ENTRIES(INFO_ST(arg_info)) = symbolEntry;
 
   }
@@ -90,9 +85,9 @@ node* get_entry_node(node* stLink, node* current_ST, bool isFunction) {
       // If the decleration has been found. A link to the decleration is added to the funcall.
       if (stLink == current_ST_entry) {
         
-        if (isFunction && SYMBOLTABLEENTRY_PARAMS(current_ST_entry) != NULL) {
+        if (isFunction && SYMBOLTABLEENTRY_ISFUNCTION(current_ST_entry)) {
           return current_ST_entry;
-        } else if (!isFunction && SYMBOLTABLEENTRY_PARAMS(current_ST_entry) == NULL) {
+        } else if (!isFunction && !SYMBOLTABLEENTRY_ISFUNCTION(current_ST_entry)) {
           return current_ST_entry;        
         }
       }
@@ -122,9 +117,9 @@ node* get_entry(char* name, node* current_ST, bool isFunction) {
       // If the decleration has been found. A link to the decleration is added to the funcall.
       if (STReq(name, SYMBOLTABLEENTRY_NAME(current_ST_entry))) {
         
-        if (isFunction && SYMBOLTABLEENTRY_PARAMS(current_ST_entry) != NULL) {
+        if (isFunction && SYMBOLTABLEENTRY_ISFUNCTION(current_ST_entry)) {
           return current_ST_entry;
-        } else if (!isFunction && SYMBOLTABLEENTRY_PARAMS(current_ST_entry) == NULL) {
+        } else if (!isFunction && !SYMBOLTABLEENTRY_ISFUNCTION(current_ST_entry)) {
           return current_ST_entry;        
         }
       }

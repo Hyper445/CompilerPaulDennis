@@ -1444,6 +1444,18 @@
                     </targets>
                 </type>
             </attribute>
+            <attribute name="isFunction">
+                <type name="Bool">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
         </attributes>
     </node>
 

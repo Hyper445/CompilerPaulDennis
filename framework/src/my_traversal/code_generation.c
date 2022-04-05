@@ -165,7 +165,21 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 node* CGfuncall(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGfuncall");
 
-    printf("\tjsr %s\n", FUNCALL_NAME(arg_node));
+    node *arg = FUNCALL_ARGS(arg_node);
+    int arg_amount = 0;
+    while (arg) {
+
+      arg_amount++;
+      arg = EXPRS_NEXT(arg);
+
+    }
+
+
+    printf("\tisr \n");
+    FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
+
+    printf("\tjsr %d %s\n", arg_amount, FUNCALL_NAME(arg_node));
+    printf("\tipop\n");
 
     DBUG_RETURN(arg_node);
 

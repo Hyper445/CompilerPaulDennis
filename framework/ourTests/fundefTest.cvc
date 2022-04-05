@@ -6,6 +6,7 @@ int test1(int d, int e) {
     int test2 = 5;
 
     test2(3);
+    test1(3, 5);
 
     return 2;
 

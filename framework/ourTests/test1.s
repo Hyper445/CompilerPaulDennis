@@ -13,6 +13,11 @@ test1:
     iloadc 0
     jsr 1 test2
     ipop
+    isrg
+    iloadc 0
+    iloadc 1
+    jsr 2 test1
+    ipop
     iloadc 2
     ireturn
 
