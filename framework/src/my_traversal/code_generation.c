@@ -143,6 +143,20 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 
     printf("%s:\n", FUNDEF_NAME(arg_node));
 
+    // Calculate number of vardecls in funbody.
+    int sum_vardecls = 0;
+    node *body = FUNDEF_FUNBODY(arg_node);
+    node *current_vardecl = FUNBODY_VARDECLS(body);
+    while(current_vardecl != NULL) {
+      sum_vardecls = sum_vardecls + 1;
+      current_vardecl = VARDECL_NEXT(current_vardecl);
+    }
+
+    // Print esr if necessarily.
+    if(sum_vardecls != 0) {
+      printf("\tesr %d\n", sum_vardecls);
+    }
+
     FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
     FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
     
