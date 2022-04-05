@@ -125,9 +125,21 @@ node *MTfundef (node *arg_node, info *arg_info){
   
   // When reaching a function definition, add this to the current symbol table
   if (strcmp(SYMBOLTABLE_NAME(INFO_ST(arg_info)), "Global")) {
+
+    if (!strcmp(SYMBOLTABLE_NAME(SYMBOLTABLE_PARENT(INFO_ST(arg_info))), "Global")) {
+      char* name = STRcat("__", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+      char* functionName = STRcat("_", FUNDEF_NAME(arg_node));
+      FUNDEF_NAME(arg_node) = STRcat(name, functionName);
+
+    } else {
+      FUNDEF_NAME(arg_node) = STRcat(SYMBOLTABLE_NAME(INFO_ST(arg_info)), STRcat("_", FUNDEF_NAME(arg_node)));
+    }
+    
+
     name = STRcpy(FUNDEF_NAME(arg_node));
     type = FUNDEF_TYPE(arg_node);
     addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node));
+
   }
 
   node* parent_table = INFO_ST(arg_info);
