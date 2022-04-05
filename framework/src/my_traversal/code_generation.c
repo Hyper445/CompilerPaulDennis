@@ -220,7 +220,7 @@ extern node *CGassign (node *arg_node, info *arg_info) {
     // EVEN EEN MANIER ZIEN TE VINDEN OM ERACHTER TE KOMEN OF ASSIGN_LET EEN GLOBALE VARIABELE IS //
     if (ASSIGN_LET(arg_node)) {
 
-      if (get_entry(VARLET_NAME(ASSIGN_LET(arg_node)), INFO_GST(arg_info)) == 
+      if (get_entry(VARLET_NAME(ASSIGN_LET(arg_node)), INFO_GST(arg_info), FALSE) == 
             VARLET_DECL(ASSIGN_LET(arg_node))) {
         
         printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
@@ -269,7 +269,7 @@ node *CGvar(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGvar");
 
 
-    node* st_entry = get_entry(VAR_NAME(arg_node), INFO_GST(arg_info));
+    node* st_entry = get_entry(VAR_NAME(arg_node), INFO_GST(arg_info), FALSE);
 
     if (st_entry == VAR_DECL(arg_node)) {
 

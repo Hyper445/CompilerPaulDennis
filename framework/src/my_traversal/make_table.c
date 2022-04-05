@@ -183,7 +183,7 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
   type type = GLOBDECL_TYPE(arg_node);
   addSymbol(name, type, arg_info, NULL);
 
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
   if(ST_entry != NULL) {
       GLOBDECL_DECL(arg_node) = ST_entry;
@@ -205,7 +205,7 @@ node *MTglobdef (node *arg_node, info *arg_info) {
   type type = GLOBDEF_TYPE(arg_node);
   addSymbol(name, type, arg_info, NULL);
 
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
   if(ST_entry != NULL) {
       GLOBDEF_DECL(arg_node) = ST_entry;
@@ -252,7 +252,7 @@ node *MTvardecl (node *arg_node, info *arg_info) {
 
   VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
 
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
   if(ST_entry != NULL) {
       VARDECL_DECL(arg_node) = ST_entry;
@@ -273,7 +273,7 @@ node *MTfuncall(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTfuncall");
 
   char* name = STRcpy(FUNCALL_NAME(arg_node));
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), TRUE);
 
   if(ST_entry != NULL) {
       FUNCALL_DECL(arg_node) = ST_entry;
@@ -294,7 +294,7 @@ node *MTvarlet(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTvarlet");
 
   char* name = STRcpy(VARLET_NAME(arg_node));
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
   if(ST_entry != NULL) {
     VARLET_DECL(arg_node) = ST_entry;
@@ -311,7 +311,7 @@ node *MTvar(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTvar");
   
   char* name = STRcpy(VAR_NAME(arg_node));
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
   if(ST_entry != NULL) {
     VAR_DECL(arg_node) = ST_entry;

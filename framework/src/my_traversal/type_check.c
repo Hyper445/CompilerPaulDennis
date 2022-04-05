@@ -78,13 +78,13 @@ node *TCfundef(node *arg_node, info* arg_info) {
       stmts = STMTS_NEXT(stmts);
 
     }
-    if (!stmts && SYMBOLTABLEENTRY_TYPE(get_entry(SYMBOLTABLE_NAME(symboltable), symboltable)) != T_void) {
+    if (!stmts && SYMBOLTABLEENTRY_TYPE(get_entry(SYMBOLTABLE_NAME(symboltable), symboltable, TRUE)) != T_void) {
       CTIerrorLine(NODE_LINE(arg_node), "Function expects return!");
     } else if (!stmts && SYMBOLTABLEENTRY_TYPE(
-        get_entry(SYMBOLTABLE_NAME(symboltable), symboltable)) == T_void) {
+        get_entry(SYMBOLTABLE_NAME(symboltable), symboltable, TRUE)) == T_void) {
       addNodeStatements(TBmakeReturn(NULL), FUNDEF_FUNBODY(arg_node));
     } else if (stmts && SYMBOLTABLEENTRY_TYPE(
-        get_entry(SYMBOLTABLE_NAME(symboltable), symboltable)) == T_void) {
+        get_entry(SYMBOLTABLE_NAME(symboltable), symboltable, TRUE)) == T_void) {
       addNodeStatements(TBmakeReturn(NULL), FUNDEF_FUNBODY(arg_node));
     }
 
@@ -207,7 +207,7 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCfuncall");
 
   node* symboltable = INFO_ST(arg_info);
-  node* fun_entry = get_entry(FUNCALL_NAME(arg_node), INFO_ST(arg_info));
+  node* fun_entry = get_entry(FUNCALL_NAME(arg_node), INFO_ST(arg_info), TRUE);
   node* funcall_params = FUNCALL_ARGS(arg_node);
   node* fun_params;
   
@@ -253,7 +253,7 @@ node* TCreturn (node* arg_node, info* arg_info) {
   type returnType = INFO_TYPE(arg_info);
 
   // Check if the expr type matches the fundef type
-  node* fundefEntry = get_entry(SYMBOLTABLE_NAME(INFO_ST(arg_info)), INFO_ST(arg_info));
+  node* fundefEntry = get_entry(SYMBOLTABLE_NAME(INFO_ST(arg_info)), INFO_ST(arg_info), TRUE);
 
   type fundefType = SYMBOLTABLEENTRY_TYPE(fundefEntry);
 
@@ -413,13 +413,13 @@ type get_type(node* expr, info* arg_info) {
       return MONOP_TYPE(expr);
 
     case N_funcall:
-      return SYMBOLTABLEENTRY_TYPE(get_entry(FUNCALL_NAME(expr), INFO_ST(arg_info)));
+      return SYMBOLTABLEENTRY_TYPE(get_entry(FUNCALL_NAME(expr), INFO_ST(arg_info), TRUE));
 
     case N_cast:
       return CAST_TYPE_LEFT(expr);
 
     case N_var:
-      return SYMBOLTABLEENTRY_TYPE(get_entry(STRcpy(VAR_NAME(expr)), INFO_ST(arg_info)));
+      return SYMBOLTABLEENTRY_TYPE(get_entry(STRcpy(VAR_NAME(expr)), INFO_ST(arg_info), TRUE));
 
     case N_num:
       return T_int;
