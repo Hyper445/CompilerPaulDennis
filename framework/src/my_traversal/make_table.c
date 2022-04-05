@@ -219,29 +219,6 @@ node *MTglobdef (node *arg_node, info *arg_info) {
 
 }
 
-// node *MTassign (node *arg_node, info* arg_info) {
-
-//   DBUG_ENTER("MTassign");
-
-//   char* name = STRcpy(VARLET_NAME(ASSIGN_LET(arg_node)));
-//   node* ST_entry = get_entry(name, INFO_ST(arg_info));
-
-//   if(ST_entry != NULL) {
-//     VARLET_DECL(ASSIGN_LET(arg_node)) = ST_entry;
-//     printf("\nType of %s = %s\n", VARLET_NAME(ASSIGN_LET(arg_node)), type_to_string(SYMBOLTABLEENTRY_TYPE(ST_entry)));
-//     printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
-//   }
-//   else {
-//     // If decleration was not found, an error is thrown.
-//     CTIerror("varlet %s is not in scope\n", name);
-//   }
-
-//   ASSIGN_LET(arg_node) = TRAVdo(ASSIGN_LET(arg_node), arg_info);
-
-//   DBUG_RETURN(arg_node);
-
-// }
-
 node *MTvardecl (node *arg_node, info *arg_info) {
   
   DBUG_ENTER("MTvardecl");

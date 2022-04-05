@@ -66,37 +66,23 @@ static info *MakeInfo(void) {
  */
 
 // Get the index of the global table
-// global_index(char* name, info* arg_info) {
+int functions_amount(node* GST) {
 
-//   int index = 0;
-//   node* current_st = INFO_ST(arg_info);
+  int amount = 0;
+  node* stEntry = SYMBOLTABLE_ENTRIES(GST);
 
-//   while (SYMBOLTABLE_PARENT(current_st) != NULL) {
+  while (stEntry) {
+    if (SYMBOLTABLEENTRY_PARAMS(stEntry)) {
+      amount++;
+    }
 
-//     current_st = SYMBOLTABLE_PARENT(current_st);
+    stEntry = SYMBOLTABLEENTRY_NEXT(stEntry);
 
-//   }
+  }
 
-//   node* entries_st = SYMBOLTABLE_ENTRIES(current_st);
+  return amount;
 
-//   while (entries_st) {
-
-//     if (STReq(SYMBOLTABLEENTRY_NAME(entries_st) == name)) {
-
-//       return index;
-
-//     }
-
-//     entries_st = SYMBOLTABLEENTRY_NEXT(entries_st);
-//     index++;
-
-//   }
-
-//   return -1;
-
-
-
-// }
+}
 
 node *CGprogram(node* arg_node, info* arg_info) {
 
@@ -241,23 +227,25 @@ extern node *CGdowhile(node *arg_node, info *arg_info) {
 extern node *CGassign (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGassign");
 
-    //ASSIGN_LET(arg_node) = TRAVopt(ASSIGN_LET(arg_node), arg_info);
     ASSIGN_EXPR(arg_node) = TRAVdo(ASSIGN_EXPR(arg_node), arg_info);
 
-    // EVEN EEN MANIER ZIEN TE VINDEN OM ERACHTER TE KOMEN OF ASSIGN_LET EEN GLOBALE VARIABELE IS //
     if (ASSIGN_LET(arg_node)) {
 
       if (get_entry_node(VARLET_DECL(ASSIGN_LET(arg_node)), INFO_GST(arg_info), FALSE)) {
         
-        printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+        int fun_amount = functions_amount(INFO_GST(arg_info));
+        printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
+          SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))) - fun_amount);
 
       }
       else {
-        printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+        printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
+          SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))));
       }
 
     } else {
-      printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
+      printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
+        SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))));
     }
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
