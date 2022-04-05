@@ -125,9 +125,21 @@ node *MTfundef (node *arg_node, info *arg_info){
   
   // When reaching a function definition, add this to the current symbol table
   if (strcmp(SYMBOLTABLE_NAME(INFO_ST(arg_info)), "Global")) {
+
+    if (!strcmp(SYMBOLTABLE_NAME(SYMBOLTABLE_PARENT(INFO_ST(arg_info))), "Global")) {
+      char* name = STRcat("__", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+      char* functionName = STRcat("_", FUNDEF_NAME(arg_node));
+      FUNDEF_NAME(arg_node) = STRcat(name, functionName);
+
+    } else {
+      FUNDEF_NAME(arg_node) = STRcat(SYMBOLTABLE_NAME(INFO_ST(arg_info)), STRcat("_", FUNDEF_NAME(arg_node)));
+    }
+    
+
     name = STRcpy(FUNDEF_NAME(arg_node));
     type = FUNDEF_TYPE(arg_node);
     addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node));
+
   }
 
   node* parent_table = INFO_ST(arg_info);
@@ -171,12 +183,10 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
   type type = GLOBDECL_TYPE(arg_node);
   addSymbol(name, type, arg_info, NULL);
 
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
   if(ST_entry != NULL) {
       GLOBDECL_DECL(arg_node) = ST_entry;
-      printf("\nType of %s = %s\n", GLOBDECL_NAME(arg_node), type_to_string(SYMBOLTABLEENTRY_TYPE(ST_entry)));
-      printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
   }
   else {
       // If decleration was not found, an error is thrown.
@@ -195,14 +205,10 @@ node *MTglobdef (node *arg_node, info *arg_info) {
   type type = GLOBDEF_TYPE(arg_node);
   addSymbol(name, type, arg_info, NULL);
 
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
   if(ST_entry != NULL) {
       GLOBDEF_DECL(arg_node) = ST_entry;
-      printf("\nType of %s = %s\n", GLOBDEF_NAME(arg_node), type_to_string(SYMBOLTABLEENTRY_TYPE(ST_entry)));
-
-  
-      printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
   }
   else {
       // If decleration was not found, an error is thrown.
@@ -246,13 +252,10 @@ node *MTvardecl (node *arg_node, info *arg_info) {
 
   VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
 
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
   if(ST_entry != NULL) {
       VARDECL_DECL(arg_node) = ST_entry;
-      printf("\nType of %s = %s\n", VARDECL_NAME(arg_node), type_to_string(SYMBOLTABLEENTRY_TYPE(ST_entry)));
-
-      printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
   }
   else {
       // If decleration was not found, an error is thrown.
@@ -270,11 +273,10 @@ node *MTfuncall(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTfuncall");
 
   char* name = STRcpy(FUNCALL_NAME(arg_node));
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), TRUE);
 
   if(ST_entry != NULL) {
       FUNCALL_DECL(arg_node) = ST_entry;
-      printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
   }
   else {
       // If decleration was not found, an error is thrown.
@@ -292,12 +294,10 @@ node *MTvarlet(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTvarlet");
 
   char* name = STRcpy(VARLET_NAME(arg_node));
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
   if(ST_entry != NULL) {
     VARLET_DECL(arg_node) = ST_entry;
-    printf("\nType of %s = %s\n", VARLET_NAME(arg_node), type_to_string(SYMBOLTABLEENTRY_TYPE(ST_entry)));
-    printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
   }
   else {
     // If decleration was not found, an error is thrown.
@@ -311,12 +311,10 @@ node *MTvar(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTvar");
   
   char* name = STRcpy(VAR_NAME(arg_node));
-  node* ST_entry = get_entry(name, INFO_ST(arg_info));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
   if(ST_entry != NULL) {
     VAR_DECL(arg_node) = ST_entry;
-    printf("Type of %s = %s\n", VAR_NAME(arg_node), type_to_string(SYMBOLTABLEENTRY_TYPE(ST_entry)));
-    printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
   }
   else {
     // If decleration was not found, an error is thrown.

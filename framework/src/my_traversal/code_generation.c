@@ -234,7 +234,7 @@ extern node *CGassign (node *arg_node, info *arg_info) {
     // EVEN EEN MANIER ZIEN TE VINDEN OM ERACHTER TE KOMEN OF ASSIGN_LET EEN GLOBALE VARIABELE IS //
     if (ASSIGN_LET(arg_node)) {
 
-      if (get_entry(VARLET_NAME(ASSIGN_LET(arg_node)), INFO_GST(arg_info)) == 
+      if (get_entry(VARLET_NAME(ASSIGN_LET(arg_node)), INFO_GST(arg_info), FALSE) == 
             VARLET_DECL(ASSIGN_LET(arg_node))) {
         
         printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), INFO_SUM_V(arg_info));
@@ -283,18 +283,21 @@ node *CGvar(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGvar");
 
 
-    node* st_entry = get_entry(VAR_NAME(arg_node), INFO_GST(arg_info));
+    node* st_entry = get_entry(VAR_NAME(arg_node), INFO_GST(arg_info), FALSE);
 
     if (st_entry == VAR_DECL(arg_node)) {
 
       printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
         SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
-    } else {
+    } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) > 3) {
       
       printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
         SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
+    } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) <= 3) {
+      char* optimised_string = optimise(arg_node);
+      printf("%s\n", optimised_string);
     }
 
     // if (global_index(VAR_NAME(arg_node), arg_info) != -1) {

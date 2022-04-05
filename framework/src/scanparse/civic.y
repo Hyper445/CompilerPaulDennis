@@ -134,25 +134,30 @@ globdef: EXPORT type ID LET expr COMMA exprs SEMICOLON
   }
   ;
 
+
 fundef: EXPORT type ID BRACKET_L BRACKET_R funbody
   {
     node* funNode = TBmakeFundef($2, STRcpy($3), NULL, $6, NULL);
-    FUNDEF_ISEXPORT(funNode) = TRUE;
+    FUNDEF_ISEXPORT(funNode) = 1;
     $$ = funNode;
   }
   | EXPORT type ID BRACKET_L param BRACKET_R funbody
   {
     node* funNode = TBmakeFundef($2, STRcpy($3), $5, $7, NULL);
-    FUNDEF_ISEXPORT(funNode) = TRUE;
+    FUNDEF_ISEXPORT(funNode) = 1;
     $$ = funNode;
   }
   | type ID BRACKET_L BRACKET_R funbody
   {
-    $$ = TBmakeFundef($1, STRcpy($2), NULL, $5, NULL);
+    node* funNode = TBmakeFundef($1, STRcpy($2), NULL, $5, NULL);
+    FUNDEF_ISEXPORT(funNode) = 0;
+    $$ = funNode;
   }
   | type ID BRACKET_L param BRACKET_R funbody
   {
-    $$ = TBmakeFundef($1, STRcpy($2), $4, $6, NULL);
+    node* funNode = TBmakeFundef($1, STRcpy($2), $4, $6, NULL);
+    FUNDEF_ISEXPORT(funNode) = 0;
+    $$ = funNode;
   }
   ;
 
@@ -212,6 +217,10 @@ funbody: CURLY_BRACKET_L vardecl fundefs stmts CURLY_BRACKET_R
   | CURLY_BRACKET_L vardecl fundefs CURLY_BRACKET_R
   {
     $$ = TBmakeFunbody($2, $3, NULL);
+  }
+  | CURLY_BRACKET_L stmts fundefs CURLY_BRACKET_R
+  {
+    $$ = TBmakeFunbody(NULL, $3, $2);
   }
   | CURLY_BRACKET_L vardecl CURLY_BRACKET_R
   {
@@ -389,9 +398,9 @@ expr: monop expr
   {
     $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
   }
-  | BRACKET_L expr binop expr BRACKET_R
+  | expr binop expr
   {
-    $$ = TBmakeBinop( $3, $2, $4);
+    $$ = TBmakeBinop( $2, $1, $3);
   }
   | cast
   {
@@ -487,7 +496,8 @@ binop: PLUS      { $$ = BO_add; }
      | GT        { $$ = BO_gt; }
      | EQ        { $$ = BO_eq; }
      | OR        { $$ = BO_or; }
-     | AND       { $$ = BO_and; }
+     | AND       { $$ = BO_and;}
+     | NE        { $$ = BO_ne; }
      ;
 
 monop: NOT { $$ = MO_not; }

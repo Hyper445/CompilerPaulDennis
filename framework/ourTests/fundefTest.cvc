@@ -1,0 +1,15 @@
+
+
+int test1(int d, int e) {
+
+    int test1 = 3;
+    return 2;
+
+
+}
+
+int test2(int a) {
+    int x = 3;
+    return x;
+}
+

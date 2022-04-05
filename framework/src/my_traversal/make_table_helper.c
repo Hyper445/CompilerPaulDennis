@@ -32,6 +32,17 @@ void addSymbol(char* name, type type, info* arg_info, node* params) {
 
   node* currentSymbolTable = INFO_ST(arg_info);
   node* currentSymbolEntry = SYMBOLTABLE_ENTRIES(currentSymbolTable);
+  bool isFunction = FALSE;
+
+  if (params) {
+    isFunction = TRUE;
+  }
+
+  if (get_entry_scope(name, INFO_ST(arg_info), isFunction)) {
+  
+    CTIerror("%s is already declared!", name);
+
+  }
 
   // Gets the correct nesting level.
   int nestinglevel = 0;
@@ -63,7 +74,7 @@ void addSymbol(char* name, type type, info* arg_info, node* params) {
 
 }
 
-node* get_entry(char* name, node* current_ST) {
+node* get_entry(char* name, node* current_ST, bool isFunction) {
 
   // gets ST and it's first entry.
   // node* current_ST = INFO_ST(arg_info);
@@ -78,13 +89,49 @@ node* get_entry(char* name, node* current_ST) {
 
       // If the decleration has been found. A link to the decleration is added to the funcall.
       if (STReq(name, SYMBOLTABLEENTRY_NAME(current_ST_entry))) {
-        return current_ST_entry;
+        
+        if (isFunction && SYMBOLTABLEENTRY_PARAMS(current_ST_entry) != NULL) {
+          return current_ST_entry;
+        } else if (!isFunction && SYMBOLTABLEENTRY_PARAMS(current_ST_entry) == NULL) {
+          return current_ST_entry;        
+        }
       }
 
     current_ST_entry = SYMBOLTABLEENTRY_NEXT(current_ST_entry);
     }
 
     current_ST = SYMBOLTABLE_PARENT(current_ST);
+  }
+
+  return NULL;
+}
+
+node* get_entry_scope(char* name, node* current_ST, bool isFunction) {
+
+  // gets ST and it's first entry.
+  // node* current_ST = INFO_ST(arg_info);
+  node* current_ST_entry;
+  
+  // Loops through the symboltables until the function decleration has been found.
+  while(current_ST != NULL) {
+    current_ST_entry = SYMBOLTABLE_ENTRIES(current_ST);
+
+    // loops through all entries at current nesting.
+    while(current_ST_entry != NULL) {
+
+      // If the decleration has been found. A link to the decleration is added to the funcall.
+      if (STReq(name, SYMBOLTABLEENTRY_NAME(current_ST_entry))) {
+        if (isFunction && SYMBOLTABLEENTRY_PARAMS(current_ST_entry) != NULL) {
+          return current_ST_entry;
+        } else if (!isFunction && SYMBOLTABLEENTRY_PARAMS(current_ST_entry) == NULL) {
+          return current_ST_entry;        
+        }
+      }
+
+    current_ST_entry = SYMBOLTABLEENTRY_NEXT(current_ST_entry);
+    }
+
+    current_ST = NULL;
   }
 
   return NULL;

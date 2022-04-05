@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+extern void addNodeStatements(node* stmt, node* funbody);
 extern node *VAprogram (node *arg_node, info *arg_info);
 extern node *VAfunbody (node *arg_node, info *arg_info);
 extern node *VAdoVariableToAssign( node *syntaxtree);

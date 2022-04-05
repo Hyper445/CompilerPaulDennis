@@ -61,12 +61,14 @@ node* RFfundef(node* arg_node, info* arg_info) {
             node *left = TBmakeVar(STRcpy(vardecl_name), NULL, NULL);
             node *right = COPYdoCopy(FOR_STOP(current_stmt));
             node *condition;
-            if(NUM_VALUE(FOR_START(current_stmt)) < NUM_VALUE(FOR_STOP(current_stmt))) {
-                condition = TBmakeBinop(BO_lt, left, right);
-            }
-            else {
-                condition = TBmakeBinop(BO_gt, left, right);
-            }
+            // if(NUM_VALUE(FOR_START(current_stmt)) < NUM_VALUE(FOR_STOP(current_stmt))) {
+            //     condition = TBmakeBinop(BO_lt, left, right);
+            // }
+            // else {
+            //     condition = TBmakeBinop(BO_gt, left, right);
+            // }
+
+            condition = TBmakeBinop(BO_gt, left, right);
 
             // Create the block of the while loop.
             node *block = COPYdoCopy(FOR_BLOCK(current_stmt));

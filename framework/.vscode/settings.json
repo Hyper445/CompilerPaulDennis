@@ -17,6 +17,7 @@
         "opt_sub.h": "c",
         "traverse.h": "c",
         "make_table_helper.h": "c",
-        "cstring": "cpp"
+        "cstring": "cpp",
+        "code_generation_helper.h": "c"
     }
 }
