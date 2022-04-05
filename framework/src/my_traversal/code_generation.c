@@ -141,7 +141,9 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
     INFO_SUM_C(arg_info) = 0;
     INFO_SUM_V(arg_info) = 0;
 
-    printf("%s:\n", FUNDEF_NAME(arg_node));
+
+
+    printf("\n%s:\n", FUNDEF_NAME(arg_node));
 
     // Calculate number of vardecls in funbody.
     int sum_vardecls = 0;
@@ -157,9 +159,20 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
       printf("\tesr %d\n", sum_vardecls);
     }
 
+    // traverse through paramaters.
     FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
-    FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
+
+    // Traverse through vardecls and statements.
+    FUNBODY_VARDECLS(body) = TRAVopt(FUNBODY_VARDECLS(body), arg_info);
+    FUNBODY_STMTS(body) = TRAVopt(FUNBODY_STMTS(body), arg_info);
+
+
+    // Traverse through the local fundefs
+    FUNBODY_LOCALFUNDEFS(body) = TRAVopt(FUNBODY_LOCALFUNDEFS(body), arg_info);
     
+    
+    
+
     DBUG_RETURN(arg_node);
 }
 
