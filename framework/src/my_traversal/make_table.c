@@ -168,7 +168,7 @@ node *MTfundef (node *arg_node, info *arg_info){
       FUNDEF_NAME(arg_node) = STRcat(name, functionName);
 
     } else {
-      
+
       FUNDEF_NAME(arg_node) = STRcat(SYMBOLTABLE_NAME(INFO_ST(arg_info)), STRcat("_", FUNDEF_NAME(arg_node)));
     }
   }
@@ -227,12 +227,12 @@ node *MTvardecl (node *arg_node, info *arg_info) {
   
   DBUG_ENTER("MTvardecl");
 
+  VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
+  VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
+
   char* name = STRcpy(VARDECL_NAME(arg_node));
   type type = VARDECL_TYPE(arg_node);
   addSymbol(name, type, arg_info, NULL, FALSE);
-
-  VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
-  VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
 
   node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
