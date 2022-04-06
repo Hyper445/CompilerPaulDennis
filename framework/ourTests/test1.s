@@ -4,12 +4,20 @@ __init:
     return
 
 test1:
-    esr 3
-    iload_1
-    iload_2
-    ieq
-    bstore 3
+    esr 2
+    iloadc 0
+    istore 1
     iloadc 1
+    istore 2
+    iload_1
+    iload_1
+    iadd
+    istore 1
+    iload_2
+    iload_1
+    iadd
+    istore 1
+    iloadc 2
     ireturn
 
 test2:
@@ -20,6 +28,7 @@ test2:
     ireturn
 
 .const int 3
+.const int 5
 .const int 2
 .exportfun "__init" void __init
 .global int

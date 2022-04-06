@@ -126,14 +126,15 @@ char* optimise(node* arg_node) {
 
     case N_var:
       if (SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) == 0) {
-        return ("\tload_0");
+        return ("load_0");
       } else if (SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) == 1) {
-        return ("\tload_1");
+        return ("load_1");
       } else if (SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) == 2) {
-        return ("\tload_2");
+        return ("load_2");
       } else if (SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) == 3) {
-        return ("\tload_3");
+        return ("load_3");
       }
+      printf("%d = indexlevel\n", SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
       break;
 
     default:

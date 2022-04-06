@@ -35,6 +35,7 @@ struct INFO {
   int sum_labels;
   node* constant_table;
   node* global_st;
+  node* current_st;
 
 };
 
@@ -44,6 +45,7 @@ struct INFO {
 #define INFO_SUM_L(n) ((n)->sum_labels)
 #define INFO_CT(n) ((n)->constant_table)
 #define INFO_GST(n) ((n)->global_st)
+#define INFO_CST(n) ((n)->current_st)
 
 static info *MakeInfo(void) {
   info *result;
@@ -53,6 +55,7 @@ static info *MakeInfo(void) {
   result = (info *)MEMmalloc(sizeof(info));
   INFO_CT(result) = NULL;
   INFO_GST(result) = NULL;
+  INFO_CST(result) = NULL;
   INFO_SUM_C(result) = 0;
   INFO_SUM_V(result) = 0;
   INFO_SUM_S(result) = 0;
@@ -91,6 +94,7 @@ node *CGprogram(node* arg_node, info* arg_info) {
 
     INFO_CT(arg_info) = PROGRAM_CONSTANTTABLE(arg_node);
     INFO_GST(arg_info) = PROGRAM_SYMBOLTABLE(arg_node);
+    INFO_CST(arg_info) = PROGRAM_SYMBOLTABLE(arg_node);
     PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 
     printf("\n");
@@ -124,10 +128,7 @@ node *CGprogram(node* arg_node, info* arg_info) {
 extern node *CGfundef (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGfundef");
 
-    INFO_SUM_C(arg_info) = 0;
-    INFO_SUM_V(arg_info) = 0;
-
-
+    INFO_CST(arg_info) = FUNDEF_SYMBOLTABLE(arg_node);
 
     printf("\n%s:\n", FUNDEF_NAME(arg_node));
 
@@ -297,7 +298,7 @@ node *CGvar(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGvar");
 
 
-    node* st_entry = get_entry(VAR_NAME(arg_node), INFO_GST(arg_info), FALSE);
+    node* st_entry = get_entry(VAR_NAME(arg_node), INFO_CST(arg_info), FALSE);
 
     if (get_entry_node(VAR_DECL(arg_node), INFO_GST(arg_info), FALSE)) {
 
@@ -311,7 +312,7 @@ node *CGvar(node* arg_node, info* arg_info) {
 
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) <= 3) {
       char* optimised_string = optimise(arg_node);
-      printf("%s\n", optimised_string);
+      printf("\t%s%s\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string);
     
     }
 

@@ -4,20 +4,12 @@ int a = 3;
 
 int test1(int d) {
 
-    int test1 = 3;
-    int test2 = 3;
+    int a = 3;
+    int b = 5;
 
-    int test1(int d, int e) {
-        int x = 3;
-
-        int test3(int a, int b, int c) {
-            int x = 4;
-            test1(3, 4);
-            return 2;
-        }
-        return 2;
-    }
-
+    a = a + a;
+    a = b + a;
+    
     return 2;
 
 
