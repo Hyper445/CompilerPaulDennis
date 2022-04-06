@@ -312,19 +312,10 @@ node *CGvar(node* arg_node, info* arg_info) {
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) <= 3) {
       char* optimised_string = optimise(arg_node);
       printf("%s\n", optimised_string);
+    
     }
 
-    // if (global_index(VAR_NAME(arg_node), arg_info) != -1) {
-
-    //   printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
-    //     global_index(VAR_NAME(arg_node), arg_info));
-
-    // } else {
-    
-
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
-    
-    // }
 
     DBUG_RETURN(arg_node);
 

@@ -69,6 +69,7 @@ void addSymbol(char* name, type type, info* arg_info, node* params, bool isFunct
 
 }
 
+// Compare links when entry has already been added and link has been provided
 node* get_entry_node(node* stLink, node* current_ST, bool isFunction) {
 
   // gets ST and it's first entry.
@@ -101,6 +102,7 @@ node* get_entry_node(node* stLink, node* current_ST, bool isFunction) {
   return NULL;
 }
 
+// Get entry by name
 node* get_entry(char* name, node* current_ST, bool isFunction) {
 
   // gets ST and it's first entry.
@@ -133,6 +135,7 @@ node* get_entry(char* name, node* current_ST, bool isFunction) {
   return NULL;
 }
 
+// Check if entry is in the current scope
 node* get_entry_scope(char* name, node* current_ST, bool isFunction) {
 
   // gets ST and it's first entry.

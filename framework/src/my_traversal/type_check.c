@@ -207,7 +207,7 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCfuncall");
 
   node* symboltable = INFO_ST(arg_info);
-  node* fun_entry = get_entry(FUNCALL_NAME(arg_node), INFO_ST(arg_info), TRUE);
+  node* fun_entry = get_entry_node(FUNCALL_DECL(arg_node), INFO_ST(arg_info), TRUE);
   node* funcall_params = FUNCALL_ARGS(arg_node);
   node* fun_params;
   

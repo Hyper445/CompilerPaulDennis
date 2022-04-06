@@ -96,12 +96,13 @@ node *CFbinop (node* arg_node, info* arg_info) {
   BINOP_LEFT(arg_node) = TRAVopt(BINOP_LEFT(arg_node), arg_info);
   BINOP_RIGHT(arg_node) = TRAVopt(BINOP_RIGHT(arg_node), arg_info);
 
+  if (BINOP_OP(arg_node) > 4) {
+    DBUG_RETURN(arg_node);
+  }
+
   if (NODE_TYPE(BINOP_LEFT(arg_node)) == NODE_TYPE(BINOP_RIGHT(arg_node))) {
-
     if (NODE_TYPE(BINOP_LEFT(arg_node)) == N_num) {
-
       switch (BINOP_OP(arg_node)) {
-
         case BO_add:
           arg_node = TBmakeNum(NUM_VALUE(BINOP_LEFT(arg_node)) + NUM_VALUE(BINOP_RIGHT(arg_node)));
           break;
@@ -124,7 +125,30 @@ node *CFbinop (node* arg_node, info* arg_info) {
         default:
           CTIerror("unvalid node type (constant_folding)");
           break;
+      }
 
+    }
+    else if (NODE_TYPE(BINOP_LEFT(arg_node)) == N_float) {
+      switch (BINOP_OP(arg_node)) {
+        case BO_add:
+          arg_node = TBmakeFloat(FLOAT_VALUE(BINOP_LEFT(arg_node)) + FLOAT_VALUE(BINOP_RIGHT(arg_node)));
+          break;
+
+        case BO_mul:
+          arg_node = TBmakeFloat(FLOAT_VALUE(BINOP_LEFT(arg_node)) * FLOAT_VALUE(BINOP_RIGHT(arg_node)));
+          break;
+
+        case BO_div:
+          arg_node = TBmakeFloat(FLOAT_VALUE(BINOP_LEFT(arg_node)) / FLOAT_VALUE(BINOP_RIGHT(arg_node)));
+          break;
+
+        case BO_sub:
+          arg_node = TBmakeFloat(FLOAT_VALUE(BINOP_LEFT(arg_node)) - FLOAT_VALUE(BINOP_RIGHT(arg_node)));
+          break;
+
+        default:
+          CTIerror("unvalid node type (constant_folding)");
+          break;
       }
 
     }

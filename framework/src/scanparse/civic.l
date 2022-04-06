@@ -102,3 +102,9 @@
 
 [ \t]                      { global.col += yyleng;
                            } 
+
+"/*"([^*]|(\*+[^*/]))*\*+\/             { /* comment ,
+                                                do nothing */ }
+
+"//".*$                     { /* comment ,
+                              do nothing */ }

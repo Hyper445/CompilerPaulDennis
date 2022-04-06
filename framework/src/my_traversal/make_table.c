@@ -126,16 +126,6 @@ node *MTfundef (node *arg_node, info *arg_info){
   // When reaching a function definition, add this to the current symbol table
   if (strcmp(SYMBOLTABLE_NAME(INFO_ST(arg_info)), "Global")) {
 
-    if (!strcmp(SYMBOLTABLE_NAME(SYMBOLTABLE_PARENT(INFO_ST(arg_info))), "Global")) {
-      char* name = STRcat("__", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
-      char* functionName = STRcat("_", FUNDEF_NAME(arg_node));
-      FUNDEF_NAME(arg_node) = STRcat(name, functionName);
-
-    } else {
-      FUNDEF_NAME(arg_node) = STRcat(SYMBOLTABLE_NAME(INFO_ST(arg_info)), STRcat("_", FUNDEF_NAME(arg_node)));
-    }
-    
-
     name = STRcpy(FUNDEF_NAME(arg_node));
     type = FUNDEF_TYPE(arg_node);
     addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node), TRUE);
@@ -164,12 +154,26 @@ node *MTfundef (node *arg_node, info *arg_info){
     }
   }
 
-
   //If the function has a body, traverse the funbody with the new table
   FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
   FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
   INFO_ST(arg_info) = parent_table;
+
+  if (strcmp(SYMBOLTABLE_NAME(INFO_ST(arg_info)), "Global")) {
+
+    if (!strcmp(SYMBOLTABLE_NAME(SYMBOLTABLE_PARENT(INFO_ST(arg_info))), "Global")) {
+      char* name = STRcat("__", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+      char* functionName = STRcat("_", FUNDEF_NAME(arg_node));
+      FUNDEF_NAME(arg_node) = STRcat(name, functionName);
+
+    } else {
+      
+      FUNDEF_NAME(arg_node) = STRcat(SYMBOLTABLE_NAME(INFO_ST(arg_info)), STRcat("_", FUNDEF_NAME(arg_node)));
+    }
+  }
+
+  
   DBUG_RETURN(arg_node);
   
 }
@@ -227,6 +231,7 @@ node *MTvardecl (node *arg_node, info *arg_info) {
   type type = VARDECL_TYPE(arg_node);
   addSymbol(name, type, arg_info, NULL, FALSE);
 
+  VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
   VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
 
   node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
@@ -238,8 +243,6 @@ node *MTvardecl (node *arg_node, info *arg_info) {
       // If decleration was not found, an error is thrown.
       CTIerror("varlet %s is not in scope\n", name);
   }
-
-  VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
   
