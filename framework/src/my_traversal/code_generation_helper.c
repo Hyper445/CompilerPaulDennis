@@ -2,6 +2,7 @@
 #include "make_table_helper.h"
 #include "code_generation_helper.h"
 #include "print.h"
+#include "stdbool.h"
 
 #include "stdlib.h"
 #include "lookup_table.h"
@@ -101,7 +102,7 @@ node* in_table(node* value_node, node* constant_table) {
 
 }
 
-char* optimise(node* arg_node) {
+char* optimise_constant(node* arg_node) {
 
   // If constant isn't in the table, it is one of the optimised numbers
   switch(NODE_TYPE(arg_node)) {
@@ -143,6 +144,43 @@ char* optimise(node* arg_node) {
   }
 
   return NULL;
+}
+
+int optimise_assign(node *arg_node, node *constant_table) {
+  node *expr = ASSIGN_EXPR(arg_node);
+  if(NODE_TYPE(expr) == N_binop && BINOP_OP(expr) == BO_add) {
+    // Expr is a addition.
+    if(NODE_TYPE(BINOP_LEFT(expr)) == N_var && STReq(VAR_NAME(BINOP_LEFT(expr)), VARLET_NAME(ASSIGN_LET(arg_node)))) {
+      // The addition binop has a var as its left child, the var matches the varlet of the assign node.
+      if(NODE_TYPE(BINOP_RIGHT(expr)) == N_num) {
+        // The right child of the binop is a num.
+        int index_var = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(BINOP_LEFT(expr)));
+        if(NUM_VALUE(BINOP_RIGHT(expr)) == 1) {
+          printf("\tiinc_1 %d\n", index_var);
+          return true;
+        }
+        else {
+          node *constant = in_table(BINOP_RIGHT(expr), constant_table);
+          printf("\tiinc %d %d\n", index_var, CONSTANT_INDEX(constant_table));
+          return true;
+        }
+      }
+      else {
+        // The right child of the binop is not a num.
+        return false;
+      }
+    } else if (NODE_TYPE(BINOP_RIGHT(expr)) == N_var && STReq(VAR_NAME(BINOP_RIGHT(expr)), VARLET_NAME(ASSIGN_LET(arg_node)))) {
+      // The binop has a var as its right child, the var matches the varlet of the assign node.
+      return true;
+    } else {
+      // the binop has no var as its child.
+      return false;
+    }
+  }
+  else {
+    // right child of assign is not a binop.
+    return false;
+  }
 }
 
 // Helper function. Converts a type to a string.

@@ -242,6 +242,10 @@ extern node *CGdowhile(node *arg_node, info *arg_info) {
 extern node *CGassign (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGassign");
 
+    if(optimise_assign(arg_node, INFO_CT(arg_info)) == 1) {
+      DBUG_RETURN(arg_node);
+    }
+
     ASSIGN_EXPR(arg_node) = TRAVdo(ASSIGN_EXPR(arg_node), arg_info);
 
     if (ASSIGN_LET(arg_node)) {
@@ -311,10 +315,19 @@ node *CGvar(node* arg_node, info* arg_info) {
         SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) <= 3) {
-      char* optimised_string = optimise(arg_node);
+      char* optimised_string = optimise_constant(arg_node);
       printf("\t%s%s\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string);
-    
+
     }
+
+    // if (global_index(VAR_NAME(arg_node), arg_info) != -1) {
+
+    //   printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+    //     global_index(VAR_NAME(arg_node), arg_info));
+
+    // } else {
+    
+    // }
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
 
@@ -332,7 +345,7 @@ node* CGnum(node* arg_node, info* arg_info) {
  
     } else {
 
-      char* optimisedCode = optimise(arg_node); 
+      char* optimisedCode = optimise_constant(arg_node); 
       printf("%s\n", optimisedCode);
     
     }
@@ -363,7 +376,7 @@ node* CGfloat(node* arg_node, info* arg_info) {
       printf("\tfloadc %d\n", CONSTANT_INDEX(constant_table));
  
     } else {
-      char* optimisedCode = optimise(arg_node); 
+      char* optimisedCode = optimise_constant(arg_node); 
       printf("%s\n", optimisedCode);
     
     }
