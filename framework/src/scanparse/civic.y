@@ -56,9 +56,13 @@ static int yyerror( char *errname);
 %type <ctype> type
 %type <cmonop> monop
 
-%left MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE AND OR NOT
-%left BRACKET_R SEMICOLON
-
+%left NOT
+%left STAR SLASH PERCENT
+%left MINUS PLUS
+%left GE GT LE LT
+%left EQ NE
+%left AND
+%left OR
 
 %start program
 

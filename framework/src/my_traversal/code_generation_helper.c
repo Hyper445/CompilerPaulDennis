@@ -35,7 +35,7 @@ void print_globals(node* symbolTable) {
     node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
     while (current_entry) {
         
-        if (!SYMBOLTABLEENTRY_PARAMS(current_entry)) { 
+        if (!SYMBOLTABLEENTRY_ISFUNCTION(current_entry)) { 
             
             printf(".global %s\n", type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry))); 
         }
