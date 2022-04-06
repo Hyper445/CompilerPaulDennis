@@ -56,6 +56,8 @@ static int yyerror( char *errname);
 %type <ctype> type
 %type <cmonop> monop
 
+%left MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE AND OR NOT
+%left BRACKET_R SEMICOLON
 
 
 %start program
@@ -139,24 +141,42 @@ fundef: EXPORT type ID BRACKET_L BRACKET_R funbody
   {
     node* funNode = TBmakeFundef($2, STRcpy($3), NULL, $6, NULL);
     FUNDEF_ISEXPORT(funNode) = 1;
+    FUNDEF_ISEXTERN(funNode) = 0;    
     $$ = funNode;
   }
   | EXPORT type ID BRACKET_L param BRACKET_R funbody
   {
     node* funNode = TBmakeFundef($2, STRcpy($3), $5, $7, NULL);
     FUNDEF_ISEXPORT(funNode) = 1;
+    FUNDEF_ISEXTERN(funNode) = 0;    
     $$ = funNode;
   }
   | type ID BRACKET_L BRACKET_R funbody
   {
     node* funNode = TBmakeFundef($1, STRcpy($2), NULL, $5, NULL);
     FUNDEF_ISEXPORT(funNode) = 0;
+    FUNDEF_ISEXTERN(funNode) = 0;    
     $$ = funNode;
   }
   | type ID BRACKET_L param BRACKET_R funbody
   {
     node* funNode = TBmakeFundef($1, STRcpy($2), $4, $6, NULL);
     FUNDEF_ISEXPORT(funNode) = 0;
+    FUNDEF_ISEXTERN(funNode) = 0;    
+    $$ = funNode;
+  } 
+  | EXTERN type ID BRACKET_L BRACKET_R SEMICOLON
+  {
+    node* funNode = TBmakeFundef($2, STRcpy($3), NULL, NULL, NULL);
+    FUNDEF_ISEXPORT(funNode) = 0;
+    FUNDEF_ISEXTERN(funNode) = 1;    
+    $$ = funNode;
+  }
+  | EXTERN type ID BRACKET_L param BRACKET_R SEMICOLON
+  {
+    node* funNode = TBmakeFundef($2, STRcpy($3), $5, NULL, NULL);
+    FUNDEF_ISEXPORT(funNode) = 0;
+    FUNDEF_ISEXTERN(funNode) = 1;    
     $$ = funNode;
   }
   ;

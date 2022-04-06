@@ -206,6 +206,8 @@ node *TCcast (node *arg_node, info *arg_info) {
 node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCfuncall");
 
+  FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
+
   node* symboltable = INFO_ST(arg_info);
   node* fun_entry = get_entry_node(FUNCALL_DECL(arg_node), INFO_ST(arg_info), TRUE);
   node* funcall_params = FUNCALL_ARGS(arg_node);
@@ -216,7 +218,7 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   } 
 
   while (fun_params && funcall_params) {
-    
+
     if (PARAM_TYPE(fun_params) == get_type(EXPRS_EXPR(funcall_params), arg_info)) {
 
       fun_params = PARAM_NEXT(fun_params);
@@ -369,8 +371,6 @@ node *TCvar(node *arg_node, info *arg_info) {
 node *TCvarlet(node *arg_node, info *arg_info) {
   DBUG_ENTER("TCvarlet");
 
-  printf("TCvarlet is being executed\n");
-
   node *entry = VARLET_DECL(arg_node);
 
   if(entry != NULL) {
@@ -413,7 +413,7 @@ type get_type(node* expr, info* arg_info) {
       return MONOP_TYPE(expr);
 
     case N_funcall:
-      return SYMBOLTABLEENTRY_TYPE(get_entry(FUNCALL_NAME(expr), INFO_ST(arg_info), TRUE));
+      return SYMBOLTABLEENTRY_TYPE(get_entry_node(FUNCALL_DECL(expr), INFO_ST(arg_info), TRUE));
 
     case N_cast:
       return CAST_TYPE_LEFT(expr);
