@@ -52,6 +52,12 @@ SUBPHASE( mt,
           ALWAYS,
           pet)
 
+SUBPHASE( al, 
+          "Adding links",
+          ALdoAddLinks, 
+          ALWAYS,
+          pet)
+
 SUBPHASE( pt,
           "Printing Symboltable",
           PTdoPrintTable,
@@ -89,14 +95,14 @@ SUBPHASE( tw,
           ALWAYS,
           pet)
 
-SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)      
-
-
 SUBPHASE( mct,
           "Making Constant Table",
           MCTdoMakeConstantTable,
           ALWAYS,
           pet)
+
+SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)      
+
 
 SUBPHASE( cg,
           "Generating Code",

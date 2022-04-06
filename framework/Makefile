@@ -266,11 +266,19 @@ ifeq ($(CHECK_DEPS),yes)
   endif
 endif
 
-
 ###############################################################################
 #
 # Testing
 #
+#  Uncomment the necessary parts when adding extensions.
+
+TEST_DIRS := basic # nested_funs arrays preprocess
+TEST_CFLAGS := ""
+TEST_RUN_FUNCTIONAL := 0
+TEST_CIVAS := bin/civas
+TEST_CIVVM := bin/civvm
+TEST_CIVCC := bin/civicc
+
 
 # check: all
 #     @cd test; \

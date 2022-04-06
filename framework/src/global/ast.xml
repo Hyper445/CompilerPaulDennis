@@ -49,7 +49,7 @@
         </travuser>
       </traversal>
 
-      <!-- <traversal id="AL" name="Adding links to vars" default="sons" include="add_links.h">
+      <traversal id="AL" name="Adding links to vars" default="sons" include="add_links.h">
         <travuser>
           <node name="Program" />
           <node name="FunDef" />
@@ -60,7 +60,7 @@
           <node name="Var" />
           <node name="FunCall" />
         </travuser>
-      </traversal> -->
+      </traversal>
 
       <traversal id="VA" name="Variable Initialisation to Regular Assignment" default="sons" include="var_to_assign.h">
         <travuser>
@@ -530,6 +530,7 @@
         </attributes>
         <flags>
             <flag name="IsExport" />
+            <flag name="IsExtern" />
         </flags>
     </node>
 

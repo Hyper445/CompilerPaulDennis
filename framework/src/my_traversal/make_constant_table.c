@@ -88,7 +88,7 @@ void addConstant(node* arg_node, info* arg_info) {
     node* previous_constant = current_constant;
     while (current_constant) {
       
-      if (NODE_TYPE(CONSTANT_VALUE(current_constant)) == NODE_TYPE(arg_node))
+      if (NODE_TYPE(CONSTANT_VALUE(current_constant)) == NODE_TYPE(arg_node)) {
 
         switch (NODE_TYPE(arg_node)) {
 
@@ -107,11 +107,12 @@ void addConstant(node* arg_node, info* arg_info) {
 
         }
       
+      }
+      
       index++;
       previous_constant = current_constant;
       current_constant = CONSTANT_NEXT(current_constant);
       
-
     }
 
     CONSTANT_NEXT(previous_constant) = TBmakeConstant(NODE_TYPE(arg_node), arg_node, index, NULL);

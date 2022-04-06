@@ -39,8 +39,11 @@ node* RFfundef(node* arg_node, info* arg_info) {
     int sum = 0;
 
     node *body = FUNDEF_FUNBODY(arg_node);
-    node *stmts = FUNBODY_STMTS(body);
-    
+    node* stmts = NULL;
+    if (body) {
+        stmts = FUNBODY_STMTS(body);
+    }
+
     // Traverse through body of loop. In case of a for loop in an inner function, that for loop will be changed into a while loop first.
     FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
