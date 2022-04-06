@@ -351,11 +351,23 @@ ifelse: IF BRACKET_L expr BRACKET_R block ELSE block
   {
     $$ = TBmakeIfelse($3, NULL, NULL);
   }
+  | IF BRACKET_L expr BRACKET_R RETURN SEMICOLON
+  {
+    $$ = TBmakeIfelse($3, NULL, NULL);
+  }
+  | IF BRACKET_L expr BRACKET_R ELSE block
+  {
+    $$ = TBmakeIfelse($3, NULL, $6);
+  }
   ;
 
 block: CURLY_BRACKET_L stmts CURLY_BRACKET_R
   {
     $$ = $2;
+  }
+  | stmts
+  {
+    $$ = $1;
   }
   ;
 
@@ -381,6 +393,14 @@ assign: varlet LET expr SEMICOLON
   {
     $$ = TBmakeFor( $4, $6, $8, $10, $13);
   }
+  | FOR BRACKET_L type ID LET expr COMMA expr COMMA expr BRACKET_R stmts
+  {
+    $$ = TBmakeFor( $4, $6, $8, $10, $12);
+  }
+  | FOR BRACKET_L type ID LET expr COMMA expr BRACKET_R stmts
+  {
+    $$ = TBmakeFor( $4, $6, $8, NULL, $10);
+  }
   ;
 
   dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
@@ -390,6 +410,10 @@ assign: varlet LET expr SEMICOLON
   | DO CURLY_BRACKET_L CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
   {
     $$ = TBmakeDowhile( $6, NULL);
+  }
+  | DO stmts WHILE BRACKET_L expr BRACKET_R SEMICOLON
+  {
+    $$ = TBmakeDowhile( $5, $2);
   }
   ;
 

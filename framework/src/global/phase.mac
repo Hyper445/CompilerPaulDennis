@@ -64,6 +64,8 @@ SUBPHASE( pt,
           ALWAYS,
           pet)
 
+SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)
+
 SUBPHASE( tc,
           "Type Checking",
           TCdoTypeCheck,
@@ -100,9 +102,6 @@ SUBPHASE( mct,
           MCTdoMakeConstantTable,
           ALWAYS,
           pet)
-
-SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)      
-
 
 SUBPHASE( cg,
           "Generating Code",

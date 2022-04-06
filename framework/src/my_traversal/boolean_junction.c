@@ -37,23 +37,14 @@ node *BJbinop (node *arg_node, info *arg_info){
 
     if (BINOP_OP(arg_node) == BO_and) {
       
-      if (BOOL_VALUE(BINOP_LEFT(arg_node)) == TRUE) {
         node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), BINOP_RIGHT(arg_node), TBmakeBool(FALSE));
         arg_node = condexpr;
-      } else if(BOOL_VALUE(BINOP_LEFT(arg_node)) == FALSE) {
-        node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), TBmakeBool(FALSE), BINOP_RIGHT(arg_node));
-        arg_node = condexpr;
-      }
 
     } else if (BINOP_OP(arg_node) == BO_or) {
 
-      if (BOOL_VALUE(BINOP_LEFT(arg_node)) == TRUE) {
-        node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), TBmakeBool(TRUE), BINOP_RIGHT(arg_node));
-        arg_node = condexpr;
-      } else if (BOOL_VALUE(BINOP_LEFT(arg_node)) == FALSE) {
         node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), TBmakeBool(FALSE), BINOP_RIGHT(arg_node));
         arg_node = condexpr;
-      }
+
     }
     
 

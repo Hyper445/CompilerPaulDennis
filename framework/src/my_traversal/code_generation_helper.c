@@ -116,7 +116,6 @@ char* optimise(node* arg_node) {
       break;
 
     case N_float:
-      printf("1\n");
       if (FLOAT_VALUE(arg_node) == 0.0) {
         return ("\tfloadc_0");
       } else if (FLOAT_VALUE(arg_node) == 1.0) {

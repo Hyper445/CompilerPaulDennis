@@ -104,7 +104,6 @@ node *ALglobdecl(node* arg_node, info* arg_info) {
 
     if(ST_entry != NULL) {
         GLOBDECL_DECL(arg_node) = ST_entry;
-        printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
     }
     else {
         // If decleration was not found, an error is thrown.
@@ -124,7 +123,6 @@ node *ALglobdef(node* arg_node, info* arg_info) {
 
     if(ST_entry != NULL) {
         GLOBDEF_DECL(arg_node) = ST_entry;
-        printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
     }
     else {
         // If decleration was not found, an error is thrown.
@@ -145,7 +143,6 @@ node *ALvardecl(node* arg_node, info* arg_info) {
 
     if(ST_entry != NULL) {
         VARDECL_DECL(arg_node) = ST_entry;
-        printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
     }
     else {
         // If decleration was not found, an error is thrown.
@@ -167,7 +164,6 @@ node *ALfuncall(node* arg_node, info* arg_info) {
     
     if(ST_entry != NULL) {
         FUNCALL_DECL(arg_node) = ST_entry;
-        printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
     }
     else {
         // If decleration was not found, an error is thrown.
@@ -190,7 +186,6 @@ node *ALvarlet(node* arg_node, info* arg_info) {
 
     if(ST_entry != NULL) {
         VARLET_DECL(arg_node) = ST_entry;
-        printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
     }
     else {
         // If decleration was not found, an error is thrown.
@@ -211,7 +206,6 @@ node *ALvar(node* arg_node, info* arg_info) {
 
     if(ST_entry != NULL) {
         VAR_DECL(arg_node) = ST_entry;
-        printf("link added from %s\t to %s \t with nesting %d\n", name, SYMBOLTABLEENTRY_NAME(ST_entry), SYMBOLTABLEENTRY_NESTINGLEVEL(ST_entry));
     }
     else {
         // If decleration was not found, an error is thrown.

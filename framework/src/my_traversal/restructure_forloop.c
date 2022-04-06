@@ -35,7 +35,6 @@
 
 node* RFfundef(node* arg_node, info* arg_info) {
     DBUG_ENTER("RFfundef");    
-    printf("fundef is being executed\n");
     int sum = 0;
 
     node *body = FUNDEF_FUNBODY(arg_node);
@@ -49,7 +48,6 @@ node* RFfundef(node* arg_node, info* arg_info) {
 
     // Loops through all stmts nodes.
     while(stmts != NULL) {
-        printf("test0\n");
         node *current_stmt = STMTS_STMT(stmts);
 
         if (NODE_TYPE(current_stmt) == N_for) {
@@ -97,11 +95,9 @@ node* RFfundef(node* arg_node, info* arg_info) {
             node *current_block_stmts = block;
             node *step_stmts = TBmakeStmts(step_while, NULL);
             if(block == NULL) {
-                printf("if statement entered\n");
                 WHILE_BLOCK(new_while_loop) = step_stmts;
             }
             else {
-                printf("else statement entered\n");
                 while(STMTS_NEXT(current_block_stmts) != NULL) {
                     current_block_stmts = STMTS_NEXT(current_block_stmts);
                 }
