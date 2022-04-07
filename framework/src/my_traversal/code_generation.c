@@ -357,20 +357,20 @@ node *CGvar(node* arg_node, info* arg_info) {
     if (get_entry_node(VAR_DECL(arg_node), INFO_GST(arg_info), FALSE)) {
       char *type_char = type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node)));
       int index = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node));
-      write_assembly(STRcatn(5, "\t", type_char, "loadg ", STRitoa(index), "\t"));
+      write_assembly(STRcatn(5, "\t", type_char, "loadg ", STRitoa(index), "\n"));
       //printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
       //  SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) > 3) {
       char *type_char = type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node)));
       int index = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node));
-      write_assembly(STRcatn(5, "\t", type_char, "load ", STRitoa(index), "\t"));
+      write_assembly(STRcatn(5, "\t", type_char, "load ", STRitoa(index), "\n"));
       //printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
       //  SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) <= 3) {
       char* optimised_string = optimise_constant(arg_node);
-      write_assembly(STRcatn(4, "\t", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string, "\n"));
+      write_assembly(STRcatn(4, "\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string, "\n"));
       //printf("\t%s%s\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string);
 
     }
