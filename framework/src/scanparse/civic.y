@@ -56,13 +56,14 @@ static int yyerror( char *errname);
 %type <ctype> type
 %type <cmonop> monop
 
-%left NOT
-%left STAR SLASH PERCENT
-%left MINUS PLUS
-%left GE GT LE LT
-%left EQ NE
-%left AND
 %left OR
+%right LET
+%left AND
+%left EQ NE 
+%left GE GT LE LT
+%left MINUS PLUS
+%left STAR SLASH PERCENT
+%left NOT
 
 %start program
 
@@ -450,9 +451,17 @@ expr: monop expr
   {
     $$ = TBmakeBinop( $2, $1, $3);
   }
+  | BRACKET_L expr binop expr BRACKET_R
+  {
+    $$ = TBmakeBinop( $3, $2, $4);
+  }
   | cast
   {
     $$ = $1;
+  }
+  | BRACKET_L cast BRACKET_R
+  {
+    $$ = $2;
   }
   | funcall
   {
@@ -464,7 +473,11 @@ expr: monop expr
   }
   ;
 
-cast: BRACKET_L type BRACKET_R expr
+cast: BRACKET_L type BRACKET_R BRACKET_L expr BRACKET_R
+  {
+    $$ = TBmakeCast($2, $5);
+  }
+  | BRACKET_L type BRACKET_R expr
   {
     $$ = TBmakeCast($2, $4);
   }
