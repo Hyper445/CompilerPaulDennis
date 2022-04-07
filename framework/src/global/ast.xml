@@ -138,6 +138,7 @@
             <node name="FunDef" />
             <node name="Assign" />
             <node name="BinOp" />
+            <node name="MonOp" />
             <node name="Var" />
             <node name="Num"/>
             <node name="Float"/>

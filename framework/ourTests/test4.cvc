@@ -1,0 +1,14 @@
+int b;
+
+int negate_integer(){
+	int a = 3;
+	a = -a;
+	return a;
+}
+
+float negate_float(){
+	float a = -3.0;
+	a = -8.0;
+	return a;
+}
+

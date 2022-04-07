@@ -287,6 +287,31 @@ node *CGbinop(node* arg_node, info* arg_info) {
     DBUG_RETURN(arg_node);
 }
 
+node *CGmonop(node *arg_node, info *arg_info) {
+  DBUG_ENTER("CGmonop");
+  //printf("test, monop function starts\n");
+  MONOP_OPERAND(arg_node) = TRAVdo(MONOP_OPERAND(arg_node), arg_info);
+  //printf("traverse through monop operand is now done\n");
+  //printf("monop type = %d\n", MONOP_TYPE(arg_node));
+
+  switch(MONOP_TYPE(arg_node)) {
+    case T_int:
+      printf("\tineg\n");
+      break;
+    case T_float:
+      printf("\tfneg\n");
+      break;
+    case T_bool:
+      printf("\tbnot\n");
+      break;
+    default:
+      break;
+  }
+  
+
+  DBUG_RETURN(arg_node);
+}
+
 node *CGreturn(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGreturn");
 

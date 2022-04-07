@@ -1,0 +1,29 @@
+int test1() {
+    int a = 3;
+    a = a + 1;
+    return a;
+}
+
+int test2() {
+	int b = 3;
+	b = b + 3;
+	return b;
+}
+
+int test3() {
+	int a = 5;
+	a = a -1;
+	return a;
+}
+
+int test4(){
+	int b = 6;
+	b = b - 12;
+	return b;
+}
+
+int test5(){
+	int c = 3;
+	c = 1 + c;
+	return c;
+}
