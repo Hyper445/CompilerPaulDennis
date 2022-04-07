@@ -23,7 +23,7 @@ void print_funs(node* symbolTable) {
     node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
     while (current_entry) {
 
-        if (SYMBOLTABLEENTRY_PARAMS(current_entry)) {
+        if (SYMBOLTABLEENTRY_ISFUNCTION(current_entry)) {
             //.exportfun "__init" void __init
             char *name = SYMBOLTABLEENTRY_NAME(current_entry);
             char *type = type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry));
