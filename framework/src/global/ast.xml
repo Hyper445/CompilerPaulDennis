@@ -31,6 +31,9 @@
       <traversal id="RF" name="remove declaration from for-loop" default="sons" include="restructure_forloop.h">
         <travuser>
             <node name="FunDef" />
+            <node name="Var" />
+            <node name="VarLet" />
+            <node name="For" />
         </travuser>
       </traversal>
 
@@ -45,7 +48,7 @@
           <node name="FunCall" />
           <node name="VarLet" />
           <node name="Var" />
-          <node name="For" />
+          <node name="While" />
         </travuser>
       </traversal>
 

@@ -45,16 +45,13 @@ SUBPHASE( RF,
           RFdoRestructureForLoop, 
           ALWAYS,
           pet)
+    
+SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)
+
 
 SUBPHASE( mt, 
           "Entering symbols in symbol table",
           MTdoMakeTable, 
-          ALWAYS,
-          pet)
-
-SUBPHASE( al, 
-          "Adding links",
-          ALdoAddLinks, 
           ALWAYS,
           pet)
 
@@ -64,7 +61,13 @@ SUBPHASE( pt,
           ALWAYS,
           pet)
 
-SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)
+SUBPHASE( al, 
+          "Adding links",
+          ALdoAddLinks, 
+          ALWAYS,
+          pet)
+
+//  SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)
 
 SUBPHASE( tc,
           "Type Checking",

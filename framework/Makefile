@@ -273,18 +273,18 @@ endif
 #  Uncomment the necessary parts when adding extensions.
 
 
-# TEST_DIRS := basic nested_funs # arrays preprocess
-# TEST_CFLAGS := ""
-# TEST_RUN_FUNCTIONAL := 1
-# TEST_CIVAS := bin/civas
-# TEST_CIVVM := bin/civvm
-# TEST_CIVCC := bin/civicc
+TEST_DIRS := basic nested_funs # arrays preprocess
+TEST_CFLAGS := ""
+TEST_RUN_FUNCTIONAL := 1
+TEST_CIVAS := bin/civas
+TEST_CIVVM := bin/civvm
+TEST_CIVCC := bin/civicc
 
 
-# check: all
-# 	@cd test; \
-# 		CIVAS=../$(TEST_CIVAS) \
-# 		CIVVM=../$(TEST_CIVVM) \
-# 		CIVCC=../$(TEST_CIVCC) \
-# 		RUN_FUNCTIONAL=$(TEST_RUN_FUNCTIONAL) \
-# 		bash run.bash $(TEST_DIRS)
+check: all
+	@cd test; \
+		CIVAS=../$(TEST_CIVAS) \
+		CIVVM=../$(TEST_CIVVM) \
+		CIVCC=../$(TEST_CIVCC) \
+		RUN_FUNCTIONAL=$(TEST_RUN_FUNCTIONAL) \
+		bash run.bash $(TEST_DIRS)

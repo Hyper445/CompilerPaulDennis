@@ -68,24 +68,24 @@ static info *MakeInfo(void) {
  * Traversal functions
  */
 
-// Get the index of the global table
-int functions_amount(node* GST) {
+// // Get the index of the global table
+// int functions_amount(node* GST) {
 
-  int amount = 0;
-  node* stEntry = SYMBOLTABLE_ENTRIES(GST);
+//   int amount = 0;
+//   node* stEntry = SYMBOLTABLE_ENTRIES(GST);
 
-  while (stEntry) {
-    if (SYMBOLTABLEENTRY_PARAMS(stEntry)) {
-      amount++;
-    }
+//   while (stEntry) {
+//     if (SYMBOLTABLEENTRY_PARAMS(stEntry)) {
+//       amount++;
+//     }
 
-    stEntry = SYMBOLTABLEENTRY_NEXT(stEntry);
+//     stEntry = SYMBOLTABLEENTRY_NEXT(stEntry);
 
-  }
+//   }
 
-  return amount;
+//   return amount;
 
-}
+// }
 
 node *CGprogram(node* arg_node, info* arg_info) {
 
@@ -255,9 +255,9 @@ extern node *CGassign (node *arg_node, info *arg_info) {
 
       if (get_entry_node(VARLET_DECL(ASSIGN_LET(arg_node)), INFO_GST(arg_info), FALSE)) {
         
-        int fun_amount = functions_amount(INFO_GST(arg_info));
+        //int fun_amount = functions_amount(INFO_GST(arg_info));
         printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
-          SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))) - fun_amount);
+          SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))));// - fun_amount);
 
       }
       else {
