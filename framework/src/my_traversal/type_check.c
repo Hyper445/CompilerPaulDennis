@@ -230,7 +230,6 @@ node *TCfuncall (node *arg_node, info *arg_info) {
     
     }
   }
-  printf("9\n");
 
 
   if (!fun_params && funcall_params) { 

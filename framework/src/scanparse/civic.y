@@ -26,8 +26,6 @@ static int yyerror( char *errname);
  char               *id;
  int                 cint;
  float               cflt;
- binop               cbinop;
- monop               cmonop;
  node               *node;
  type                ctype;
 }
@@ -42,19 +40,18 @@ static int yyerror( char *errname);
 
 %token IF ELSE FOR DO WHILE  
 
+%token CAST "cast"
 %token <cint> NUM
 %token <cflt> FLOAT
 %token <id> ID
 
-%type <node> intval floatval boolval constant expr exprs
-%type <node> stmts stmt assign varlet
 
 %type <node> program decls decl fundefs globdecl globdef fundef param block ids funbody vardecl ifelse return 
 %type <node> for dowhile while arrexpr funcall cast exprstmt
+%type <node> intval floatval boolval constant expr exprs
+%type <node> stmts stmt assign varlet var
 
-%type <cbinop> binop
 %type <ctype> type
-%type <cmonop> monop
 
 %left OR
 %right LET
@@ -63,6 +60,7 @@ static int yyerror( char *errname);
 %left GE GT LE LT
 %left MINUS PLUS
 %left STAR SLASH PERCENT
+%right CAST
 %left NOT
 
 %start program
@@ -352,7 +350,7 @@ ifelse: IF BRACKET_L expr BRACKET_R block ELSE block
   {
     $$ = TBmakeIfelse($3, NULL, NULL);
   }
-  | IF BRACKET_L expr BRACKET_R RETURN SEMICOLON
+  | IF BRACKET_L expr BRACKET_R return SEMICOLON
   {
     $$ = TBmakeIfelse($3, NULL, NULL);
   }
@@ -366,7 +364,7 @@ block: CURLY_BRACKET_L stmts CURLY_BRACKET_R
   {
     $$ = $2;
   }
-  | stmts
+  | stmt
   {
     $$ = $1;
   }
@@ -435,33 +433,36 @@ varlet: ID
   ;
 
 
-expr: monop expr 
+expr: BRACKET_L expr BRACKET_R
   {
-    $$ = TBmakeMonop($1, $2);
+    $$ = $2;
   }
+  | expr PLUS expr     { $$ = TBmakeBinop(BO_add, $1, $3); }
+  | expr MINUS expr    { $$ = TBmakeBinop(BO_sub, $1, $3); }
+  | expr STAR expr    { $$ = TBmakeBinop(BO_mul, $1, $3); }
+  | expr SLASH expr   { $$ = TBmakeBinop(BO_div, $1, $3); }
+  | expr PERCENT expr  { $$ = TBmakeBinop(BO_mod, $1, $3); }
+  | expr LE expr       { $$ = TBmakeBinop(BO_le, $1, $3); }
+  | expr LT expr       { $$ = TBmakeBinop(BO_lt, $1, $3); }
+  | expr GE expr       { $$ = TBmakeBinop(BO_ge, $1, $3); }
+  | expr GT expr       { $$ = TBmakeBinop(BO_gt, $1, $3); }
+  | expr EQ expr       { $$ = TBmakeBinop(BO_eq, $1, $3); }
+  | expr OR expr       { $$ = TBmakeBinop(BO_or, $1, $3); }
+  | expr AND expr      { $$ = TBmakeBinop(BO_and, $1, $3);}
+  | expr NE expr       { $$ = TBmakeBinop(BO_ne, $1, $3); }
+  | MINUS expr         { $$ = TBmakeMonop( MO_neg, $2); }
+  | NOT expr           { $$ = TBmakeMonop(MO_not, $2); }
   | constant
   {
     $$ = $1;
   }
-  | ID
+  | var
   {
-    $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
-  }
-  | expr binop expr
-  {
-    $$ = TBmakeBinop( $2, $1, $3);
-  }
-  | BRACKET_L expr binop expr BRACKET_R
-  {
-    $$ = TBmakeBinop( $3, $2, $4);
+    $$ = $1;
   }
   | cast
   {
     $$ = $1;
-  }
-  | BRACKET_L cast BRACKET_R
-  {
-    $$ = $2;
   }
   | funcall
   {
@@ -473,13 +474,15 @@ expr: monop expr
   }
   ;
 
-cast: BRACKET_L type BRACKET_R BRACKET_L expr BRACKET_R
-  {
-    $$ = TBmakeCast($2, $5);
-  }
-  | BRACKET_L type BRACKET_R expr
+cast: BRACKET_L type BRACKET_R expr
   {
     $$ = TBmakeCast($2, $4);
+  }
+  ;
+
+var: ID
+  {
+    $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
   }
   ;
 
@@ -546,24 +549,6 @@ boolval: TRUEVAL
          }
        ;
 
-binop: PLUS      { $$ = BO_add; }
-     | MINUS     { $$ = BO_sub; }
-     | STAR      { $$ = BO_mul; }
-     | SLASH     { $$ = BO_div; }
-     | PERCENT   { $$ = BO_mod; }
-     | LE        { $$ = BO_le; }
-     | LT        { $$ = BO_lt; }
-     | GE        { $$ = BO_ge; }
-     | GT        { $$ = BO_gt; }
-     | EQ        { $$ = BO_eq; }
-     | OR        { $$ = BO_or; }
-     | AND       { $$ = BO_and;}
-     | NE        { $$ = BO_ne; }
-     ;
-
-monop: NOT { $$ = MO_not; }
-     | MINUS { $$ = MO_neg; }
-     ;
 
 type: INT_TYPE { $$ = T_int;}
     | FLOAT_TYPE { $$ = T_float;}

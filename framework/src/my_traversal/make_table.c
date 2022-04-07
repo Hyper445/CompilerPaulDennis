@@ -234,6 +234,18 @@ node *MTvardecl (node *arg_node, info *arg_info) {
   
   }
 
+node* MTfor(node* arg_node, info* arg_info) {
+
+  DBUG_ENTER("MTfor");
+
+  FOR_START(arg_node) = TRAVopt(FOR_START(arg_node), arg_info);
+  FOR_STEP(arg_node) = TRAVopt(FOR_STEP(arg_node), arg_info);
+  FOR_STOP(arg_node) = TRAVopt(FOR_STOP(arg_node), arg_info);
+
+  DBUG_RETURN(arg_node);
+
+}
+
 // For every function call, a link is added to the function's decleration.
 node *MTfuncall(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTfuncall");

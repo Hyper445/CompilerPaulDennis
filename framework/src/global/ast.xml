@@ -45,7 +45,7 @@
           <node name="FunCall" />
           <node name="VarLet" />
           <node name="Var" />
-          <!-- <node name="Assign" /> -->
+          <node name="For" />
         </travuser>
       </traversal>
 

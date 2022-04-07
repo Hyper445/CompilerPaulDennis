@@ -306,7 +306,7 @@ node *CGvar(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGvar");
 
 
-    node* st_entry = get_entry(VAR_NAME(arg_node), INFO_CST(arg_info), FALSE);
+    node* st_entry = get_entry_node(VAR_DECL(arg_node), INFO_CST(arg_info), FALSE);
 
     if (get_entry_node(VAR_DECL(arg_node), INFO_GST(arg_info), FALSE)) {
 
