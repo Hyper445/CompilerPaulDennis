@@ -11,6 +11,8 @@
 #include "traverse.h"
 #include "dbug.h"
 #include "str.h"
+#include "globals.h"
+#include "stdio.h"
 
 #include "memory.h"
 #include "ctinfo.h"
@@ -23,8 +25,11 @@ void print_funs(node* symbolTable) {
 
         if (SYMBOLTABLEENTRY_PARAMS(current_entry)) {
             //.exportfun "__init" void __init
-            printf(".exportfun \"%s\" %s %s\n", SYMBOLTABLEENTRY_NAME(current_entry), 
-                type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry)), SYMBOLTABLEENTRY_NAME(current_entry));
+            char *name = SYMBOLTABLEENTRY_NAME(current_entry);
+            char *type = type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry));
+            write_assembly(STRcatn(7,".exportfun \"", name, "\" ", type, " ", name, "\n"));
+            //printf(".exportfun \"%s\" %s %s\n", SYMBOLTABLEENTRY_NAME(current_entry), 
+            //    type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry)), SYMBOLTABLEENTRY_NAME(current_entry));
         
         }
         current_entry = SYMBOLTABLEENTRY_NEXT(current_entry);
@@ -37,8 +42,8 @@ void print_globals(node* symbolTable) {
     while (current_entry) {
         
         if (!SYMBOLTABLEENTRY_ISFUNCTION(current_entry)) { 
-            
-            printf(".global %s\n", type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry))); 
+            write_assembly(STRcatn(3, ".global ", type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry)), "\n"));
+            //printf(".global %s\n", type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry))); 
         }
         current_entry = SYMBOLTABLEENTRY_NEXT(current_entry);
     }
@@ -52,9 +57,11 @@ void print_constants(node* constant) {
 
       switch(NODE_TYPE(CONSTANT_VALUE(constant))) {
         case N_float:
+          write_assembly(STRcatn(3, ".constant float ", STRitoa(FLOAT_VALUE(CONSTANT_VALUE(constant))), "\n"));
           printf(".constant float %f\n", FLOAT_VALUE(CONSTANT_VALUE(constant)));
           break;
         case N_num:
+          write_assembly(STRcatn(3, ".constant int ", STRitoa(NUM_VALUE(CONSTANT_VALUE(constant))), "\n"));
           printf(".constant int %d\n", NUM_VALUE(CONSTANT_VALUE(constant)));
           break;
         default:
@@ -134,7 +141,6 @@ char* optimise_constant(node* arg_node) {
       } else if (SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) == 3) {
         return ("load_3");
       }
-      printf("%d = indexlevel\n", SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
       break;
 
     default:
@@ -185,12 +191,14 @@ int optimise_assign(node *arg_node, node *constant_table) {
 
     int index_var = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(var));
     if(NUM_VALUE(constant) == 1) {
-      printf("\t%s_1 %d\n", instruction, index_var);
+      write_assembly(STRcatn(5, "\t", instruction, "_1 ", STRitoa(index_var), "\n"));
+      //printf("\t%s_1 %d\n", instruction, index_var);
       return true;
     }
     else {
       //node *constant_in_table = in_table(constant, constant_table);
-      printf("\t%s %d %d\n", instruction, index_var, CONSTANT_INDEX(constant_table));
+      write_assembly(STRcatn(7, "\t", instruction, " ", STRitoa(index_var), " ",STRitoa(CONSTANT_INDEX(constant_table)), "\n"));
+      //printf("\t%s %d %d\n", instruction, index_var, CONSTANT_INDEX(constant_table));
       return true;
     }
   }
@@ -270,4 +278,13 @@ char* binop_to_char(binop binop) {
   }
 }
 
-//TODO: monop to char
+void write_assembly(char *assembly) {
+  if(global.outfile != NULL) {
+    FILE *file = fopen(global.outfile, "a");
+    fputs(assembly, file);
+    fclose(file);
+  }
+  else {
+    printf("%s", assembly);
+  }
+}

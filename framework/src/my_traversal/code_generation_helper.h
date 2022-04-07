@@ -12,6 +12,7 @@ extern void print_funs(node* symbolTable);
 extern void print_globals(node* symbolTable);
 extern char* optimise_constant(node* arg_node);
 extern int optimise_assign(node *arg_node, node *constant_table);
+extern void write_assembly(char *assembly);
 
 //TODO: monop to char
 
