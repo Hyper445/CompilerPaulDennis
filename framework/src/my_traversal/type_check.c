@@ -177,9 +177,6 @@ node *TCmonop (node *arg_node, info *arg_info) {
   }
   else if (operator == MO_neg) {
     INFO_TYPE(arg_info) = type;
-    if(type == T_bool) {
-      CTIerrorLine(NODE_LINE(arg_node),"monop operator '-' cannot be applied to type boolean.");
-    }
   }
   else {
     INFO_TYPE(arg_info) = T_unknown;

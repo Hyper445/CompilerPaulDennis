@@ -2,6 +2,7 @@
 #include "make_table_helper.h"
 #include "code_generation_helper.h"
 #include "print.h"
+#include "stdbool.h"
 
 #include "stdlib.h"
 #include "lookup_table.h"
@@ -101,7 +102,7 @@ node* in_table(node* value_node, node* constant_table) {
 
 }
 
-char* optimise(node* arg_node) {
+char* optimise_constant(node* arg_node) {
 
   // If constant isn't in the table, it is one of the optimised numbers
   switch(NODE_TYPE(arg_node)) {
@@ -142,6 +143,61 @@ char* optimise(node* arg_node) {
   }
 
   return NULL;
+}
+
+int optimise_assign(node *arg_node, node *constant_table) {
+  node *expr = ASSIGN_EXPR(arg_node);
+
+  if(NODE_TYPE(expr) == N_binop) {
+
+    // gets the operation that should be printed.
+    char *instruction;
+    switch(BINOP_OP(expr)){
+      case BO_add:
+        instruction = "iinc";
+        break;
+      case BO_sub:
+        instruction = "idec";
+        break;
+      default:
+        return false;
+    }
+
+    // Expr is a addition or substraction. get the var and varlet.
+    node *varlet = ASSIGN_LET(arg_node);
+    node *var;
+    node *constant;
+    if(NODE_TYPE(BINOP_LEFT(expr)) == N_var && STReq(VAR_NAME(BINOP_LEFT(expr)), VARLET_NAME(varlet))) {
+      var = BINOP_LEFT(expr);
+      constant = BINOP_RIGHT(expr);
+    }
+    else if(NODE_TYPE(BINOP_RIGHT(expr)) == N_var && STReq(VAR_NAME(BINOP_RIGHT(expr)), VARLET_NAME(varlet))){
+      var = BINOP_RIGHT(expr);
+      constant = BINOP_LEFT(expr);
+    } else {
+      return false;
+    }
+
+    // Exit optimalisation if constant is not a num.
+    if(NODE_TYPE(constant) != N_num) {
+      return false;
+    }
+
+    int index_var = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(var));
+    if(NUM_VALUE(constant) == 1) {
+      printf("\t%s_1 %d\n", instruction, index_var);
+      return true;
+    }
+    else {
+      //node *constant_in_table = in_table(constant, constant_table);
+      printf("\t%s %d %d\n", instruction, index_var, CONSTANT_INDEX(constant_table));
+      return true;
+    }
+  }
+  else {
+    // right child of assign is not a binop.
+    return false;
+  }
 }
 
 // Helper function. Converts a type to a string.

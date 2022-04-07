@@ -132,14 +132,12 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 
     printf("\n%s:\n", FUNDEF_NAME(arg_node));
 
-    printf("1\n");
-
     // Calculate number of vardecls in funbody.
     int sum_vardecls = 0;
     node *body = FUNDEF_FUNBODY(arg_node);
     node* current_vardecl = NULL;
     if (body) {
-      node *current_vardecl = FUNBODY_VARDECLS(body);
+      current_vardecl = FUNBODY_VARDECLS(body);
     }
     
     while(current_vardecl != NULL) {
@@ -164,10 +162,7 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
       FUNBODY_LOCALFUNDEFS(body) = TRAVopt(FUNBODY_LOCALFUNDEFS(body), arg_info);
 
     }
-    printf("8\n");
     
-    
-
     DBUG_RETURN(arg_node);
 }
 
@@ -250,6 +245,10 @@ extern node *CGdowhile(node *arg_node, info *arg_info) {
 extern node *CGassign (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGassign");
 
+    if(optimise_assign(arg_node, INFO_CT(arg_info)) == 1) {
+      DBUG_RETURN(arg_node);
+    }
+
     ASSIGN_EXPR(arg_node) = TRAVdo(ASSIGN_EXPR(arg_node), arg_info);
 
     if (ASSIGN_LET(arg_node)) {
@@ -288,6 +287,31 @@ node *CGbinop(node* arg_node, info* arg_info) {
     DBUG_RETURN(arg_node);
 }
 
+node *CGmonop(node *arg_node, info *arg_info) {
+  DBUG_ENTER("CGmonop");
+  //printf("test, monop function starts\n");
+  MONOP_OPERAND(arg_node) = TRAVdo(MONOP_OPERAND(arg_node), arg_info);
+  //printf("traverse through monop operand is now done\n");
+  //printf("monop type = %d\n", MONOP_TYPE(arg_node));
+
+  switch(MONOP_TYPE(arg_node)) {
+    case T_int:
+      printf("\tineg\n");
+      break;
+    case T_float:
+      printf("\tfneg\n");
+      break;
+    case T_bool:
+      printf("\tbnot\n");
+      break;
+    default:
+      break;
+  }
+  
+
+  DBUG_RETURN(arg_node);
+}
+
 node *CGreturn(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGreturn");
 
@@ -319,10 +343,19 @@ node *CGvar(node* arg_node, info* arg_info) {
         SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) <= 3) {
-      char* optimised_string = optimise(arg_node);
+      char* optimised_string = optimise_constant(arg_node);
       printf("\t%s%s\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string);
-    
+
     }
+
+    // if (global_index(VAR_NAME(arg_node), arg_info) != -1) {
+
+    //   printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+    //     global_index(VAR_NAME(arg_node), arg_info));
+
+    // } else {
+    
+    // }
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
 
@@ -340,7 +373,7 @@ node* CGnum(node* arg_node, info* arg_info) {
  
     } else {
 
-      char* optimisedCode = optimise(arg_node); 
+      char* optimisedCode = optimise_constant(arg_node); 
       printf("%s\n", optimisedCode);
     
     }
@@ -371,7 +404,7 @@ node* CGfloat(node* arg_node, info* arg_info) {
       printf("\tfloadc %d\n", CONSTANT_INDEX(constant_table));
  
     } else {
-      char* optimisedCode = optimise(arg_node); 
+      char* optimisedCode = optimise_constant(arg_node); 
       printf("%s\n", optimisedCode);
     
     }

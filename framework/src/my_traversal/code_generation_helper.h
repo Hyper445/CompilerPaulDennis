@@ -10,7 +10,8 @@ extern char* binop_to_char(binop binop);
 extern void print_constants(node* constant);
 extern void print_funs(node* symbolTable);
 extern void print_globals(node* symbolTable);
-extern char* optimise(node* arg_node);
+extern char* optimise_constant(node* arg_node);
+extern int optimise_assign(node *arg_node, node *constant_table);
 
 //TODO: monop to char
 
