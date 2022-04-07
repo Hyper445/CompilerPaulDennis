@@ -65,8 +65,6 @@ void addSymbol(char* name, type type, info* arg_info, node* params, bool isFunct
 
   }
 
-  printf("Symbol %s \t, nesting %d \t-> tabel %s \n", name, nestinglevel, SYMBOLTABLE_NAME(INFO_ST(arg_info)));
-
 }
 
 // Compare links when entry has already been added and link has been provided
@@ -115,7 +113,6 @@ node* get_entry(char* name, node* current_ST, bool isFunction) {
 
     // loops through all entries at current nesting.
     while(current_ST_entry != NULL) {
-
       // If the decleration has been found. A link to the decleration is added to the funcall.
       if (STReq(name, SYMBOLTABLEENTRY_NAME(current_ST_entry))) {
         
@@ -131,7 +128,6 @@ node* get_entry(char* name, node* current_ST, bool isFunction) {
 
     current_ST = SYMBOLTABLE_PARENT(current_ST);
   }
-
   return NULL;
 }
 

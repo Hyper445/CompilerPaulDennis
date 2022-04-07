@@ -117,7 +117,6 @@ char* optimise_constant(node* arg_node) {
       break;
 
     case N_float:
-      printf("1\n");
       if (FLOAT_VALUE(arg_node) == 0.0) {
         return ("\tfloadc_0");
       } else if (FLOAT_VALUE(arg_node) == 1.0) {
@@ -148,33 +147,51 @@ char* optimise_constant(node* arg_node) {
 
 int optimise_assign(node *arg_node, node *constant_table) {
   node *expr = ASSIGN_EXPR(arg_node);
-  if(NODE_TYPE(expr) == N_binop && BINOP_OP(expr) == BO_add) {
-    // Expr is a addition.
-    if(NODE_TYPE(BINOP_LEFT(expr)) == N_var && STReq(VAR_NAME(BINOP_LEFT(expr)), VARLET_NAME(ASSIGN_LET(arg_node)))) {
-      // The addition binop has a var as its left child, the var matches the varlet of the assign node.
-      if(NODE_TYPE(BINOP_RIGHT(expr)) == N_num) {
-        // The right child of the binop is a num.
-        int index_var = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(BINOP_LEFT(expr)));
-        if(NUM_VALUE(BINOP_RIGHT(expr)) == 1) {
-          printf("\tiinc_1 %d\n", index_var);
-          return true;
-        }
-        else {
-          node *constant = in_table(BINOP_RIGHT(expr), constant_table);
-          printf("\tiinc %d %d\n", index_var, CONSTANT_INDEX(constant_table));
-          return true;
-        }
-      }
-      else {
-        // The right child of the binop is not a num.
+
+  if(NODE_TYPE(expr) == N_binop) {
+
+    // gets the operation that should be printed.
+    char *instruction;
+    switch(BINOP_OP(expr)){
+      case BO_add:
+        instruction = "iinc";
+        break;
+      case BO_sub:
+        instruction = "idec";
+        break;
+      default:
         return false;
-      }
-    } else if (NODE_TYPE(BINOP_RIGHT(expr)) == N_var && STReq(VAR_NAME(BINOP_RIGHT(expr)), VARLET_NAME(ASSIGN_LET(arg_node)))) {
-      // The binop has a var as its right child, the var matches the varlet of the assign node.
-      return true;
+    }
+
+    // Expr is a addition or substraction. get the var and varlet.
+    node *varlet = ASSIGN_LET(arg_node);
+    node *var;
+    node *constant;
+    if(NODE_TYPE(BINOP_LEFT(expr)) == N_var && STReq(VAR_NAME(BINOP_LEFT(expr)), VARLET_NAME(varlet))) {
+      var = BINOP_LEFT(expr);
+      constant = BINOP_RIGHT(expr);
+    }
+    else if(NODE_TYPE(BINOP_RIGHT(expr)) == N_var && STReq(VAR_NAME(BINOP_RIGHT(expr)), VARLET_NAME(varlet))){
+      var = BINOP_RIGHT(expr);
+      constant = BINOP_LEFT(expr);
     } else {
-      // the binop has no var as its child.
       return false;
+    }
+
+    // Exit optimalisation if constant is not a num.
+    if(NODE_TYPE(constant) != N_num) {
+      return false;
+    }
+
+    int index_var = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(var));
+    if(NUM_VALUE(constant) == 1) {
+      printf("\t%s_1 %d\n", instruction, index_var);
+      return true;
+    }
+    else {
+      //node *constant_in_table = in_table(constant, constant_table);
+      printf("\t%s %d %d\n", instruction, index_var, CONSTANT_INDEX(constant_table));
+      return true;
     }
   }
   else {

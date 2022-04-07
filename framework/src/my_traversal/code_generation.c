@@ -132,14 +132,12 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 
     printf("\n%s:\n", FUNDEF_NAME(arg_node));
 
-    printf("1\n");
-
     // Calculate number of vardecls in funbody.
     int sum_vardecls = 0;
     node *body = FUNDEF_FUNBODY(arg_node);
     node* current_vardecl = NULL;
     if (body) {
-      node *current_vardecl = FUNBODY_VARDECLS(body);
+      current_vardecl = FUNBODY_VARDECLS(body);
     }
     
     while(current_vardecl != NULL) {
@@ -164,10 +162,7 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
       FUNBODY_LOCALFUNDEFS(body) = TRAVopt(FUNBODY_LOCALFUNDEFS(body), arg_info);
 
     }
-    printf("8\n");
     
-    
-
     DBUG_RETURN(arg_node);
 }
 

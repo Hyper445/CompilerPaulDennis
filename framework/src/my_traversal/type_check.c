@@ -177,9 +177,6 @@ node *TCmonop (node *arg_node, info *arg_info) {
   }
   else if (operator == MO_neg) {
     INFO_TYPE(arg_info) = type;
-    if(type == T_bool) {
-      CTIerrorLine(NODE_LINE(arg_node),"monop operator '-' cannot be applied to type boolean.");
-    }
   }
   else {
     INFO_TYPE(arg_info) = T_unknown;
@@ -207,20 +204,19 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCfuncall");
 
   FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
-
   node* symboltable = INFO_ST(arg_info);
   node* fun_entry = get_entry_node(FUNCALL_DECL(arg_node), INFO_ST(arg_info), TRUE);
   node* funcall_params = FUNCALL_ARGS(arg_node);
-  node* fun_params;
+  node* fun_params = NULL;
   
   if (fun_entry) {
     fun_params = SYMBOLTABLEENTRY_PARAMS(fun_entry);
-  } 
+    INFO_TYPE(arg_info) = SYMBOLTABLEENTRY_TYPE(fun_entry);
+  }
 
   while (fun_params && funcall_params) {
 
     if (PARAM_TYPE(fun_params) == get_type(EXPRS_EXPR(funcall_params), arg_info)) {
-
       fun_params = PARAM_NEXT(fun_params);
       funcall_params = EXPRS_NEXT(funcall_params);
 
@@ -231,6 +227,8 @@ node *TCfuncall (node *arg_node, info *arg_info) {
     
     }
   }
+  printf("9\n");
+
 
   if (!fun_params && funcall_params) { 
     CTIerror("Too many arguments!\n");
@@ -419,7 +417,7 @@ type get_type(node* expr, info* arg_info) {
       return CAST_TYPE_LEFT(expr);
 
     case N_var:
-      return SYMBOLTABLEENTRY_TYPE(get_entry(STRcpy(VAR_NAME(expr)), INFO_ST(arg_info), TRUE));
+      return SYMBOLTABLEENTRY_TYPE(get_entry(STRcpy(VAR_NAME(expr)), INFO_ST(arg_info), FALSE));
 
     case N_num:
       return T_int;
@@ -429,6 +427,7 @@ type get_type(node* expr, info* arg_info) {
 
     case N_bool:
       return T_bool;
+    
     default:
       return T_unknown;
 
