@@ -89,17 +89,20 @@ void addConstant(node* arg_node, info* arg_info) {
     while (current_constant) {
       
       if (NODE_TYPE(CONSTANT_VALUE(current_constant)) == NODE_TYPE(arg_node)) {
-
         switch (NODE_TYPE(arg_node)) {
 
           case N_float:
             if (FLOAT_VALUE(CONSTANT_VALUE(current_constant)) == FLOAT_VALUE(arg_node)) {
               return;
+            } else {
+              break;
             }
 
           case N_num:
             if (NUM_VALUE(CONSTANT_VALUE(current_constant)) == NUM_VALUE(arg_node)) {
               return;
+            } else {
+              break;
             }
 
           default:

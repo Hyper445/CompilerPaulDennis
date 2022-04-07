@@ -1,24 +1,10 @@
-// comment
-
-int a = 3;
-
 int test1(int d) {
 
-    int a = 3;
-    int b = 5;
+    float a = 3.0;
+    a = 5.0;
 
-    int test2(int a) {
-        int x = 3;
-        return 2;
-    }
-    
     return 2;
 
 
-}
-
-int test2(int a) {
-    int x = 3;
-    return x;
 }
 
