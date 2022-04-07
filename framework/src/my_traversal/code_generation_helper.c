@@ -57,12 +57,12 @@ void print_constants(node* constant) {
 
       switch(NODE_TYPE(CONSTANT_VALUE(constant))) {
         case N_float:
-          write_assembly(STRcatn(3, ".constant float ", STRitoa(FLOAT_VALUE(CONSTANT_VALUE(constant))), "\n"));
-          printf(".constant float %f\n", FLOAT_VALUE(CONSTANT_VALUE(constant)));
+          write_assembly(STRcatn(3, ".const float ", STRitoa(FLOAT_VALUE(CONSTANT_VALUE(constant))), "\n"));
+          printf(".const float %f\n", FLOAT_VALUE(CONSTANT_VALUE(constant)));
           break;
         case N_num:
-          write_assembly(STRcatn(3, ".constant int ", STRitoa(NUM_VALUE(CONSTANT_VALUE(constant))), "\n"));
-          printf(".constant int %d\n", NUM_VALUE(CONSTANT_VALUE(constant)));
+          write_assembly(STRcatn(3, ".const int ", STRitoa(NUM_VALUE(CONSTANT_VALUE(constant))), "\n"));
+          printf(".const int %d\n", NUM_VALUE(CONSTANT_VALUE(constant)));
           break;
         default:
           CTIerror("unknown type (code_generation_helper)");

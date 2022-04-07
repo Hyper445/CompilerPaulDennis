@@ -147,7 +147,7 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 
     // Print esr if necessarily.
     if(sum_vardecls != 0) {
-      write_assembly(STRcatn(3,"\tesr", STRitoa(sum_vardecls), "\n"));
+      write_assembly(STRcatn(3,"\tesr ", STRitoa(sum_vardecls), "\n"));
       //printf("\tesr %d\n", sum_vardecls);
     }
     
