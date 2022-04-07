@@ -91,7 +91,6 @@ node *CGprogram(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("CGprogram");
 
-
     INFO_CT(arg_info) = PROGRAM_CONSTANTTABLE(arg_node);
     INFO_GST(arg_info) = PROGRAM_SYMBOLTABLE(arg_node);
     INFO_CST(arg_info) = PROGRAM_SYMBOLTABLE(arg_node);
@@ -130,8 +129,9 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 
     INFO_CST(arg_info) = FUNDEF_SYMBOLTABLE(arg_node);
 
-    printf("\n%s:\n", FUNDEF_NAME(arg_node));
-
+    write_assembly(STRcatn(3, "\n", FUNDEF_NAME(arg_node), ":\n"));
+    // printf("\n%s:\n", FUNDEF_NAME(arg_node));
+    
     // Calculate number of vardecls in funbody.
     int sum_vardecls = 0;
     node *body = FUNDEF_FUNBODY(arg_node);
@@ -147,7 +147,8 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 
     // Print esr if necessarily.
     if(sum_vardecls != 0) {
-      printf("\tesr %d\n", sum_vardecls);
+      write_assembly(STRcatn(3,"\tesr", STRitoa(sum_vardecls), "\n"));
+      //printf("\tesr %d\n", sum_vardecls);
     }
     
 
@@ -178,12 +179,13 @@ node* CGfuncall(node* arg_node, info* arg_info) {
 
     }
 
-
-    printf("\tisr \n");
+    write_assembly("\tisr \n");
+    //printf("\tisr \n");
     FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
-
-    printf("\tjsr %d %s\n", arg_amount, FUNCALL_NAME(arg_node));
-    printf("\tipop\n");
+    write_assembly(STRcatn(5, "\tjsr ", STRitoa(arg_amount), " ", FUNCALL_NAME(arg_node), "\n"));
+    write_assembly("\tipop\n");
+    //printf("\tjsr %d %s\n", arg_amount, FUNCALL_NAME(arg_node));
+    //printf("\tipop\n");
 
     DBUG_RETURN(arg_node);
 
@@ -198,17 +200,21 @@ extern node *CGifelse (node *arg_node, info *arg_info) {
     int label2 = label1 + 1;
     INFO_SUM_L(arg_info) = INFO_SUM_S(arg_info) + 2;
 
-    printf("\tbranch_f L%d\n", label1);
+    write_assembly(STRcatn(3, "\tbranch_f L", STRitoa(label1), "\n"));
+    //printf("\tbranch_f L%d\n", label1);
 
     IFELSE_THEN(arg_node) = TRAVopt(IFELSE_THEN(arg_node), arg_info);
 
-    printf("\tjump L%d\n", label2);
+    write_assembly(STRcatn(3, "\tjump L", STRitoa(label2), "\n"));
+    //printf("\tjump L%d\n", label2);
 
-    printf("L%d\n", label1);
+    write_assembly(STRcatn(3, "L", STRitoa(label1), "\n"));
+    //printf("L%d\n", label1);
 
     IFELSE_ELSE(arg_node) = TRAVopt(IFELSE_ELSE(arg_node), arg_info);
 
-    printf("L%d\n", label2);
+    write_assembly(STRcatn(3, "L", STRitoa(label2), "\n"));
+    //printf("L%d\n", label2);
 
     DBUG_RETURN(arg_node);
 }
@@ -220,7 +226,8 @@ extern node *CGcast(node *arg_node, info *arg_info) {
 
   type old_type = CAST_TYPE_RIGHT(arg_node);
   type new_type = CAST_TYPE_LEFT(arg_node);
-  printf("\t%s2%s\n", type_to_char(old_type), type_to_char(new_type));
+  write_assembly(STRcatn(5, "\t", type_to_char(old_type), "2", type_to_char(new_type), "\n"));
+  //printf("\t%s2%s\n", type_to_char(old_type), type_to_char(new_type));
 
   DBUG_RETURN(arg_node);
 }
@@ -231,13 +238,15 @@ extern node *CGdowhile(node *arg_node, info *arg_info) {
   int label = INFO_SUM_L(arg_info) + 1;
   INFO_SUM_L(arg_info) = INFO_SUM_L(arg_info) + 1;
 
-  printf("L%d\n", label);
+  write_assembly(STRcatn(3, "L", STRitoa(label), "\n"));
+  //printf("L%d\n", label);
 
   DOWHILE_BLOCK(arg_node) = TRAVopt(DOWHILE_BLOCK(arg_node), arg_info);
 
   DOWHILE_COND(arg_node) = TRAVdo(DOWHILE_COND(arg_node), arg_info);
 
-  printf("\tbranch_f L%d\n", label);
+  write_assembly(STRcatn(3, "\tbranch_f L", STRitoa(label), "\n"));
+  //printf("\tbranch_f L%d\n", label);
 
   DBUG_RETURN(arg_node);
 }
@@ -256,18 +265,28 @@ extern node *CGassign (node *arg_node, info *arg_info) {
       if (get_entry_node(VARLET_DECL(ASSIGN_LET(arg_node)), INFO_GST(arg_info), FALSE)) {
         
         int fun_amount = functions_amount(INFO_GST(arg_info));
-        printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
-          SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))) - fun_amount);
+        char *type_char = type_to_char(ASSIGN_TYPE(arg_node));
+        int index = SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))) - fun_amount;
+
+        write_assembly(STRcatn(5, "\t", type_char, "storeg ", STRitoa(index), "\n"));
+        //printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
+        //  SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))) - fun_amount);
 
       }
       else {
-        printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
-          SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))));
+        char *type_char = type_to_char(ASSIGN_TYPE(arg_node));
+        int index = SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node)));
+        write_assembly(STRcatn(5, "\t", type_char, "store ", STRitoa(index), "\n"));
+        //printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
+        //  SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))));
       }
 
     } else {
-      printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
-        SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))));
+      char *type_char = type_to_char(ASSIGN_TYPE(arg_node));
+      int index = SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node)));
+      write_assembly(STRcatn(5, "\t", type_char, STRitoa(index), "\n"));
+      //printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
+      //  SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))));
     }
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
@@ -282,27 +301,29 @@ node *CGbinop(node* arg_node, info* arg_info) {
     BINOP_LEFT(arg_node) = TRAVdo(BINOP_LEFT(arg_node), arg_info);
     BINOP_RIGHT(arg_node) = TRAVdo(BINOP_RIGHT(arg_node), arg_info);
 
-    printf("\t%s%s\n", type_to_char(BINOP_SUBTYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
+    write_assembly(STRcatn(4, "\t", type_to_char(BINOP_SUBTYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)), "\n"));
+    //printf("\t%s%s\n", type_to_char(BINOP_SUBTYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
 
     DBUG_RETURN(arg_node);
 }
 
 node *CGmonop(node *arg_node, info *arg_info) {
   DBUG_ENTER("CGmonop");
-  //printf("test, monop function starts\n");
+
   MONOP_OPERAND(arg_node) = TRAVdo(MONOP_OPERAND(arg_node), arg_info);
-  //printf("traverse through monop operand is now done\n");
-  //printf("monop type = %d\n", MONOP_TYPE(arg_node));
 
   switch(MONOP_TYPE(arg_node)) {
     case T_int:
-      printf("\tineg\n");
+      write_assembly("\tineg\n");
+      //printf("\tineg\n");
       break;
     case T_float:
-      printf("\tfneg\n");
+      write_assembly("\tfneg\n");
+      //printf("\tfneg\n");
       break;
     case T_bool:
-      printf("\tbnot\n");
+      write_assembly("\tbnot\n");
+      //printf("\tbnot\n");
       break;
     default:
       break;
@@ -316,11 +337,14 @@ node *CGreturn(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGreturn");
 
     RETURN_EXPR(arg_node) = TRAVopt(RETURN_EXPR(arg_node), arg_info);
+
     if (RETURN_EXPR(arg_node)) {
-      printf("\t%sreturn\n", type_to_char(RETURN_TYPE(arg_node)));
+      write_assembly(STRcatn(3, "\t", type_to_char(RETURN_TYPE(arg_node)), "return\n"));
+      //printf("\t%sreturn\n", type_to_char(RETURN_TYPE(arg_node)));
 
     } else {
-      printf("\treturn\n");
+      write_assembly("\treturn\n");
+      //printf("\treturn\n");
     }
 
     DBUG_RETURN(arg_node);
@@ -329,22 +353,26 @@ node *CGreturn(node* arg_node, info* arg_info) {
 node *CGvar(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGvar");
 
-
     node* st_entry = get_entry_node(VAR_DECL(arg_node), INFO_CST(arg_info), FALSE);
 
     if (get_entry_node(VAR_DECL(arg_node), INFO_GST(arg_info), FALSE)) {
-
-      printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
-        SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
+      char *type_char = type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node)));
+      int index = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node));
+      write_assembly(STRcatn(5, "\t", type_char, "loadg ", STRitoa(index), "\t"));
+      //printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+      //  SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) > 3) {
-      
-      printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
-        SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
+      char *type_char = type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node)));
+      int index = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node));
+      write_assembly(STRcatn(5, "\t", type_char, "load ", STRitoa(index), "\t"));
+      //printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+      //  SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) <= 3) {
       char* optimised_string = optimise_constant(arg_node);
-      printf("\t%s%s\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string);
+      write_assembly(STRcatn(4, "\t", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string, "\n"));
+      //printf("\t%s%s\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string);
 
     }
 
@@ -368,13 +396,14 @@ node* CGnum(node* arg_node, info* arg_info) {
 
     node* constant_table = in_table(arg_node, INFO_CT(arg_info));
     if (constant_table) {
-
-      printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
+      write_assembly(STRcatn(3, "\tiloadc ", STRitoa(CONSTANT_INDEX(constant_table)), "\n"));
+      //printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
  
     } else {
 
-      char* optimisedCode = optimise_constant(arg_node); 
-      printf("%s\n", optimisedCode);
+      char* optimisedCode = optimise_constant(arg_node);
+      write_assembly(STRcat(optimisedCode, "\n"));
+      //printf("%s\n", optimisedCode);
     
     }
 
@@ -400,12 +429,14 @@ node* CGfloat(node* arg_node, info* arg_info) {
 
     node* constant_table = in_table(arg_node, INFO_CT(arg_info));
     if (constant_table) {
-
-      printf("\tfloadc %d\n", CONSTANT_INDEX(constant_table));
+      
+      write_assembly(STRcatn(3, "\tfloadc ", STRitoa(CONSTANT_INDEX(constant_table)), "\n"));
+      //printf("\tfloadc %d\n", CONSTANT_INDEX(constant_table));
  
     } else {
-      char* optimisedCode = optimise_constant(arg_node); 
-      printf("%s\n", optimisedCode);
+      char* optimisedCode = optimise_constant(arg_node);
+      write_assembly(STRcat(optimisedCode, "\n"));
+      //printf("%s\n", optimisedCode);
     
     }
 
