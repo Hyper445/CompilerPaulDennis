@@ -106,6 +106,12 @@ SUBPHASE( mct,
           ALWAYS,
           pet)
 
+SUBPHASE( met,
+          "Making Export Table",
+          METdoMakeExportTable,
+          ALWAYS,
+          pet)
+
 SUBPHASE( cg,
           "Generating Code",
           CGdoCodeGeneration,

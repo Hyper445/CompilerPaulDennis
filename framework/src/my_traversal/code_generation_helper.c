@@ -36,6 +36,54 @@ void print_funs(node* symbolTable) {
     }
 }
 
+void print_exports(node* current_decls, node* export_table) {
+
+    while (current_decls) {
+      node *current_decl = DECLS_DECL(current_decls);
+      if (current_decl) {
+        if (NODE_TYPE(current_decl) == N_fundef && in_export_table(current_decl, export_table) != NULL) {
+
+          char *name = FUNDEF_NAME(current_decl);
+          char *type = type_to_string(FUNDEF_TYPE(current_decl));
+          write_assembly(STRcatn(7,".exportfun \"", name, "\" ", type, " ", name, "\n"));
+
+          // printf(".exportfun \"%s\" %s %s\n", FUNDEF_NAME(current_decl), 
+          //   type_to_string(FUNDEF_TYPE(current_decl)), FUNDEF_NAME(current_decl));
+
+        }
+
+        current_decls = DECLS_NEXT(current_decls);
+      }
+    }
+}
+
+void print_imports(node* current_import) {
+
+  while (current_import) {
+
+    node* fundef = EXTERN_FUNDEF(current_import);
+    char *name = FUNDEF_NAME(fundef);
+    char *typeFundef = type_to_string(FUNDEF_TYPE(fundef));
+    write_assembly(STRcatn(5,".importfun \"", name, "\" ", typeFundef, " "));
+    
+    node* params = FUNDEF_PARAMS(fundef);
+    while (params) {
+      type typeParam = PARAM_TYPE(params);
+      printf("%s = type\n", type_to_string(typeParam));
+      write_assembly(STRcat(type_to_string(typeParam), " "));
+      params = PARAM_NEXT(params);
+    }
+    write_assembly("\n");
+
+    // printf(".exportfun \"%s\" %s %s\n", FUNDEF_NAME(current_decl), 
+    //   type_to_string(FUNDEF_TYPE(current_decl)), FUNDEF_NAME(current_decl));
+
+    current_import = EXTERN_NEXT(current_import);
+  }
+}
+
+    
+
 void print_globals(node* symbolTable) {
 
     node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
@@ -103,6 +151,36 @@ node* in_table(node* value_node, node* constant_table) {
 
     }
     constant_table = CONSTANT_NEXT(constant_table);
+
+  }
+  return NULL;
+
+}
+
+node* in_export_table(node* exportnode, node* export_table) {
+
+  while (export_table) {
+
+    if (exportnode == EXPORT_FUNDEF(export_table)) {
+      printf("erin\n");
+      return exportnode;
+    }
+    export_table = EXPORT_NEXT(export_table);
+
+  }
+  return NULL;
+
+}
+
+
+node* in_import_table(node* importnode, node* import_table) {
+
+  while (import_table) {
+
+    if (importnode == EXTERN_FUNDEF(import_table)) {
+      return importnode;
+    }
+    import_table = EXTERN_NEXT(import_table);
 
   }
   return NULL;

@@ -112,7 +112,7 @@ node *MTfundef (node *arg_node, info *arg_info){
   // When reaching a function definition, add this to the current symbol table
   name = STRcpy(FUNDEF_NAME(arg_node));
   type = FUNDEF_TYPE(arg_node);
-  addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node), TRUE);
+  addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node), arg_node, TRUE);
 
   node* parent_table = INFO_ST(arg_info);
 
@@ -131,7 +131,7 @@ node *MTfundef (node *arg_node, info *arg_info){
     while (current_param) {
       name = STRcpy(PARAM_NAME(current_param));
       type = PARAM_TYPE(current_param);
-      addSymbol(name, type, arg_info, NULL, FALSE);
+      addSymbol(name, type, arg_info, NULL, arg_node, FALSE);
       current_param = PARAM_NEXT(current_param);
     }
   }
@@ -153,7 +153,7 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(GLOBDECL_NAME(arg_node));
   type type = GLOBDECL_TYPE(arg_node);
-  addSymbol(name, type, arg_info, NULL, FALSE);
+  addSymbol(name, type, arg_info, NULL, NULL, FALSE);
 
   DBUG_RETURN(arg_node);
   
@@ -165,7 +165,7 @@ node *MTglobdef (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(GLOBDEF_NAME(arg_node));
   type type = GLOBDEF_TYPE(arg_node);
-  addSymbol(name, type, arg_info, NULL, FALSE);
+  addSymbol(name, type, arg_info, NULL, NULL, FALSE);
 
   DBUG_RETURN(arg_node);
 
@@ -180,7 +180,7 @@ node *MTvardecl (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(VARDECL_NAME(arg_node));
   type type = VARDECL_TYPE(arg_node);
-  addSymbol(name, type, arg_info, NULL, FALSE);
+  addSymbol(name, type, arg_info, NULL, NULL, FALSE);
 
   DBUG_RETURN(arg_node);
   

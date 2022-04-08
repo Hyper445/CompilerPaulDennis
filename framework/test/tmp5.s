@@ -8,7 +8,6 @@ main:
 	isr 
 	iloadg 1
 	jsre 0
-	ipop
 	iloadc_0
 	ireturn
 .const int 10

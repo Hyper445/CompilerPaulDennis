@@ -206,8 +206,17 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
   node* symboltable = INFO_ST(arg_info);
   node* fun_entry = get_entry_node(FUNCALL_DECL(arg_node), INFO_ST(arg_info), TRUE);
+  node* fundef = NULL;
+  if (fun_entry) {
+    printf("1\n");
+    fundef = SYMBOLTABLEENTRY_FUNDEF(fun_entry);
+    printf("%s = fundef naam uit st\n", FUNDEF_NAME(SYMBOLTABLEENTRY_FUNDEF(fun_entry)));
+    printf("%s = funcall name\n", FUNCALL_NAME(arg_node));
+  }
+  printf("2\n");
   node* funcall_params = FUNCALL_ARGS(arg_node);
   node* fun_params = NULL;
+
   
   if (fun_entry) {
     fun_params = SYMBOLTABLEENTRY_PARAMS(fun_entry);
@@ -240,6 +249,8 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   if (!symboltable) {
     CTIerror("No function named %s! \n", FUNCALL_NAME(arg_node));
   }
+
+  FUNCALL_FUNDEF(arg_node) = fundef;
 
   DBUG_RETURN(arg_node);
 }

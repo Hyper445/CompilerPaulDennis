@@ -28,7 +28,7 @@ struct INFO {
 #define INFO_ST(n) ((n)->Symboltable)
 #define INFO_NEXT(n) ((n)->next)
 
-void addSymbol(char* name, type type, info* arg_info, node* params, bool isFunction) {
+void addSymbol(char* name, type type, info* arg_info, node* params, node* fundef, bool isFunction) {
 
   node* currentSymbolTable = INFO_ST(arg_info);
   node* currentSymbolEntry = SYMBOLTABLE_ENTRIES(currentSymbolTable);
@@ -55,16 +55,36 @@ void addSymbol(char* name, type type, info* arg_info, node* params, bool isFunct
       indexlevel++;
     }
     
-    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, indexlevel, params, isFunction, NULL);
+    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, indexlevel, params, 
+      fundef, isFunction, NULL);
     SYMBOLTABLEENTRY_NEXT(currentSymbolEntry) = symbolEntry;
 
   } else {
 
-    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, indexlevel, params, isFunction, NULL);
+    node* symbolEntry = TBmakeSymboltableentry(name, type, nestinglevel, indexlevel, params, 
+      fundef, isFunction, NULL);
     SYMBOLTABLE_ENTRIES(INFO_ST(arg_info)) = symbolEntry;
 
   }
 
+}
+
+node* get_symboltable(char* name, node* current_ST) {
+
+  printf("funcall name = %s\n", name);
+  // Loops through the symboltables until the function decleration has been found.
+  while(current_ST != NULL) {
+    printf("current st name = %s\n", SYMBOLTABLE_NAME(current_ST));
+    // If the decleration has been found. A link to the decleration is added to the funcall.
+    if (STReq(name, SYMBOLTABLE_NAME(current_ST))) {
+
+      return current_ST;
+    }
+
+    current_ST = SYMBOLTABLE_PARENT(current_ST);
+  }
+
+  return NULL;
 }
 
 // Compare links when entry has already been added and link has been provided
