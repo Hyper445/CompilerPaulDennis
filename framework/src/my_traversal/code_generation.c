@@ -166,11 +166,6 @@ node* CGfuncall(node* arg_node, info* arg_info) {
 
     node *arg = FUNCALL_ARGS(arg_node);
 
-    // if (FUNCALL_DECL(arg_node)) {
-
-    //   printf("%s = name\n", SYMBOLTABLEENTRY_NAME(FUNCALL_DECL(arg_node)));
-    // }
-
     int arg_amount = 0;
     while (arg) {
 
@@ -178,7 +173,6 @@ node* CGfuncall(node* arg_node, info* arg_info) {
       arg = EXPRS_NEXT(arg);
 
     }
-
 
     if (SYMBOLTABLE_PARENT(INFO_CST(arg_info)) && 
         STReq(SYMBOLTABLE_NAME(SYMBOLTABLE_PARENT(INFO_CST(arg_info))), "Global")) {
@@ -263,9 +257,9 @@ extern node *CGdowhile(node *arg_node, info *arg_info) {
   //write_assembly(STRcatn(3, "L", STRitoa(label), "\n"));
   write_assembly(STRcat(STRitoa(whileamount),"_while:\n"));
   //printf("L%d\n", label);
-  DOWHILE_BLOCK(arg_node) = TRAVopt(DOWHILE_BLOCK(arg_node), arg_info);
-
   DOWHILE_COND(arg_node) = TRAVdo(DOWHILE_COND(arg_node), arg_info);
+  write_assembly(STRcatn(3, "\tbranch_f ", STRitoa(whileamount + 1), "_end\n"));
+  DOWHILE_BLOCK(arg_node) = TRAVopt(DOWHILE_BLOCK(arg_node), arg_info);
 
 
   write_assembly(STRcatn(3,"\tjump ", STRitoa(whileamount), "_while\n"));
