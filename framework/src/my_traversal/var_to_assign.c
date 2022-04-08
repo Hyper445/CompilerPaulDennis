@@ -67,12 +67,18 @@ void addNodeStatements(node* assign, node* funbody) {
   node* previous_stmt = NULL;
 
   if (current_stmt) {
-    
-    while (current_stmt && NODE_TYPE(STMTS_STMT(current_stmt)) == N_assign && 
-      STRsub(VARLET_NAME(ASSIGN_LET(STMTS_STMT(current_stmt))), "temp")) {
-        previous_stmt = current_stmt;
-        current_stmt = STMTS_NEXT(current_stmt);
+
+    if (NODE_TYPE(assign) != N_return) {
+      while (current_stmt && NODE_TYPE(STMTS_STMT(current_stmt)) == N_assign && 
+        STRsub(VARLET_NAME(ASSIGN_LET(STMTS_STMT(current_stmt))), "temp")) {
+          previous_stmt = current_stmt;
+          current_stmt = STMTS_NEXT(current_stmt);
+      }
+    } else {
+      previous_stmt = current_stmt;
+      current_stmt = STMTS_NEXT(current_stmt);     
     }
+    
   
   }
 
