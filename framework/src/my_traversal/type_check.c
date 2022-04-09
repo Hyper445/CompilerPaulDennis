@@ -48,8 +48,6 @@ static info *MakeInfo(void) {
   INFO_ST(result) = NULL;
   DBUG_RETURN( result);
 }
-
-// Get the symboltable and store it in the arg_info.
 node *TCprogram(node *arg_node, info* arg_info) {
 
   DBUG_ENTER("TCprogram");
@@ -61,7 +59,6 @@ node *TCprogram(node *arg_node, info* arg_info) {
 
 }
 
-// Type checks if the return statement matches the expected return type.
 node *TCfundef(node *arg_node, info* arg_info) {
 
   DBUG_ENTER("TCfundef");
@@ -96,10 +93,12 @@ node *TCfundef(node *arg_node, info* arg_info) {
 
   INFO_ST(arg_info) = parent_table;
 
+
+
   DBUG_RETURN(arg_node);
+
 }
 
-// Type checks whether the arguments of the binop match with each other and with the binop.
 node *TCbinop (node *arg_node, info *arg_info) {
   
   DBUG_ENTER("TCbinop");
@@ -162,9 +161,9 @@ node *TCbinop (node *arg_node, info *arg_info) {
   BINOP_TYPE(arg_node) = INFO_TYPE(arg_info);
 
   DBUG_RETURN(arg_node);
+
 }
 
-// Type checks whether the argument matches the monop.
 node *TCmonop (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCmonop");
 
@@ -192,7 +191,6 @@ node *TCmonop (node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// Stores the type of its result in the arg_info.
 node *TCcast (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCcast");
 
@@ -204,7 +202,6 @@ node *TCcast (node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// Stores the return type of the called function in the arg_info.
 node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCfuncall");
 
@@ -256,7 +253,6 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// Type checks whether the return type matches the return type of the function.
 node* TCreturn (node* arg_node, info* arg_info) {
 
   DBUG_ENTER("TCreturn");
@@ -268,15 +264,19 @@ node* TCreturn (node* arg_node, info* arg_info) {
   node* test = TBmakeReturn(NULL);
   
   if (RETURN_EXPR(test)) {
+    printf("test\n");
     if (NODE_TYPE(RETURN_EXPR(test)) == N_num) {
+      printf("%d\n", RETURN_EXPR(test) == NULL);
     }
   }
   if (RETURN_EXPR(arg_node)) {
     if (NODE_TYPE(RETURN_EXPR(arg_node)) == N_num) {
+      printf("%d\n", RETURN_EXPR(arg_node) == NULL);
     }
+
   }
 
-  // Check if the expr type matches the fundef type.
+  // Check if the expr type matches the fundef type
   node* fundefEntry = get_entry(SYMBOLTABLE_NAME(INFO_ST(arg_info)), INFO_ST(arg_info), TRUE);
 
   type fundefType = SYMBOLTABLEENTRY_TYPE(fundefEntry);
@@ -295,9 +295,11 @@ node* TCreturn (node* arg_node, info* arg_info) {
   RETURN_TYPE(arg_node) = returnType;
 
   DBUG_RETURN(arg_node);
+
+
+
 }
 
-// Type checks whether both sides of the assign have matching types.
 node *TCassign (node *arg_node, info *arg_info) {
   DBUG_ENTER("TCassign");
 
@@ -315,7 +317,6 @@ node *TCassign (node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// Type checks whether both sides of the vardecl statement have the same type.
 node *TCvardecl(node *arg_node, info *arg_info) {
   DBUG_ENTER("TCvardecl");
 
@@ -335,7 +336,6 @@ node *TCvardecl(node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// Type checks whether both sides of the global assign operation have the same type.
 node *TCglobdef(node *arg_node, info *arg_info) {
   DBUG_ENTER("TCglobdef");
 
@@ -351,7 +351,6 @@ node *TCglobdef(node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// Stores the num type in the arg_info.
 node *TCnum(node *arg_node, info *arg_info) {
   DBUG_ENTER("TCnum");
 
@@ -360,7 +359,6 @@ node *TCnum(node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// Stores the float type in the arg_info.
 node *TCfloat(node *arg_node, info *arg_info) {
   DBUG_ENTER("TCfloat");
 
@@ -369,7 +367,6 @@ node *TCfloat(node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// Stores the bool type in the arg_info
 node *TCbool(node *arg_node, info *arg_info) {
   DBUG_ENTER("TCbool");
 
@@ -378,8 +375,6 @@ node *TCbool(node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// Gets the var type and stores it in the arg_info. Checks whether the var
-// has been declared.
 node *TCvar(node *arg_node, info *arg_info) {
   DBUG_ENTER("TCvar");
 
@@ -396,8 +391,6 @@ node *TCvar(node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
-// Gets the varlet type and stores it in the arg_info. Checks whether the variable
-// has been declared.
 node *TCvarlet(node *arg_node, info *arg_info) {
   DBUG_ENTER("TCvarlet");
 
@@ -431,7 +424,7 @@ node *TCdoTypeCheck( node *syntaxtree)
   DBUG_RETURN( syntaxtree);
 }
 
-// Helper function. Takes an expression and returnes its type.
+
 type get_type(node* expr, info* arg_info) {
 
   switch (NODE_TYPE(expr)) {

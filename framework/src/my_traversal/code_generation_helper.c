@@ -49,7 +49,6 @@ void print_exports(node* current_decls, node* export_table) {
     }
 }
 
-// Writes imported function to output.
 void print_imports(node* current_import) {
 
   while (current_import) {
@@ -62,6 +61,7 @@ void print_imports(node* current_import) {
     node* params = FUNDEF_PARAMS(fundef);
     while (params) {
       type typeParam = PARAM_TYPE(params);
+      printf("%s = type\n", type_to_string(typeParam));
       write_assembly(STRcat(type_to_string(typeParam), " "));
       params = PARAM_NEXT(params);
     }
@@ -71,7 +71,6 @@ void print_imports(node* current_import) {
   }
 }
 
-// Writes global variables to output.
 void print_globals(node* symbolTable) {
 
     node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
@@ -140,7 +139,6 @@ node* in_table(node* value_node, node* constant_table) {
 
 }
 
-// Writes all exported function definitions to output.
 node* in_export_table(node* exportnode, node* export_table) {
 
   while (export_table) {
@@ -155,7 +153,7 @@ node* in_export_table(node* exportnode, node* export_table) {
 
 }
 
-// Returns the pointer to the constant_table that matches the given value.
+
 node* in_import_table(node* importnode, node* import_table) {
 
   while (import_table) {
@@ -216,7 +214,7 @@ char* optimise_constant(node* arg_node) {
 
 // If an assign node increments or decrements a variable, a specific
 // increment/decrement instruction is written to output and this function
-// returns true. Otherwise, false is returned and nothing is written to output.
+// returns true. Otherwise, false is returned.
 int optimise_assign(node *arg_node, node *constant_table) {
   node *expr = ASSIGN_EXPR(arg_node);
 

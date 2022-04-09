@@ -24,6 +24,7 @@
 #include "memory.h"
 #include "ctinfo.h"
 
+
 /*
  * INFO structure
  */
@@ -35,6 +36,8 @@ struct INFO {
   float float_result;
 };
 
+
+
 /*
  * INFO macros
  */
@@ -44,9 +47,11 @@ struct INFO {
 #define INFO_INT(n) ((n)->int_result)
 #define INFO_FLOAT(n) ((n)->float_result)
 
+
 /*
  * INFO functions
  */
+
 
 static info *MakeInfo(void)
 {
@@ -71,6 +76,7 @@ static info *FreeInfo( info *info)
   DBUG_RETURN( info);
 }
 
+
 /*
  * Traversal functions
  */
@@ -87,6 +93,7 @@ void addExport(node* arg_node, info* arg_info) {
       current_export = EXPORT_NEXT(current_export);
       
     }
+    printf("export toegevoegd\n");
 
     EXPORT_NEXT(previous_export) = TBmakeExport(index, arg_node, NULL);
 
@@ -108,6 +115,7 @@ void addExtern(node* arg_node, info* arg_info) {
       current_extern = EXTERN_NEXT(current_extern);
       
     }
+    printf("import toegevoegd\n");
     EXTERN_NEXT(previous_extern) = TBmakeExtern(index, arg_node, NULL);
 
   } else {
@@ -116,30 +124,44 @@ void addExtern(node* arg_node, info* arg_info) {
 
 }
 
+
 node* METprogram(node *arg_node, info *arg_info) {
 
   DBUG_ENTER("MCTprogram");
 
   PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
+  //PROGRAM_CONSTANTTABLE(arg_node) = INFO_C(arg_info);
   PROGRAM_EXPORTTABLE(arg_node) = INFO_E(arg_info);
   PROGRAM_EXTERNTABLE(arg_node) = INFO_EXT(arg_info);
+
+  //arg_node = addConstant(TBmakeFloat(INFO_FLOAT(arg_info)), arg_info);
+
 
   DBUG_RETURN(arg_node);
 
 }
 
+
 node* METfundef (node* arg_node, info* arg_info) {
+
 
     DBUG_ENTER("METfundef");
 
     if (FUNDEF_ISEXPORT(arg_node)) {
+        printf("exportname = %s\n", FUNDEF_NAME(arg_node));
         addExport(arg_node, arg_info);
     } else if (FUNDEF_ISEXTERN(arg_node)) {
+        printf("importname = %s\n", FUNDEF_NAME(arg_node));
         addExtern(arg_node, arg_info);
     }
 
     DBUG_RETURN(arg_node);
+
+
 }
+
+
+
 
 /*
  * Traversal start function

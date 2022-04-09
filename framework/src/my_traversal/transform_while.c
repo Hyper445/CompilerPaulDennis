@@ -6,7 +6,8 @@
  *
  * Description:
  *
- * This module replaces all while-loops with their do-while-loop equivalent.
+ * This module implements a demo traversal of the abstract syntax tree that 
+ * sums up all integer constants and prints the result at the end of the traversal.
  *
  *****************************************************************************/
 
@@ -34,6 +35,8 @@ struct INFO {
   node* symboltable;
 };
 
+
+
 /*
  * INFO macros
  */
@@ -41,9 +44,11 @@ struct INFO {
 #define INFO_TEMP(n) ((n)->tempAmount)
 #define INFO_CST(n) ((n)->symboltable)
 
+
 /*
  * INFO functions
  */
+
 
 static info *MakeInfo(void)
 {
@@ -73,7 +78,6 @@ static info *FreeInfo( info *info)
  * Traversal functions
  */
 
-// Creates a symboltable, stores it in arg_info.
 node* TWprogram(node* arg_node, info* arg_info) {
 
   DBUG_ENTER("TWprogram");
@@ -85,7 +89,6 @@ node* TWprogram(node* arg_node, info* arg_info) {
 
 }
 
-// Transforms while-loops into dowhile-loops.
 node* TWfundef(node* arg_node, info* arg_info) {
 
   DBUG_ENTER("TWfundef");
@@ -99,20 +102,18 @@ node* TWfundef(node* arg_node, info* arg_info) {
     }   
     char* functionName = STRcat("_", FUNDEF_NAME(arg_node));
     FUNDEF_NAME(arg_node) = STRcat(name, functionName);
-    SYMBOLTABLE_NAME(INFO_CST(arg_info)) = STRcpy(FUNDEF_NAME(arg_nod);
+    SYMBOLTABLE_NAME(INFO_CST(arg_info)) = STRcpy(FUNDEF_NAME(arg_node));
 
   } 
 
   // traverse through paramaters.
   FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
-  
   FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
   
 }
 
-// Changes the while-loop into a dowhile-loop..
 node *TWwhile( node* arg_node, info * arg_info) {
 
   DBUG_ENTER("TWwhile");
@@ -122,6 +123,7 @@ node *TWwhile( node* arg_node, info * arg_info) {
   DBUG_RETURN(arg_node);
 
 }
+
 
 /*
  * Traversal start function

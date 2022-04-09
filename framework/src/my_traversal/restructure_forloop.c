@@ -52,7 +52,6 @@ static info *MakeInfo(void) {
   DBUG_RETURN( result);
 }
 
-// Replaces all for-loops with their while-loop equivalent.
 node* RFfundef(node* arg_node, info* arg_info) {
     DBUG_ENTER("RFfundef");    
     int sum = 0;
@@ -77,6 +76,9 @@ node* RFfundef(node* arg_node, info* arg_info) {
             node *new_vardecl = TBmakeVardecl(T_int, vardecl_name, NULL, NULL, vardecl_expr, FUNBODY_VARDECLS(body));
             FUNBODY_VARDECLS(body) = new_vardecl;
             sum = sum + 1;
+
+            // Change the vars in the body to the new name
+            //FOR_LOOPVAR(current_stmt) = STRcpy(vardecl_name);
 
             INFO_OLDNAME(arg_info) = FOR_LOOPVAR(current_stmt);
             INFO_NEWNAME(arg_info) = vardecl_name;
@@ -134,6 +136,7 @@ node* RFfundef(node* arg_node, info* arg_info) {
     }
 
     DBUG_RETURN(arg_node);
+
 }
 
 node* RFfor(node *arg_node, info* arg_info) {
@@ -143,6 +146,7 @@ node* RFfor(node *arg_node, info* arg_info) {
     FOR_BLOCK(arg_node) = TRAVopt(FOR_BLOCK(arg_node), arg_info);
 
     DBUG_RETURN(arg_node);
+
 }
 
 node *RFvarlet(node* arg_node, info* arg_info) {
@@ -156,6 +160,7 @@ node *RFvarlet(node* arg_node, info* arg_info) {
     }
 
     DBUG_RETURN(arg_node);
+
 }
 
 node *RFvar(node* arg_node, info* arg_info) {
@@ -169,6 +174,7 @@ node *RFvar(node* arg_node, info* arg_info) {
     }
 
     DBUG_RETURN(arg_node);
+
 }
 
 /*

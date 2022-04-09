@@ -6,7 +6,8 @@
  *
  * Description:
  *
- * This module creates a table that stores all constants.
+ * This module implements a demo traversal of the abstract syntax tree that 
+ * sums up all integer constants and prints the result at the end of the traversal.
  *
  *****************************************************************************/
 
@@ -77,7 +78,6 @@ static info *FreeInfo( info *info)
  * Traversal functions
  */
 
-
 void addConstant(node* arg_node, info* arg_info) {
   
   int index = 0;
@@ -125,6 +125,8 @@ void addConstant(node* arg_node, info* arg_info) {
     INFO_C(arg_info) = TBmakeConstant(NODE_TYPE(arg_node), arg_node, index, NULL);
 
   }
+
+
 }
 
 
@@ -135,7 +137,11 @@ node* MCTprogram(node *arg_node, info *arg_info) {
   PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
   PROGRAM_CONSTANTTABLE(arg_node) = INFO_C(arg_info);
 
+  //arg_node = addConstant(TBmakeFloat(INFO_FLOAT(arg_info)), arg_info);
+
+
   DBUG_RETURN(arg_node);
+
 }
 
 node *MCTglobdef (node *arg_node, info *arg_info) {
@@ -145,6 +151,7 @@ node *MCTglobdef (node *arg_node, info *arg_info) {
   GLOBDEF_INIT(arg_node) = TRAVopt(GLOBDEF_INIT(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
+
 }
 
 node *MCTvardecl (node *arg_node, info *arg_info) {
@@ -155,6 +162,7 @@ node *MCTvardecl (node *arg_node, info *arg_info) {
   VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
+  
 }
 
 node* MCTnum(node* arg_node, info* arg_info) {
@@ -167,6 +175,7 @@ node* MCTnum(node* arg_node, info* arg_info) {
   }
 
   DBUG_RETURN(arg_node);
+
 }
 
 node* MCTfloat(node* arg_node, info* arg_info) {
@@ -175,10 +184,13 @@ node* MCTfloat(node* arg_node, info* arg_info) {
 
   float value = FLOAT_VALUE(arg_node);
   if (value != 0.0 && value != 1.0) {
+
     addConstant(arg_node, arg_info);
+
   }
 
   DBUG_RETURN(arg_node);
+
 }
 
 

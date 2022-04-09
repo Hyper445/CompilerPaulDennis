@@ -75,7 +75,7 @@ static info *MakeInfo(void) {
 }
 
 
-// Gets the number of import functions.
+// Get the index of the global table
 int functions_amount(node* GST) {
 
   int amount = 0;
@@ -91,15 +91,14 @@ int functions_amount(node* GST) {
   }
 
   return amount;
+
 }
 
 /*
  * Traversal functions
  */
 
-// Creates and adds required tables to arg_info. Writes exports,
-// globals and imports to output after assembly instructions have
-// been generated.
+
 node *CGprogram(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("CGprogram");
@@ -121,10 +120,9 @@ node *CGprogram(node* arg_node, info* arg_info) {
     print_imports(PROGRAM_EXTERNTABLE(arg_node));
 
     DBUG_RETURN(arg_node);
+  
 }
 
-// Writes the esr statemnt and traverses through exprs stmts and fundefs
-// In correct order.
 extern node *CGfundef (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGfundef");
 
@@ -152,6 +150,7 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
     // Print esr if necessary.
     if(sum_vardecls != 0) {
       write_assembly(STRcatn(3,"\tesr ", STRitoa(sum_vardecls), "\n"));
+      //printf("\tesr %d\n", sum_vardecls);
     }
     
     // traverse through paramaters.
@@ -168,7 +167,6 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
     DBUG_RETURN(arg_node);
 }
 
-// Writes instructions corresponding to a funcall to output.
 node* CGfuncall(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGfuncall");
 
@@ -189,6 +187,7 @@ node* CGfuncall(node* arg_node, info* arg_info) {
       write_assembly("\tisrl \n");
     }
 
+    //printf("\tisr \n");
     FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
     node* import_node = in_import_table(FUNCALL_FUNDEF(arg_node), INFO_IMP(arg_info));
 
@@ -197,11 +196,13 @@ node* CGfuncall(node* arg_node, info* arg_info) {
     } else {
       write_assembly(STRcatn(5, "\tjsr ", STRitoa(arg_amount), " ", FUNDEF_NAME(FUNCALL_FUNDEF(arg_node)), "\n"));
     }
+    //printf("\tjsr %d %s\n", arg_amount, FUNCALL_NAME(arg_node));
+    //printf("\tipop\n");
 
     DBUG_RETURN(arg_node);
+
 }
 
-// Writes instrucitons corresponding to if-else statements to output.
 extern node *CGifelse (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGifelse");
 
@@ -212,21 +213,24 @@ extern node *CGifelse (node *arg_node, info *arg_info) {
     INFO_SUM_L(arg_info) = INFO_SUM_S(arg_info) + 2;
 
     write_assembly(STRcatn(3, "\tbranch_f L", STRitoa(label1), "\n"));
+    //printf("\tbranch_f L%d\n", label1);
 
     IFELSE_THEN(arg_node) = TRAVopt(IFELSE_THEN(arg_node), arg_info);
 
     write_assembly(STRcatn(3, "\tjump L", STRitoa(label2), "\n"));
+    //printf("\tjump L%d\n", label2);
 
     write_assembly(STRcatn(3, "L", STRitoa(label1), "\n"));
+    //printf("L%d\n", label1);
 
     IFELSE_ELSE(arg_node) = TRAVopt(IFELSE_ELSE(arg_node), arg_info);
 
     write_assembly(STRcatn(3, "L", STRitoa(label2), "\n"));
+    //printf("L%d\n", label2);
 
     DBUG_RETURN(arg_node);
 }
 
-// Writes instructions corresponding to cast statement to output.
 extern node *CGcast(node *arg_node, info *arg_info) {
   DBUG_ENTER("CGcast");
 
@@ -235,16 +239,19 @@ extern node *CGcast(node *arg_node, info *arg_info) {
   type old_type = CAST_TYPE_RIGHT(arg_node);
   type new_type = CAST_TYPE_LEFT(arg_node);
   
+
   if (old_type != T_bool && new_type != T_bool) {
     write_assembly(STRcatn(5, "\t", type_to_char(old_type), "2", type_to_char(new_type), "\n"));
   } else {
     write_assembly("\tbloadc_t\n");
   } 
+  
+  
+  //printf("\t%s2%s\n", type_to_char(old_type), type_to_char(new_type));
 
   DBUG_RETURN(arg_node);
 }
 
-// Writes instructions corresponding to dowhile to output.
 extern node *CGdowhile(node *arg_node, info *arg_info) {
   DBUG_ENTER("CGdowhile");
 
@@ -253,11 +260,13 @@ extern node *CGdowhile(node *arg_node, info *arg_info) {
 
   int whileamount = INFO_SUM_WHILE(arg_info);
 
+  //write_assembly(STRcatn(3, "L", STRitoa(label), "\n"));
   write_assembly(STRcat(STRitoa(whileamount),"_while:\n"));
-
+  //printf("L%d\n", label);
   DOWHILE_COND(arg_node) = TRAVdo(DOWHILE_COND(arg_node), arg_info);
   write_assembly(STRcatn(3, "\tbranch_f ", STRitoa(whileamount + 1), "_end\n"));
   DOWHILE_BLOCK(arg_node) = TRAVopt(DOWHILE_BLOCK(arg_node), arg_info);
+
 
   write_assembly(STRcatn(3,"\tjump ", STRitoa(whileamount), "_while\n"));
   whileamount++;
@@ -265,10 +274,12 @@ extern node *CGdowhile(node *arg_node, info *arg_info) {
   whileamount++;
   INFO_SUM_WHILE(arg_info) = whileamount;
 
+  //write_assembly(STRcatn(3, "\tbranch_f L", STRitoa(label), "\n"));
+  //printf("\tbranch_f L%d\n", label);
+
   DBUG_RETURN(arg_node);
 }
 
-// Writes instructions corresponding to assign statement to output.
 extern node *CGassign (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGassign");
 
@@ -281,20 +292,30 @@ extern node *CGassign (node *arg_node, info *arg_info) {
     if (ASSIGN_LET(arg_node)) {
 
       if (get_entry_node(VARLET_DECL(ASSIGN_LET(arg_node)), INFO_GST(arg_info), FALSE)) {
+
         char *type_char = type_to_char(ASSIGN_TYPE(arg_node));
         int index = SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node)));
         int funamount = functions_amount(INFO_GST(arg_info));
+
         write_assembly(STRcatn(5, "\t", type_char, "storeg ", STRitoa(index - funamount), "\n"));
-      } else {
+        //printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
+        //  SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))) - fun_amount);
+
+      }
+      else {
         char *type_char = type_to_char(ASSIGN_TYPE(arg_node));
         int index = SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node)));
         write_assembly(STRcatn(5, "\t", type_char, "store ", STRitoa(index), "\n"));
+        //printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
+        //  SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))));
       }
 
     } else {
       char *type_char = type_to_char(ASSIGN_TYPE(arg_node));
       int index = SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node)));
       write_assembly(STRcatn(5, "\t", type_char, STRitoa(index), "\n"));
+      //printf("\t%sstore %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
+      //  SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))));
     }
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
@@ -303,7 +324,6 @@ extern node *CGassign (node *arg_node, info *arg_info) {
     DBUG_RETURN(arg_node);
 }
 
-// Writes instructions corresponding to binop expression to output
 node *CGbinop(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGbinop");
 
@@ -311,11 +331,11 @@ node *CGbinop(node* arg_node, info* arg_info) {
     BINOP_RIGHT(arg_node) = TRAVdo(BINOP_RIGHT(arg_node), arg_info);
 
     write_assembly(STRcatn(4, "\t", type_to_char(BINOP_SUBTYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)), "\n"));
+    //printf("\t%s%s\n", type_to_char(BINOP_SUBTYPE(arg_node)), binop_to_char(BINOP_OP(arg_node)));
 
     DBUG_RETURN(arg_node);
 }
 
-// Writes instructions corresponding to monop expression to output
 node *CGmonop(node *arg_node, info *arg_info) {
   DBUG_ENTER("CGmonop");
 
@@ -324,21 +344,24 @@ node *CGmonop(node *arg_node, info *arg_info) {
   switch(MONOP_TYPE(arg_node)) {
     case T_int:
       write_assembly("\tineg\n");
+      //printf("\tineg\n");
       break;
     case T_float:
       write_assembly("\tfneg\n");
+      //printf("\tfneg\n");
       break;
     case T_bool:
       write_assembly("\tbnot\n");
+      //printf("\tbnot\n");
       break;
     default:
       break;
   }
   
+
   DBUG_RETURN(arg_node);
 }
 
-// Writes instructions corresponding to return statement to output.
 node *CGreturn(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGreturn");
 
@@ -346,15 +369,16 @@ node *CGreturn(node* arg_node, info* arg_info) {
 
     if (RETURN_EXPR(arg_node)) {
       write_assembly(STRcatn(3, "\t", type_to_char(RETURN_TYPE(arg_node)), "return\n"));
+      //printf("\t%sreturn\n", type_to_char(RETURN_TYPE(arg_node)));
 
     } else {
       write_assembly("\treturn\n");
+      //printf("\treturn\n");
     }
 
     DBUG_RETURN(arg_node);
 }
 
-// Writes instructions corresponding to var expression to output.
 node *CGvar(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGvar");
 
@@ -365,54 +389,91 @@ node *CGvar(node* arg_node, info* arg_info) {
       char *type_char = type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node)));
       int index = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node));
       write_assembly(STRcatn(5, "\t", type_char, "loadg ", STRitoa(index - funamount), "\n"));
+      //printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+      //  SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) > 3) {
       char *type_char = type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node)));
       int index = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node));
       write_assembly(STRcatn(5, "\t", type_char, "load ", STRitoa(index), "\n"));
+      //printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+      //  SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) <= 3) {
       char* optimised_string = optimise_constant(arg_node);
       write_assembly(STRcatn(4, "\t", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string, "\n"));
+      //printf("\t%s%s\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), optimised_string);
+
     }
+
+    // if (global_index(VAR_NAME(arg_node), arg_info) != -1) {
+
+    //   printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
+    //     global_index(VAR_NAME(arg_node), arg_info));
+
+    // } else {
+    
+    // }
 
     INFO_SUM_V(arg_info) = INFO_SUM_V(arg_info) + 1;
 
     DBUG_RETURN(arg_node);
+
 }
 
-// Writes instructions corresponding to num expression to output.
 node* CGnum(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGnum");
 
     node* constant_table = in_table(arg_node, INFO_CT(arg_info));
     if (constant_table) {
       write_assembly(STRcatn(3, "\tiloadc ", STRitoa(CONSTANT_INDEX(constant_table)), "\n"));
+      //printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
+ 
     } else {
+
       char* optimisedCode = optimise_constant(arg_node);
       write_assembly(STRcat(optimisedCode, "\n"));
+      //printf("%s\n", optimisedCode);
+    
     }
+
+    // if (constant_table) {
+    //   printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
+
+    // } else {
+    //   printf("\tiloadc %d\n", 0);
+    // }
+
+    // printf("\tiloadc %d\n", INFO_SUM_C(arg_info));
+    //printf("\tiloadc %d\n", CONSTANT_INDEX(constant_table));
 
     INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
     
+
     DBUG_RETURN(arg_node);
+
 }
 
-// Writes instructions corresponding to float expression to output.
 node* CGfloat(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGfloat");
 
     node* constant_table = in_table(arg_node, INFO_CT(arg_info));
     if (constant_table) {
+      
       write_assembly(STRcatn(3, "\tfloadc ", STRitoa(CONSTANT_INDEX(constant_table)), "\n"));
+      //printf("\tfloadc %d\n", CONSTANT_INDEX(constant_table));
+ 
     } else {
       char* optimisedCode = optimise_constant(arg_node);
       write_assembly(STRcat(optimisedCode, "\n"));
+      //printf("%s\n", optimisedCode);
+    
     }
 
     INFO_SUM_C(arg_info) = INFO_SUM_C(arg_info) + 1;
 
     DBUG_RETURN(arg_node);
+
 }
 
 /*

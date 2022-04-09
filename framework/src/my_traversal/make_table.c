@@ -37,6 +37,8 @@ struct INFO {
   node* Symboltable;
 };
 
+
+
 /*
  * INFO macros
  */
@@ -44,9 +46,11 @@ struct INFO {
 #define INFO_ST(n) ((n)->Symboltable)
 #define INFO_NEXT(n) ((n)->next)
 
+
 /*
  * INFO functions
  */
+
 
 static info *MakeInfo(void)
 {
@@ -199,6 +203,19 @@ node *MTfuncall(node *arg_node, info *arg_info) {
 
   // Traverse through the arguments of the function.
   FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
+
+  DBUG_RETURN(arg_node);
+}
+
+// For every varlet, a link is added to the varlet's decleration
+node *MTvarlet(node *arg_node, info *arg_info) {
+  DBUG_ENTER("MTvarlet");
+
+  DBUG_RETURN(arg_node);
+}
+
+node *MTvar(node *arg_node, info *arg_info) {
+  DBUG_ENTER("MTvar");
 
   DBUG_RETURN(arg_node);
 }
