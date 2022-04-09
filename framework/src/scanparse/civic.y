@@ -352,10 +352,6 @@ ifelse: IF BRACKET_L expr BRACKET_R block ELSE block
   {
     $$ = TBmakeIfelse($3, NULL, NULL);
   }
-  | IF BRACKET_L expr BRACKET_R return SEMICOLON
-  {
-    $$ = TBmakeIfelse($3, NULL, NULL);
-  }
   | IF BRACKET_L expr BRACKET_R ELSE block
   {
     $$ = TBmakeIfelse($3, NULL, $6);
@@ -404,17 +400,9 @@ assign: varlet LET expr SEMICOLON
   }
   ;
 
-  dowhile: DO CURLY_BRACKET_L stmts CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
+  dowhile: DO block WHILE BRACKET_L expr BRACKET_R SEMICOLON
   {
-    $$ = TBmakeDowhile( $7, $3);
-  }
-  | DO CURLY_BRACKET_L CURLY_BRACKET_R WHILE BRACKET_L expr BRACKET_R SEMICOLON
-  {
-    $$ = TBmakeDowhile( $6, NULL);
-  }
-  | DO stmts WHILE BRACKET_L expr BRACKET_R SEMICOLON
-  {
-    $$ = TBmakeDowhile( $5, $2);
+    $$ = TBmakeDowhile( $2, $5);
   }
   ;
 
@@ -538,9 +526,12 @@ floatval: FLOAT
 intval: NUM
         {
           if (NUM > INT32_MIN && NUM < INT32_MAX) {
+            printf("%d\n", $1);
             $$ = TBmakeNum( $1);
           } else {
-            CTIerror("Int too large!");
+            $$ = TBmakeNum(0);
+            CTIerror("Integer out of range!");
+
           }
           
         }
