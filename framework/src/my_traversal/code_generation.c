@@ -135,6 +135,7 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
       write_assembly(STRcat(FUNDEF_NAME(arg_node), ":\n"));
     }
 
+
     // Calculate number of vardecls in funbody.
     int sum_vardecls = 0;
     node* current_vardecl = NULL;
@@ -155,14 +156,7 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
     
     // traverse through paramaters.
     FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
-    if (body) {
-      // Traverse through vardecls and statements.
-      FUNBODY_VARDECLS(body) = TRAVopt(FUNBODY_VARDECLS(body), arg_info);
-      FUNBODY_STMTS(body) = TRAVopt(FUNBODY_STMTS(body), arg_info);
-      // Traverse through the local fundefs
-      FUNBODY_LOCALFUNDEFS(body) = TRAVopt(FUNBODY_LOCALFUNDEFS(body), arg_info);
-
-    }
+    FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
     
     DBUG_RETURN(arg_node);
 }
@@ -189,10 +183,8 @@ node* CGfuncall(node* arg_node, info* arg_info) {
 
     //printf("\tisr \n");
     FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
-    node* import_node = in_import_table(FUNCALL_FUNDEF(arg_node), INFO_IMP(arg_info));
-
-    if (import_node) {
-      write_assembly(STRcatn(3,"\tjsre ", STRitoa(EXTERN_INDEXLEVEL(import_node)), "\n"));
+    if (in_import_table(FUNCALL_FUNDEF(arg_node), INFO_IMP(arg_info))) {
+      write_assembly("\tjsre 0\n");
     } else {
       write_assembly(STRcatn(5, "\tjsr ", STRitoa(arg_amount), " ", FUNDEF_NAME(FUNCALL_FUNDEF(arg_node)), "\n"));
     }
@@ -238,12 +230,14 @@ extern node *CGcast(node *arg_node, info *arg_info) {
 
   type old_type = CAST_TYPE_RIGHT(arg_node);
   type new_type = CAST_TYPE_LEFT(arg_node);
-  
 
-  if (old_type != T_bool && new_type != T_bool) {
+  if (old_type != T_bool || new_type != T_bool) {
     write_assembly(STRcatn(5, "\t", type_to_char(old_type), "2", type_to_char(new_type), "\n"));
+
   } else {
+
     write_assembly("\tbloadc_t\n");
+
   } 
   
   

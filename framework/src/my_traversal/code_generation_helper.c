@@ -144,7 +144,8 @@ node* in_export_table(node* exportnode, node* export_table) {
   while (export_table) {
 
     if (exportnode == EXPORT_FUNDEF(export_table)) {
-      return export_table;
+      printf("erin\n");
+      return exportnode;
     }
     export_table = EXPORT_NEXT(export_table);
 
@@ -159,7 +160,7 @@ node* in_import_table(node* importnode, node* import_table) {
   while (import_table) {
 
     if (importnode == EXTERN_FUNDEF(import_table)) {
-      return import_table;
+      return importnode;
     }
     import_table = EXTERN_NEXT(import_table);
 
