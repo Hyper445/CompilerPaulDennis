@@ -18,6 +18,7 @@
         "traverse.h": "c",
         "make_table_helper.h": "c",
         "cstring": "cpp",
-        "code_generation_helper.h": "c"
+        "code_generation_helper.h": "c",
+        "tree_basic.h": "c"
     }
 }

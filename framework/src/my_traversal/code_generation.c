@@ -1,13 +1,13 @@
 /*****************************************************************************
  *
- * Module: code_gen
+ * Module: code_generations
  *
  * Prefix: CG
  *
  * Description:
  *
- * This module implements a demo traversal of the abstract syntax tree that 
- * sums up all integer constants and prints the result at the end of the traversal.
+ * This moduel writes the assembly code to either a file or to the standard
+ * output if no file is given as an argument.
  *
  *****************************************************************************/
 
