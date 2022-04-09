@@ -45,9 +45,6 @@ SUBPHASE( RF,
           RFdoRestructureForLoop, 
           ALWAYS,
           pet)
-    
-SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)
-
 
 SUBPHASE( mt, 
           "Entering symbols in symbol table",
@@ -67,7 +64,7 @@ SUBPHASE( al,
           ALWAYS,
           pet)
 
-//  SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)
+SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)
 
 SUBPHASE( tc,
           "Type Checking",

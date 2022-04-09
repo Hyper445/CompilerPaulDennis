@@ -88,7 +88,7 @@ node* RFfundef(node* arg_node, info* arg_info) {
             node *left = TBmakeVar(STRcpy(vardecl_name), NULL, NULL);
             node *right = COPYdoCopy(FOR_STOP(current_stmt));
             node *condition;
-            condition = TBmakeBinop(BO_gt, left, right);
+            condition = TBmakeBinop(BO_lt, left, right);
 
             // Create the block of the while loop.
             node *block = COPYdoCopy(FOR_BLOCK(current_stmt));
