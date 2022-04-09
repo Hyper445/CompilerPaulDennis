@@ -13,6 +13,8 @@
 #include "ctinfo.h"
 #include "free.h"
 #include "globals.h"
+#include "stdint.h" 
+#include "limits.h"
 
 static node *parseresult = NULL;
 extern int yylex();
@@ -69,7 +71,7 @@ static int yyerror( char *errname);
 
 program: decls
   {
-    parseresult = TBmakeProgram($1, NULL, NULL);      
+    parseresult = TBmakeProgram($1, NULL, NULL, NULL, NULL);      
   }
   ;
 
@@ -535,7 +537,12 @@ floatval: FLOAT
 
 intval: NUM
         {
-          $$ = TBmakeNum( $1);
+          if (NUM > INT32_MIN && NUM < INT32_MAX) {
+            $$ = TBmakeNum( $1);
+          } else {
+            CTIerror("Int too large!");
+          }
+          
         }
       ;
 

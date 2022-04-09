@@ -75,20 +75,6 @@ node* MTprogram(node *arg_node, info *arg_info) {
 
   INFO_ST(arg_info) = TBmakeSymboltable(STRcpy("Global"), NULL, NULL, NULL);
 
-  node* decls = PROGRAM_DECLS(arg_node);
-  while (decls) {
-
-    if (NODE_TYPE(DECLS_DECL(decls)) == N_fundef) {
-
-      node* fundef = DECLS_DECL(decls);
-
-      addSymbol(STRcpy(FUNDEF_NAME(fundef)), FUNDEF_TYPE(fundef), arg_info, FUNDEF_PARAMS(fundef), TRUE);
-
-    }
-    decls = DECLS_NEXT(decls);
-
-  }
-
   PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 
   PROGRAM_SYMBOLTABLE(arg_node) = INFO_ST(arg_info);
@@ -124,13 +110,9 @@ node *MTfundef (node *arg_node, info *arg_info){
   type type;
   
   // When reaching a function definition, add this to the current symbol table
-  if (strcmp(SYMBOLTABLE_NAME(INFO_ST(arg_info)), "Global")) {
-
-    name = STRcpy(FUNDEF_NAME(arg_node));
-    type = FUNDEF_TYPE(arg_node);
-    addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node), TRUE);
-
-  }
+  name = STRcpy(FUNDEF_NAME(arg_node));
+  type = FUNDEF_TYPE(arg_node);
+  addSymbol(name, type, arg_info, FUNDEF_PARAMS(arg_node), arg_node, TRUE);
 
   node* parent_table = INFO_ST(arg_info);
 
@@ -149,7 +131,7 @@ node *MTfundef (node *arg_node, info *arg_info){
     while (current_param) {
       name = STRcpy(PARAM_NAME(current_param));
       type = PARAM_TYPE(current_param);
-      addSymbol(name, type, arg_info, NULL, FALSE);
+      addSymbol(name, type, arg_info, NULL, arg_node, FALSE);
       current_param = PARAM_NEXT(current_param);
     }
   }
@@ -171,17 +153,7 @@ node *MTglobdecl (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(GLOBDECL_NAME(arg_node));
   type type = GLOBDECL_TYPE(arg_node);
-  addSymbol(name, type, arg_info, NULL, FALSE);
-
-  // node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
-
-  // if(ST_entry != NULL) {
-  //     GLOBDECL_DECL(arg_node) = ST_entry;
-  // }
-  // else {
-  //     // If decleration was not found, an error is thrown.
-  //     CTIerror("varlet %s is not in scope\n", name);
-  // }
+  addSymbol(name, type, arg_info, NULL, NULL, FALSE);
 
   DBUG_RETURN(arg_node);
   
@@ -193,17 +165,7 @@ node *MTglobdef (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(GLOBDEF_NAME(arg_node));
   type type = GLOBDEF_TYPE(arg_node);
-  addSymbol(name, type, arg_info, NULL, FALSE);
-
-  // node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
-
-  // if(ST_entry != NULL) {
-  //     GLOBDEF_DECL(arg_node) = ST_entry;
-  // }
-  // else {
-  //     // If decleration was not found, an error is thrown.
-  //     CTIerror("varlet %s is not in scope\n", name);
-  // }
+  addSymbol(name, type, arg_info, NULL, NULL, FALSE);
 
   DBUG_RETURN(arg_node);
 
@@ -218,29 +180,18 @@ node *MTvardecl (node *arg_node, info *arg_info) {
 
   char* name = STRcpy(VARDECL_NAME(arg_node));
   type type = VARDECL_TYPE(arg_node);
-  addSymbol(name, type, arg_info, NULL, FALSE);
-
-  // node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
-
-  // if(ST_entry != NULL) {
-  //     VARDECL_DECL(arg_node) = ST_entry;
-  // }
-  // else {
-  //     // If decleration was not found, an error is thrown.
-  //     CTIerror("varlet %s is not in scope\n", name);
-  // }
+  addSymbol(name, type, arg_info, NULL, NULL, FALSE);
 
   DBUG_RETURN(arg_node);
   
-  }
+}
 
-node* MTfor(node* arg_node, info* arg_info) {
+node* MTwhile(node* arg_node, info* arg_info) {
 
-  DBUG_ENTER("MTfor");
+  DBUG_ENTER("MTwhile");
 
-  FOR_START(arg_node) = TRAVopt(FOR_START(arg_node), arg_info);
-  FOR_STEP(arg_node) = TRAVopt(FOR_STEP(arg_node), arg_info);
-  FOR_STOP(arg_node) = TRAVopt(FOR_STOP(arg_node), arg_info);
+  WHILE_BLOCK(arg_node) = TRAVopt(WHILE_BLOCK(arg_node), arg_info);
+  WHILE_COND(arg_node) = TRAVopt(WHILE_COND(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
 
@@ -249,17 +200,6 @@ node* MTfor(node* arg_node, info* arg_info) {
 // For every function call, a link is added to the function's decleration.
 node *MTfuncall(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTfuncall");
-
-  // char* name = STRcpy(FUNCALL_NAME(arg_node));
-  // node* ST_entry = get_entry(name, INFO_ST(arg_info), TRUE);
-
-  // if(ST_entry != NULL) {
-  //     FUNCALL_DECL(arg_node) = ST_entry;
-  // }
-  // else {
-  //     // If decleration was not found, an error is thrown.
-  //     CTIerror("funcall %s is not in scope\n", name);
-  // }
 
   // Traverse through the arguments of the function.
   FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
@@ -271,33 +211,11 @@ node *MTfuncall(node *arg_node, info *arg_info) {
 node *MTvarlet(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTvarlet");
 
-  // char* name = STRcpy(VARLET_NAME(arg_node));
-  // node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
-
-  // if(ST_entry != NULL) {
-  //   VARLET_DECL(arg_node) = ST_entry;
-  // }
-  // else {
-  //   // If decleration was not found, an error is thrown.
-  //   CTIerror("varlet %s is not in scope\n", name);
-  // }
-
   DBUG_RETURN(arg_node);
 }
 
 node *MTvar(node *arg_node, info *arg_info) {
   DBUG_ENTER("MTvar");
-  
-  // char* name = STRcpy(VAR_NAME(arg_node));
-  // node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
-
-  // if(ST_entry != NULL) {
-  //   VAR_DECL(arg_node) = ST_entry;
-  // }
-  // else {
-  //   // If decleration was not found, an error is thrown.
-  //   CTIerror("var %s is not in scope\n", name);
-  // }
 
   DBUG_RETURN(arg_node);
 }
