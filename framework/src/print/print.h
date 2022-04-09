@@ -16,8 +16,7 @@ extern node *PRTprogram (node * arg_node, info * arg_info);
 
 extern node *PRTcondexpr (node * arg_node, info * arg_info);
 extern node *PRTconstant (node * arg_node, info * arg_info);
-extern node *PRTexport (node * arg_node, info * arg_info);
-extern node *PRTextern (node * arg_node, info * arg_info);
+
 extern node *PRTdeclarations (node * arg_node, info * arg_info);
 extern node *PRTfundef (node * arg_node, info * arg_info);
 extern node *PRTparam (node * arg_node, info * arg_info);

@@ -45,19 +45,10 @@ SUBPHASE( RF,
           RFdoRestructureForLoop, 
           ALWAYS,
           pet)
-    
-SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)
-
 
 SUBPHASE( mt, 
           "Entering symbols in symbol table",
           MTdoMakeTable, 
-          ALWAYS,
-          pet)
-
-SUBPHASE( pt,
-          "Printing Symboltable",
-          PTdoPrintTable,
           ALWAYS,
           pet)
 
@@ -67,7 +58,13 @@ SUBPHASE( al,
           ALWAYS,
           pet)
 
-//  SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)
+SUBPHASE( pt,
+          "Printing Symboltable",
+          PTdoPrintTable,
+          ALWAYS,
+          pet)
+
+SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, pet)
 
 SUBPHASE( tc,
           "Type Checking",
@@ -103,12 +100,6 @@ SUBPHASE( tw,
 SUBPHASE( mct,
           "Making Constant Table",
           MCTdoMakeConstantTable,
-          ALWAYS,
-          pet)
-
-SUBPHASE( met,
-          "Making Export Table",
-          METdoMakeExportTable,
           ALWAYS,
           pet)
 

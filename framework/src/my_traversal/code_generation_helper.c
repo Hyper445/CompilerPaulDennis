@@ -29,48 +29,21 @@
 #include "memory.h"
 #include "ctinfo.h"
 
+// Writes all exported functions to output.
+void print_funs(node* symbolTable) {
 
-// Writes all global variables to output.
-void print_exports(node* current_decls, node* export_table) {
-
-    while (current_decls) {
-      node *current_decl = DECLS_DECL(current_decls);
-      if (current_decl) {
-        if (NODE_TYPE(current_decl) == N_fundef && in_export_table(current_decl, export_table) != NULL) {
-
-          char *name = FUNDEF_NAME(current_decl);
-          char *type = type_to_string(FUNDEF_TYPE(current_decl));
-          write_assembly(STRcatn(7,".exportfun \"", name, "\" ", type, " ", name, "\n"));
-
-        }
-
-        current_decls = DECLS_NEXT(current_decls);
-      }
+  node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
+  while (current_entry) {
+    if (SYMBOLTABLEENTRY_PARAMS(current_entry)) {
+        char *name = SYMBOLTABLEENTRY_NAME(current_entry);
+        char *type = type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry));
+        write_assembly(STRcatn(7,".exportfun \"", name, "\" ", type, " ", name, "\n"));
     }
-}
-
-void print_imports(node* current_import) {
-
-  while (current_import) {
-
-    node* fundef = EXTERN_FUNDEF(current_import);
-    char *name = FUNDEF_NAME(fundef);
-    char *typeFundef = type_to_string(FUNDEF_TYPE(fundef));
-    write_assembly(STRcatn(5,".importfun \"", name, "\" ", typeFundef, " "));
-    
-    node* params = FUNDEF_PARAMS(fundef);
-    while (params) {
-      type typeParam = PARAM_TYPE(params);
-      printf("%s = type\n", type_to_string(typeParam));
-      write_assembly(STRcat(type_to_string(typeParam), " "));
-      params = PARAM_NEXT(params);
-    }
-    write_assembly("\n");
-
-    current_import = EXTERN_NEXT(current_import);
+    current_entry = SYMBOLTABLEENTRY_NEXT(current_entry);
   }
 }
 
+// Writes all global variables to output.
 void print_globals(node* symbolTable) {
 
     node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
@@ -84,21 +57,18 @@ void print_globals(node* symbolTable) {
 
 // Writes all constants to output.
 void print_constants(node* constant) {
-    while (constant) {
 
-      switch(NODE_TYPE(CONSTANT_VALUE(constant))) {
-        case N_float:
-          write_assembly(STRcatn(3, ".const float ", STRitoa(FLOAT_VALUE(CONSTANT_VALUE(constant))), "\n"));
-          break;
-        case N_num:
-          write_assembly(STRcatn(3, ".const int ", STRitoa(NUM_VALUE(CONSTANT_VALUE(constant))), "\n"));
-          break;
-        default:
-          CTIerror("unknown type (code_generation_helper)");
-          break;
-      }
-      constant = CONSTANT_NEXT(constant);
-
+  while (constant) {
+    switch(NODE_TYPE(CONSTANT_VALUE(constant))) {
+      case N_float:
+        write_assembly(STRcatn(3, ".constant float ", STRitoa(FLOAT_VALUE(CONSTANT_VALUE(constant))), "\n"));
+        break;
+      case N_num:
+        write_assembly(STRcatn(3, ".constant int ", STRitoa(NUM_VALUE(CONSTANT_VALUE(constant))), "\n"));
+        break;
+      default:
+        CTIerror("unknown type (code_generation_helper)");
+        break;
     }
     constant = CONSTANT_NEXT(constant);
 
@@ -133,36 +103,6 @@ node* in_table(node* value_node, node* constant_table) {
 
     }
     constant_table = CONSTANT_NEXT(constant_table);
-
-  }
-  return NULL;
-
-}
-
-node* in_export_table(node* exportnode, node* export_table) {
-
-  while (export_table) {
-
-    if (exportnode == EXPORT_FUNDEF(export_table)) {
-      printf("erin\n");
-      return exportnode;
-    }
-    export_table = EXPORT_NEXT(export_table);
-
-  }
-  return NULL;
-
-}
-
-
-node* in_import_table(node* importnode, node* import_table) {
-
-  while (import_table) {
-
-    if (importnode == EXTERN_FUNDEF(import_table)) {
-      return importnode;
-    }
-    import_table = EXTERN_NEXT(import_table);
 
   }
   return NULL;

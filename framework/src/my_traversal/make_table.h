@@ -12,7 +12,7 @@ extern node *MTifelse (node *arg_node, info *arg_info);
 extern node *MTfuncall (node *arg_node, info *arg_info);
 extern node *MTvarlet (node *arg_node, info *arg_info);
 extern node *MTvar (node *arg_node, info *arg_info);
-extern node *MTwhile (node *arg_node, info *arg_info);
+extern node *MTfor (node *arg_node, info *arg_info);
 
 extern node *MTdoMakeTable( node *syntaxtree);
 

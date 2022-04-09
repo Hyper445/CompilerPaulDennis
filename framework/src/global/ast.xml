@@ -31,9 +31,6 @@
       <traversal id="RF" name="remove declaration from for-loop" default="sons" include="restructure_forloop.h">
         <travuser>
             <node name="FunDef" />
-            <node name="Var" />
-            <node name="VarLet" />
-            <node name="For" />
         </travuser>
       </traversal>
 
@@ -48,7 +45,7 @@
           <node name="FunCall" />
           <node name="VarLet" />
           <node name="Var" />
-          <node name="While" />
+          <node name="For" />
         </travuser>
       </traversal>
 
@@ -122,8 +119,6 @@
 
       <traversal id="TW" name="Transform While-Loops" default="sons" include="transform_while.h">
         <travuser>
-            <node name="Program" />
-            <node name="FunDef" />
             <node name="While" />
         </travuser>
       </traversal>
@@ -134,13 +129,6 @@
             <node name="VarDecl" />
             <node name="Num" />
             <node name="Float" />
-        </travuser>
-      </traversal>
-
-      <traversal id="MET" name="Create Export Table" default="sons" include="make_export_table.h">
-        <travuser>
-            <node name="Program" />
-            <node name="FunDef" />
         </travuser>
       </traversal>
 
@@ -225,26 +213,6 @@
                 <targets>
                     <target mandatory="no">
                         <node name="Constant"/>
-                        <phases>
-                            <all/>
-                        </phases>
-                    </target>
-                </targets>
-            </son>
-            <son name="Exporttable">
-                <targets>
-                    <target mandatory="no">
-                        <node name="Export"/>
-                        <phases>
-                            <all/>
-                        </phases>
-                    </target>
-                </targets>
-            </son>
-            <son name="Externtable">
-                <targets>
-                    <target mandatory="no">
-                        <node name="Extern"/>
                         <phases>
                             <all/>
                         </phases>
@@ -424,18 +392,6 @@
                 <type name="Link">
                     <targets>
                         <target mandatory="yes">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
-            <attribute name="Fundef">
-                <type name="Link">
-                    <targets>
-                        <target mandatory="no">
                             <any/>
                             <phases>
                                 <all/>
@@ -1363,88 +1319,6 @@
         </attributes>
     </node>
 
-    <node name="Export">
-        <sons>
-            <son name="Next">
-                <targets>
-                    <target mandatory="no">
-                        <node name="Export"/>
-                        <phases>
-                            <all/>
-                        </phases>
-                    </target>
-                </targets>
-            </son>
-        </sons>
-        <attributes>
-            <attribute name="IndexLevel">
-                <type name="Int">
-                    <targets>
-                        <target mandatory="yes">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
-            <attribute name="Fundef">
-                <type name="Link">
-                    <targets>
-                        <target mandatory="yes">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
-        </attributes>
-    </node>
-
-    <node name="Extern">
-        <sons>
-            <son name="Next">
-                <targets>
-                    <target mandatory="no">
-                        <node name="Extern"/>
-                        <phases>
-                            <all/>
-                        </phases>
-                    </target>
-                </targets>
-            </son>
-        </sons>
-        <attributes>
-            <attribute name="IndexLevel">
-                <type name="Int">
-                    <targets>
-                        <target mandatory="yes">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
-            <attribute name="Fundef">
-                <type name="Link">
-                    <targets>
-                        <target mandatory="yes">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
-        </attributes>
-    </node>
-
     <node name="Symboltable">
         <sons>
             <son name="Entries">
@@ -1561,18 +1435,6 @@
                 </type>
             </attribute>
             <attribute name="Params">
-                <type name="Link">
-                    <targets>
-                        <target mandatory="yes">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
-            <attribute name="Fundef">
                 <type name="Link">
                     <targets>
                         <target mandatory="yes">
