@@ -34,9 +34,7 @@ void addSymbol(char* name, type type, info* arg_info, node* params, node* fundef
   node* currentSymbolEntry = SYMBOLTABLE_ENTRIES(currentSymbolTable);
 
   if (get_entry_scope(name, INFO_ST(arg_info), isFunction)) {
-  
     CTIerror("%s is already declared!", name);
-
   }
 
   // Gets the correct nesting level.
@@ -71,13 +69,11 @@ void addSymbol(char* name, type type, info* arg_info, node* params, node* fundef
 
 node* get_symboltable(char* name, node* current_ST) {
 
-  printf("funcall name = %s\n", name);
   // Loops through the symboltables until the function decleration has been found.
   while(current_ST != NULL) {
-    printf("current st name = %s\n", SYMBOLTABLE_NAME(current_ST));
+
     // If the decleration has been found. A link to the decleration is added to the funcall.
     if (STReq(name, SYMBOLTABLE_NAME(current_ST))) {
-
       return current_ST;
     }
 
@@ -91,7 +87,6 @@ node* get_symboltable(char* name, node* current_ST) {
 node* get_entry_node(node* stLink, node* current_ST, bool isFunction) {
 
   // gets ST and it's first entry.
-  // node* current_ST = INFO_ST(arg_info);
   node* current_ST_entry;
   
   // Loops through the symboltables until the function decleration has been found.
@@ -124,7 +119,6 @@ node* get_entry_node(node* stLink, node* current_ST, bool isFunction) {
 node* get_entry(char* name, node* current_ST, bool isFunction) {
 
   // gets ST and it's first entry.
-  // node* current_ST = INFO_ST(arg_info);
   node* current_ST_entry;
   
   // Loops through the symboltables until the function decleration has been found.
@@ -155,7 +149,6 @@ node* get_entry(char* name, node* current_ST, bool isFunction) {
 node* get_entry_scope(char* name, node* current_ST, bool isFunction) {
 
   // gets ST and it's first entry.
-  // node* current_ST = INFO_ST(arg_info);
   node* current_ST_entry;
   
   // Loops through the symboltables until the function decleration has been found.

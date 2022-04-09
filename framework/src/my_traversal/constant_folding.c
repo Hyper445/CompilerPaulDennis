@@ -6,8 +6,8 @@
  *
  * Description:
  *
- * This module implements a demo traversal of the abstract syntax tree that 
- * sums up all integer constants and prints the result at the end of the traversal.
+ * This module is an optimalisation that folds multiple constants into a single
+ * constant.
  *
  *****************************************************************************/
 
@@ -78,17 +78,8 @@ static info *FreeInfo( info *info)
  * Traversal functions
  */
 
-
-// node *CFglobdef (node *arg_node, info *arg_info) {
-  
-//   DBUG_ENTER("MCTglobdef");
-
-//   GLOBDEF_INIT(arg_node) = TRAVopt(GLOBDEF_INIT(arg_node), arg_info);
-
-//   DBUG_RETURN(arg_node);
-
-// }
-
+// Folds both arguments of a binop if binop is a (+), (*), (/), 
+// (-) or a (%). Both arguments must a float or a integer.
 node *CFbinop (node* arg_node, info* arg_info) {
 
   DBUG_ENTER("MCTbinop");
@@ -156,20 +147,7 @@ node *CFbinop (node* arg_node, info* arg_info) {
   }
   
   DBUG_RETURN(arg_node);
-
 }
-
-// node *CFvardecl (node *arg_node, info *arg_info) {
-  
-//   DBUG_ENTER("MCTvardecl");
-
-//   VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
-//   VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
-
-//   DBUG_RETURN(arg_node);
-  
-// }
-
 
 /*
  * Traversal start function

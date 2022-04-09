@@ -46,8 +46,6 @@
           <node name="VarDecl" />
           <node name="IfElse" />
           <node name="FunCall" />
-          <node name="VarLet" />
-          <node name="Var" />
           <node name="While" />
         </travuser>
       </traversal>
@@ -99,8 +97,6 @@
             <node name="Return" />
         </travuser>
       </traversal>
-
-     <!-- <traversal id="IS" name="Identifiers storer" default="sons" include="identifiers_storer.h"> -->
 
       <traversal id="BJ" name="Boolean Junction" default="sons" include="boolean_junction.h">
         <travuser>

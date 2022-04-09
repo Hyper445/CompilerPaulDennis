@@ -35,8 +35,6 @@ struct INFO {
   node* Symboltable;
 };
 
-
-
 /*
  * INFO macros
  */
@@ -44,11 +42,9 @@ struct INFO {
 #define INFO_ST(n) ((n)->Symboltable)
 #define INFO_NEXT(n) ((n)->next)
 
-
 /*
  * INFO functions
  */
-
 
 static info *MakeInfo(void)
 {
@@ -67,7 +63,7 @@ static info *MakeInfo(void)
  * Traversal functions
  */
 
-
+// Prints the symboltable.
 node *PTsymboltable (node *arg_node, info *arg_info) {
   DBUG_ENTER("PTsymboltable");
 
@@ -77,6 +73,7 @@ node *PTsymboltable (node *arg_node, info *arg_info) {
   DBUG_RETURN(arg_node);
 }
 
+// Prints a symboltableEntry.
 node *PTsymboltableentry (node *arg_node, info *arg_info) {
   DBUG_ENTER("PTsymboltableentry");
 
@@ -95,7 +92,6 @@ node *PTsymboltableentry (node *arg_node, info *arg_info) {
 
   DBUG_RETURN(arg_node);
 }
-
 
 /*
  * Traversal start function

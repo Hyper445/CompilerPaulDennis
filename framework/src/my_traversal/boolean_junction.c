@@ -6,8 +6,7 @@
  *
  * Description:
  *
- * This module implements a demo traversal of the abstract syntax tree that 
- * sums up all integer constants and prints the result at the end of the traversal.
+ * This module turns the AND binop into a conditional expression (condexpr).
  *
  *****************************************************************************/
 
@@ -49,7 +48,6 @@ node *BJbinop (node *arg_node, info *arg_info){
   DBUG_RETURN(arg_node);
   
 }
-
 
 /*
  * Traversal start function
