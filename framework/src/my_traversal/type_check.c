@@ -259,8 +259,6 @@ node* TCreturn (node* arg_node, info* arg_info) {
   RETURN_EXPR(arg_node) = TRAVopt(RETURN_EXPR(arg_node), arg_info);
   type returnType = INFO_TYPE(arg_info);
 
-  node* test = TBmakeReturn(NULL);
-
   // Check if the expr type matches the fundef type
   node* fundefEntry = get_entry(SYMBOLTABLE_NAME(INFO_ST(arg_info)), INFO_ST(arg_info), TRUE);
 

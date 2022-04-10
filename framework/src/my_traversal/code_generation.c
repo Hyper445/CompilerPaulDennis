@@ -129,7 +129,6 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
 
     INFO_CST(arg_info) = FUNDEF_SYMBOLTABLE(arg_node);
     bool isImport = (in_import_table(arg_node, INFO_IMP(arg_info)) != NULL);
-    bool isExport = (in_export_table(arg_node, INFO_EXPT(arg_info)) != NULL);
 
     node *body = FUNDEF_FUNBODY(arg_node);
     if (body || !isImport) {
@@ -246,7 +245,6 @@ extern node *CGcast(node *arg_node, info *arg_info) {
 extern node *CGdowhile(node *arg_node, info *arg_info) {
   DBUG_ENTER("CGdowhile");
 
-  int label = INFO_SUM_L(arg_info) + 1;
   INFO_SUM_L(arg_info) = INFO_SUM_L(arg_info) + 1;
 
   int whileamount = INFO_SUM_WHILE(arg_info);
