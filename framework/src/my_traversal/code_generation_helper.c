@@ -1,15 +1,3 @@
-/*****************************************************************************
- *
- * Module: code_generation_helper
- *
- * Prefix: -
- *
- * Description:
- *
- * This module contains helper functions used by code_generation.c.
- *
- *****************************************************************************/
-
 #include "code_generation.h"
 #include "make_table_helper.h"
 #include "code_generation_helper.h"
@@ -29,53 +17,113 @@
 #include "memory.h"
 #include "ctinfo.h"
 
-// Writes all exported functions to output.
+
 void print_funs(node* symbolTable) {
-
-  node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
-  while (current_entry) {
-    if (SYMBOLTABLEENTRY_PARAMS(current_entry)) {
-        char *name = SYMBOLTABLEENTRY_NAME(current_entry);
-        char *type = type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry));
-        write_assembly(STRcatn(7,".exportfun \"", name, "\" ", type, " ", name, "\n"));
-    }
-    current_entry = SYMBOLTABLEENTRY_NEXT(current_entry);
-  }
-}
-
-// Writes all global variables to output.
-void print_globals(node* symbolTable) {
 
     node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
     while (current_entry) {
-        if (!SYMBOLTABLEENTRY_ISFUNCTION(current_entry)) { 
-            write_assembly(STRcatn(3, ".global ", type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry)), "\n"));
+
+        if (SYMBOLTABLEENTRY_ISFUNCTION(current_entry)) {
+            //.exportfun "__init" void __init
+            char *name = SYMBOLTABLEENTRY_NAME(current_entry);
+            char *type = type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry));
+            write_assembly(STRcatn(7,".exportfun \"", name, "\" ", type, " ", name, "\n"));
+            //printf(".exportfun \"%s\" %s %s\n", SYMBOLTABLEENTRY_NAME(current_entry), 
+            //    type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry)), SYMBOLTABLEENTRY_NAME(current_entry));
+        
         }
         current_entry = SYMBOLTABLEENTRY_NEXT(current_entry);
     }
 }
 
-// Writes all constants to output.
-void print_constants(node* constant) {
+void print_exports(node* current_decls, node* export_table) {
 
-  while (constant) {
-    switch(NODE_TYPE(CONSTANT_VALUE(constant))) {
-      case N_float:
-        write_assembly(STRcatn(3, ".constant float ", STRitoa(FLOAT_VALUE(CONSTANT_VALUE(constant))), "\n"));
-        break;
-      case N_num:
-        write_assembly(STRcatn(3, ".constant int ", STRitoa(NUM_VALUE(CONSTANT_VALUE(constant))), "\n"));
-        break;
-      default:
-        CTIerror("unknown type (code_generation_helper)");
-        break;
+    while (current_decls) {
+      node *current_decl = DECLS_DECL(current_decls);
+      if (current_decl) {
+        if (NODE_TYPE(current_decl) == N_fundef && in_export_table(current_decl, export_table) != NULL) {
+
+          char *name = FUNDEF_NAME(current_decl);
+          char *type = type_to_string(FUNDEF_TYPE(current_decl));
+          write_assembly(STRcatn(7,".exportfun \"", name, "\" ", type, " ", name, "\n"));
+
+          // printf(".exportfun \"%s\" %s %s\n", FUNDEF_NAME(current_decl), 
+          //   type_to_string(FUNDEF_TYPE(current_decl)), FUNDEF_NAME(current_decl));
+
+        }
+
+        current_decls = DECLS_NEXT(current_decls);
+      }
     }
-    constant = CONSTANT_NEXT(constant);
+}
 
+void print_imports(node* current_import) {
+
+  while (current_import) {
+
+    node* fundef = EXTERN_FUNDEF(current_import);
+    char *name = FUNDEF_NAME(fundef);
+    char *typeFundef = type_to_string(FUNDEF_TYPE(fundef));
+    write_assembly(STRcatn(5,".importfun \"", name, "\" ", typeFundef, " "));
+    
+    node* params = FUNDEF_PARAMS(fundef);
+    while (params) {
+      type typeParam = PARAM_TYPE(params);
+      printf("%s = type\n", type_to_string(typeParam));
+      write_assembly(STRcat(type_to_string(typeParam), " "));
+      params = PARAM_NEXT(params);
+    }
+    write_assembly("\n");
+
+    // printf(".exportfun \"%s\" %s %s\n", FUNDEF_NAME(current_decl), 
+    //   type_to_string(FUNDEF_TYPE(current_decl)), FUNDEF_NAME(current_decl));
+
+    current_import = EXTERN_NEXT(current_import);
   }
 }
 
-// Returns the pointer to the constant_table that matches the given value.
+    
+
+void print_globals(node* symbolTable) {
+
+    node* current_entry = SYMBOLTABLE_ENTRIES(symbolTable);
+    while (current_entry) {
+        
+        if (!SYMBOLTABLEENTRY_ISFUNCTION(current_entry)) { 
+            write_assembly(STRcatn(3, ".global ", type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry)), "\n"));
+            //printf(".global %s\n", type_to_string(SYMBOLTABLEENTRY_TYPE(current_entry))); 
+        }
+        current_entry = SYMBOLTABLEENTRY_NEXT(current_entry);
+    }
+}
+
+
+
+void print_constants(node* constant) {
+
+    while (constant) {
+
+      switch(NODE_TYPE(CONSTANT_VALUE(constant))) {
+        case N_float:
+          write_assembly(STRcatn(3, ".const float ", STRitoa(FLOAT_VALUE(CONSTANT_VALUE(constant))), "\n"));
+          printf(".const float %f\n", FLOAT_VALUE(CONSTANT_VALUE(constant)));
+          break;
+        case N_num:
+          write_assembly(STRcatn(3, ".const int ", STRitoa(NUM_VALUE(CONSTANT_VALUE(constant))), "\n"));
+          printf(".const int %d\n", NUM_VALUE(CONSTANT_VALUE(constant)));
+          break;
+        default:
+          CTIerror("unknown type (code_generation_helper)");
+          break;
+
+      }
+      constant = CONSTANT_NEXT(constant);
+
+    }
+
+
+}
+
 node* in_table(node* value_node, node* constant_table) {
 
   while (constant_table) {
@@ -109,8 +157,35 @@ node* in_table(node* value_node, node* constant_table) {
 
 }
 
-// Returns a specific instruction for frequent incurring constants. Returns
-// NULL otherwise.
+node* in_export_table(node* exportnode, node* export_table) {
+
+  while (export_table) {
+
+    if (exportnode == EXPORT_FUNDEF(export_table)) {
+      return export_table;
+    }
+    export_table = EXPORT_NEXT(export_table);
+
+  }
+  return NULL;
+
+}
+
+
+node* in_import_table(node* importnode, node* import_table) {
+
+  while (import_table) {
+
+    if (importnode == EXTERN_FUNDEF(import_table)) {
+      return import_table;
+    }
+    import_table = EXTERN_NEXT(import_table);
+
+  }
+  return NULL;
+
+}
+
 char* optimise_constant(node* arg_node) {
 
   // If constant isn't in the table, it is one of the optimised numbers
@@ -153,9 +228,6 @@ char* optimise_constant(node* arg_node) {
   return NULL;
 }
 
-// If an assign node increments or decrements a variable, a specific
-// increment/decrement instruction is written to output and this function
-// returns true. Otherwise, false is returned.
 int optimise_assign(node *arg_node, node *constant_table) {
   node *expr = ASSIGN_EXPR(arg_node);
 
@@ -197,10 +269,13 @@ int optimise_assign(node *arg_node, node *constant_table) {
     int index_var = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(var));
     if(NUM_VALUE(constant) == 1) {
       write_assembly(STRcatn(5, "\t", instruction, "_1 ", STRitoa(index_var), "\n"));
+      //printf("\t%s_1 %d\n", instruction, index_var);
       return true;
     }
     else {
+      //node *constant_in_table = in_table(constant, constant_table);
       write_assembly(STRcatn(7, "\t", instruction, " ", STRitoa(index_var), " ",STRitoa(CONSTANT_INDEX(constant_table)), "\n"));
+      //printf("\t%s %d %d\n", instruction, index_var, CONSTANT_INDEX(constant_table));
       return true;
     }
   }
@@ -226,7 +301,7 @@ char* type_to_string(int type) {
   }
 }
 
-// Converts a type to a single character.
+
 char* type_to_char(int type) {
 
   switch(type) {
@@ -245,7 +320,6 @@ char* type_to_char(int type) {
 
 }
 
-// Converts a binop to a single type.
 char* binop_to_char(binop binop) {
 
   switch(binop) {
@@ -274,13 +348,13 @@ char* binop_to_char(binop binop) {
     default:
       CTIerror("undefined type");
       return("");
+    // case BO_and :
+    //   return ("and");
+    // case BO_or :
+    //   return("or");
   }
 }
 
-// takes an assembly instruction as an argument. If global.output contains
-// a file name, the instruction is added to the end of that file. If the file wasn't
-// yet created, then the file is first created. If global.output is NULL, the 
-// assembly instruction is printed to stdout.
 void write_assembly(char *assembly) {
   if(global.outfile != NULL) {
     FILE *file = fopen(global.outfile, "a");

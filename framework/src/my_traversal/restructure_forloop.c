@@ -33,6 +33,25 @@
 #include "memory.h"
 #include "ctinfo.h"
 
+struct INFO {
+  char* old_name;
+  char* new_name;
+};
+
+#define INFO_OLDNAME(n) ((n)->old_name)
+#define INFO_NEWNAME(n) ((n)->new_name)
+
+static info *MakeInfo(void) {
+  info *result;
+
+  DBUG_ENTER( "MakeInfo");
+
+  result = (info *)MEMmalloc(sizeof(info));
+  INFO_OLDNAME(result) = NULL;
+  INFO_NEWNAME(result) = NULL;
+  DBUG_RETURN( result);
+}
+
 node* RFfundef(node* arg_node, info* arg_info) {
     DBUG_ENTER("RFfundef");    
     int sum = 0;
@@ -58,18 +77,18 @@ node* RFfundef(node* arg_node, info* arg_info) {
             FUNBODY_VARDECLS(body) = new_vardecl;
             sum = sum + 1;
 
+            // Change the vars in the body to the new name
+            //FOR_LOOPVAR(current_stmt) = STRcpy(vardecl_name);
+
+            INFO_OLDNAME(arg_info) = FOR_LOOPVAR(current_stmt);
+            INFO_NEWNAME(arg_info) = vardecl_name;
+            FOR_BLOCK(current_stmt) = TRAVopt(FOR_BLOCK(current_stmt), arg_info);
+
             // Create the condition of the while loop.
             node *left = TBmakeVar(STRcpy(vardecl_name), NULL, NULL);
             node *right = COPYdoCopy(FOR_STOP(current_stmt));
             node *condition;
-            // if(NUM_VALUE(FOR_START(current_stmt)) < NUM_VALUE(FOR_STOP(current_stmt))) {
-            //     condition = TBmakeBinop(BO_lt, left, right);
-            // }
-            // else {
-            //     condition = TBmakeBinop(BO_gt, left, right);
-            // }
-
-            condition = TBmakeBinop(BO_gt, left, right);
+            condition = TBmakeBinop(BO_lt, left, right);
 
             // Create the block of the while loop.
             node *block = COPYdoCopy(FOR_BLOCK(current_stmt));
@@ -116,8 +135,43 @@ node* RFfundef(node* arg_node, info* arg_info) {
         stmts = STMTS_NEXT(stmts);
     }
 
+    DBUG_RETURN(arg_node);
 
-    
+}
+
+node* RFfor(node *arg_node, info* arg_info) {
+
+    DBUG_ENTER("RFfor");
+
+    FOR_BLOCK(arg_node) = TRAVopt(FOR_BLOCK(arg_node), arg_info);
+
+    DBUG_RETURN(arg_node);
+
+}
+
+node *RFvarlet(node* arg_node, info* arg_info) {
+
+    DBUG_ENTER("RFvar");
+
+    if (STReq(VARLET_NAME(arg_node),INFO_OLDNAME(arg_info))) {
+
+        VARLET_NAME(arg_node) = STRcpy(INFO_NEWNAME(arg_info));
+
+    }
+
+    DBUG_RETURN(arg_node);
+
+}
+
+node *RFvar(node* arg_node, info* arg_info) {
+
+    DBUG_ENTER("RFvar");
+
+    if (STReq(VAR_NAME(arg_node),INFO_OLDNAME(arg_info))) {
+
+        VAR_NAME(arg_node) = STRcpy(INFO_NEWNAME(arg_info));
+
+    }
 
     DBUG_RETURN(arg_node);
 
@@ -129,10 +183,13 @@ node* RFfundef(node* arg_node, info* arg_info) {
 
 node *RFdoRestructureForLoop( node *syntaxtree)
 {
+    info* arg_info;
     DBUG_ENTER("RFdoRestructureForLoop");
 
+    arg_info = MakeInfo();
+
     TRAVpush( TR_rf);
-    syntaxtree = TRAVdo( syntaxtree, NULL);
+    syntaxtree = TRAVdo( syntaxtree, arg_info);
     TRAVpop();
 
     DBUG_RETURN( syntaxtree);

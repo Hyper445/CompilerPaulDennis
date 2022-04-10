@@ -34,6 +34,7 @@ node *BJbinop (node *arg_node, info *arg_info){
   
   DBUG_ENTER("BJbinop");
 
+
     if (BINOP_OP(arg_node) == BO_and) {
       
         node* condexpr = TBmakeCondexpr(BINOP_LEFT(arg_node), BINOP_RIGHT(arg_node), TBmakeBool(FALSE));
@@ -45,6 +46,7 @@ node *BJbinop (node *arg_node, info *arg_info){
         arg_node = condexpr;
 
     }
+    
 
   DBUG_RETURN(arg_node);
   

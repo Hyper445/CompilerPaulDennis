@@ -79,20 +79,29 @@ node* ALfundef(node *arg_node, info *arg_info) {
   INFO_ST(arg_info) = FUNDEF_SYMBOLTABLE(arg_node);
   FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
+//   if (INFO_ST(arg_info)) {
+
+//     if (strcmp(SYMBOLTABLE_NAME(SYMBOLTABLE_PARENT(INFO_ST(arg_info))), "Global")) {
+//       char* name = STRcat("__", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+//       char* functionName = STRcat("_", FUNDEF_NAME(arg_node));
+//       FUNDEF_NAME(arg_node) = STRcat(name, functionName);
+
+//     } else {
+
+//       FUNDEF_NAME(arg_node) = STRcat(SYMBOLTABLE_NAME(INFO_ST(arg_info)), STRcat("_", FUNDEF_NAME(arg_node)));
+//     }
+//   }
+
   DBUG_RETURN(arg_node);
 
 }
 
-// Adds a link to globdecl the correct symboltableEntry.
 node *ALglobdecl(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("ALglobdecl");
-
-    // Get a pointer to symboltableEntry of the globdecl.
     char* name = STRcpy(GLOBDECL_NAME(arg_node));
     node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
-    // Add the pointer to the decl attribute of globdecl.
     if(ST_entry != NULL) {
         GLOBDECL_DECL(arg_node) = ST_entry;
     }
@@ -105,16 +114,13 @@ node *ALglobdecl(node* arg_node, info* arg_info) {
   
 }
 
-// Adds a link to globdef to the correct symboltableEntry.
 node *ALglobdef(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("ALglobdef");
 
-    // Get a pointer to the symboltableEntry of the globdef.
     char* name = STRcpy(GLOBDEF_NAME(arg_node));
     node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
-    // Add the pointer to the decl attribute of the globdef.
     if(ST_entry != NULL) {
         GLOBDEF_DECL(arg_node) = ST_entry;
     }
@@ -126,18 +132,15 @@ node *ALglobdef(node* arg_node, info* arg_info) {
     DBUG_RETURN(arg_node); 
 }
 
-// Adds a link to vardecl to the correct symboltableEntry.
 node *ALvardecl(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("ALvardecl");
 
     VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
-
-    // Get pointer to the symboltableEntry of the vardecl.
+    
     char* name = STRcpy(VARDECL_NAME(arg_node));
     node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
-    // Add the pointer to the decl attribute of the vardecl.
     if(ST_entry != NULL) {
         VARDECL_DECL(arg_node) = ST_entry;
     }
@@ -152,16 +155,13 @@ node *ALvardecl(node* arg_node, info* arg_info) {
   
 }
 
-// Adds a link to funcall to the correct symboltableEntry.
 node *ALfuncall(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("ALfuncall");
 
-    // Get pointer to the symboltableEntry of the vardecl.
     char* name = STRcpy(FUNCALL_NAME(arg_node));
     node* ST_entry = get_entry(name, INFO_ST(arg_info), TRUE);
     
-    // Get the pointer to the decl attribute of funcall.
     if(ST_entry != NULL) {
         FUNCALL_DECL(arg_node) = ST_entry;
     }
@@ -177,16 +177,13 @@ node *ALfuncall(node* arg_node, info* arg_info) {
   
 }
 
-// Adds a link to varlet to the correct symboltableEntry.
 node *ALvarlet(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("ALvarlet");
 
-    // Get pointer to the symboltableEntry of the varlet.
     char* name = STRcpy(VARLET_NAME(arg_node));
     node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
-    // Get the pointer to the decl attribute of varlet.  
     if(ST_entry != NULL) {
         VARLET_DECL(arg_node) = ST_entry;
     }
@@ -199,16 +196,14 @@ node *ALvarlet(node* arg_node, info* arg_info) {
   
 }
 
-// Adds a link to var to the correct symboltableEntry
+
 node *ALvar(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("ALvar");
     
-    // Get pointer to the symboltableEntry of the varlet.
     char* name = STRcpy(VAR_NAME(arg_node));
     node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
-    // Get the pointer to the decl attribute of varlet.
     if(ST_entry != NULL) {
         VAR_DECL(arg_node) = ST_entry;
     }

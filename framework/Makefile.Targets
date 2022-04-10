@@ -111,5 +111,5 @@ my_traversal= reduce_strength.o store_operators.o identifiers_storer.o make_tabl
               var_to_assign.o boolean_junction.o boolean_cast.o code_generation.o \
               make_table_helper.o type_check.o print_table.o transform_while.o \
               make_constant_table.o add_links.o code_generation_helper.o constant_folding.o \
-              restructure_forloop.o
+              restructure_forloop.o make_export_table.o
 

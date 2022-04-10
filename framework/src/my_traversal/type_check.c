@@ -62,6 +62,7 @@ node *TCprogram(node *arg_node, info* arg_info) {
 node *TCfundef(node *arg_node, info* arg_info) {
 
   DBUG_ENTER("TCfundef");
+  node* parent_table = INFO_ST(arg_info);
   INFO_ST(arg_info) = FUNDEF_SYMBOLTABLE(arg_node);
   node* symboltable = FUNDEF_SYMBOLTABLE(arg_node);
   
@@ -83,15 +84,16 @@ node *TCfundef(node *arg_node, info* arg_info) {
     } else if (!stmts && SYMBOLTABLEENTRY_TYPE(
         get_entry(SYMBOLTABLE_NAME(symboltable), symboltable, TRUE)) == T_void) {
       addNodeStatements(TBmakeReturn(NULL), FUNDEF_FUNBODY(arg_node));
-    } else if (stmts && SYMBOLTABLEENTRY_TYPE(
-        get_entry(SYMBOLTABLE_NAME(symboltable), symboltable, TRUE)) == T_void) {
-      addNodeStatements(TBmakeReturn(NULL), FUNDEF_FUNBODY(arg_node));
     }
 
   }
 
   FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
   FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
+
+  INFO_ST(arg_info) = parent_table;
+
+
 
   DBUG_RETURN(arg_node);
 
@@ -206,8 +208,13 @@ node *TCfuncall (node *arg_node, info *arg_info) {
   FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
   node* symboltable = INFO_ST(arg_info);
   node* fun_entry = get_entry_node(FUNCALL_DECL(arg_node), INFO_ST(arg_info), TRUE);
+  node* fundef = NULL;
+  if (fun_entry) {
+    fundef = SYMBOLTABLEENTRY_FUNDEF(fun_entry);
+  }
   node* funcall_params = FUNCALL_ARGS(arg_node);
   node* fun_params = NULL;
+
   
   if (fun_entry) {
     fun_params = SYMBOLTABLEENTRY_PARAMS(fun_entry);
@@ -241,6 +248,8 @@ node *TCfuncall (node *arg_node, info *arg_info) {
     CTIerror("No function named %s! \n", FUNCALL_NAME(arg_node));
   }
 
+  FUNCALL_FUNDEF(arg_node) = fundef;
+
   DBUG_RETURN(arg_node);
 }
 
@@ -250,6 +259,22 @@ node* TCreturn (node* arg_node, info* arg_info) {
 
   RETURN_EXPR(arg_node) = TRAVopt(RETURN_EXPR(arg_node), arg_info);
   type returnType = INFO_TYPE(arg_info);
+  printf("%s\n", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
+
+  node* test = TBmakeReturn(NULL);
+  
+  if (RETURN_EXPR(test)) {
+    printf("test\n");
+    if (NODE_TYPE(RETURN_EXPR(test)) == N_num) {
+      printf("%d\n", RETURN_EXPR(test) == NULL);
+    }
+  }
+  if (RETURN_EXPR(arg_node)) {
+    if (NODE_TYPE(RETURN_EXPR(arg_node)) == N_num) {
+      printf("%d\n", RETURN_EXPR(arg_node) == NULL);
+    }
+
+  }
 
   // Check if the expr type matches the fundef type
   node* fundefEntry = get_entry(SYMBOLTABLE_NAME(INFO_ST(arg_info)), INFO_ST(arg_info), TRUE);
@@ -260,7 +285,8 @@ node* TCreturn (node* arg_node, info* arg_info) {
 
     CTIerrorLine(NODE_LINE(arg_node),"function '%s' expects '%s' type.", SYMBOLTABLE_NAME(INFO_ST(arg_info)), type_to_string(fundefType));
 
-  } else if (fundefType == T_void && RETURN_EXPR(arg_node)) {
+  } 
+  else if (fundefType == T_void && RETURN_EXPR(arg_node)) {
 
     CTIerrorLine(NODE_LINE(arg_node),"function '%s' doesn't expect a return.", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
 

@@ -1,10 +1,19 @@
+extern int print(int c);
+
 int test1(int d) {
 
-    float a = 3.0 + 5.0;
-    a = 5.0;
+    int x;
+
+    bool a = (bool)1;
+
+
 
     return 2;
 
+}
 
+export int main() {
+
+    return 2;
 }
 

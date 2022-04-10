@@ -1,13 +1,13 @@
 /*****************************************************************************
  *
- * Module: code_generations
+ * Module: code_gen
  *
  * Prefix: CG
  *
  * Description:
  *
- * This moduel writes the assembly code to either a file or to the standard
- * output if no file is given as an argument.
+ * This module implements a demo traversal of the abstract syntax tree that 
+ * sums up all integer constants and prints the result at the end of the traversal.
  *
  *****************************************************************************/
 
@@ -24,6 +24,7 @@
 #include "traverse.h"
 #include "dbug.h"
 #include "str.h"
+#include "string.h"
 
 #include "memory.h"
 #include "ctinfo.h"
@@ -32,10 +33,13 @@ struct INFO {
   int sum_const;
   int sum_var;
   int sum_store;
+  int sum_while;
   int sum_labels;
   node* constant_table;
   node* global_st;
   node* current_st;
+  node* import_table;
+  node* export_table;
 
 };
 
@@ -43,7 +47,10 @@ struct INFO {
 #define INFO_SUM_V(n) ((n)->sum_var)
 #define INFO_SUM_S(n) ((n)->sum_store)
 #define INFO_SUM_L(n) ((n)->sum_labels)
+#define INFO_SUM_WHILE(n) ((n)->sum_while)
 #define INFO_CT(n) ((n)->constant_table)
+#define INFO_IMP(n) ((n)->import_table)
+#define INFO_EXPT(n) ((n)->export_table)
 #define INFO_GST(n) ((n)->global_st)
 #define INFO_CST(n) ((n)->current_st)
 
@@ -54,8 +61,11 @@ static info *MakeInfo(void) {
 
   result = (info *)MEMmalloc(sizeof(info));
   INFO_CT(result) = NULL;
+  INFO_IMP(result) = NULL;
+  INFO_EXPT(result) = NULL;
   INFO_GST(result) = NULL;
   INFO_CST(result) = NULL;
+  INFO_SUM_WHILE(result) = 1;
   INFO_SUM_C(result) = 0;
   INFO_SUM_V(result) = 0;
   INFO_SUM_S(result) = 0;
@@ -64,9 +74,6 @@ static info *MakeInfo(void) {
   DBUG_RETURN( result);
 }
 
-/*
- * Traversal functions
- */
 
 // Get the index of the global table
 int functions_amount(node* GST) {
@@ -75,7 +82,7 @@ int functions_amount(node* GST) {
   node* stEntry = SYMBOLTABLE_ENTRIES(GST);
 
   while (stEntry) {
-    if (SYMBOLTABLEENTRY_PARAMS(stEntry)) {
+    if (SYMBOLTABLEENTRY_FUNDEF(stEntry) && FUNDEF_ISEXTERN(SYMBOLTABLEENTRY_FUNDEF(stEntry))) {
       amount++;
     }
 
@@ -87,38 +94,30 @@ int functions_amount(node* GST) {
 
 }
 
+/*
+ * Traversal functions
+ */
+
+
 node *CGprogram(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("CGprogram");
 
     INFO_CT(arg_info) = PROGRAM_CONSTANTTABLE(arg_node);
+    INFO_EXPT(arg_info) = PROGRAM_EXPORTTABLE(arg_node);
+    INFO_IMP(arg_info) = PROGRAM_EXTERNTABLE(arg_node);
     INFO_GST(arg_info) = PROGRAM_SYMBOLTABLE(arg_node);
     INFO_CST(arg_info) = PROGRAM_SYMBOLTABLE(arg_node);
     PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
 
-    printf("\n");
+    write_assembly("\n");
     print_constants(INFO_CT(arg_info));
 
     node *current_decls = PROGRAM_DECLS(arg_node);
-    
-    while (current_decls) {
-      node *current_decl = DECLS_DECL(current_decls);
-      if (current_decl) {
-        if (NODE_TYPE(current_decl) == N_fundef && FUNDEF_ISEXPORT(current_decl) == TRUE) {
 
-          printf(".exportfun \"%s\" %s %s\n", FUNDEF_NAME(current_decl), 
-            type_to_string(FUNDEF_TYPE(current_decl)), FUNDEF_NAME(current_decl));
-
-        }
-
-        current_decls = DECLS_NEXT(current_decls);
-
-      }
-
-    }
-
-    print_funs(PROGRAM_SYMBOLTABLE(arg_node));
+    print_exports(current_decls, PROGRAM_EXPORTTABLE(arg_node));
     print_globals(PROGRAM_SYMBOLTABLE(arg_node));
+    print_imports(PROGRAM_EXTERNTABLE(arg_node));
 
     DBUG_RETURN(arg_node);
   
@@ -128,13 +127,16 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
     DBUG_ENTER("CGfundef");
 
     INFO_CST(arg_info) = FUNDEF_SYMBOLTABLE(arg_node);
+    bool isImport = (in_import_table(arg_node, INFO_IMP(arg_info)) != NULL);
+    bool isExport = (in_export_table(arg_node, INFO_EXPT(arg_info)) != NULL);
 
-    write_assembly(STRcatn(3, "\n", FUNDEF_NAME(arg_node), ":\n"));
-    // printf("\n%s:\n", FUNDEF_NAME(arg_node));
-    
+    node *body = FUNDEF_FUNBODY(arg_node);
+    if (body || !isImport) {
+      write_assembly(STRcat(FUNDEF_NAME(arg_node), ":\n"));
+    }
+
     // Calculate number of vardecls in funbody.
     int sum_vardecls = 0;
-    node *body = FUNDEF_FUNBODY(arg_node);
     node* current_vardecl = NULL;
     if (body) {
       current_vardecl = FUNBODY_VARDECLS(body);
@@ -145,16 +147,14 @@ extern node *CGfundef (node *arg_node, info *arg_info) {
       current_vardecl = VARDECL_NEXT(current_vardecl);
     }
 
-    // Print esr if necessarily.
+    // Print esr if necessary.
     if(sum_vardecls != 0) {
-      write_assembly(STRcatn(3,"\tesr", STRitoa(sum_vardecls), "\n"));
+      write_assembly(STRcatn(3,"\tesr ", STRitoa(sum_vardecls), "\n"));
       //printf("\tesr %d\n", sum_vardecls);
     }
     
-
     // traverse through paramaters.
     FUNDEF_PARAMS(arg_node) = TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
-
     if (body) {
       // Traverse through vardecls and statements.
       FUNBODY_VARDECLS(body) = TRAVopt(FUNBODY_VARDECLS(body), arg_info);
@@ -171,6 +171,7 @@ node* CGfuncall(node* arg_node, info* arg_info) {
     DBUG_ENTER("CGfuncall");
 
     node *arg = FUNCALL_ARGS(arg_node);
+
     int arg_amount = 0;
     while (arg) {
 
@@ -179,11 +180,22 @@ node* CGfuncall(node* arg_node, info* arg_info) {
 
     }
 
-    write_assembly("\tisr \n");
+    if (SYMBOLTABLE_PARENT(INFO_CST(arg_info)) && 
+        STReq(SYMBOLTABLE_NAME(SYMBOLTABLE_PARENT(INFO_CST(arg_info))), "Global")) {
+      write_assembly("\tisrg \n");
+    } else {
+      write_assembly("\tisrl \n");
+    }
+
     //printf("\tisr \n");
     FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
-    write_assembly(STRcatn(5, "\tjsr ", STRitoa(arg_amount), " ", FUNCALL_NAME(arg_node), "\n"));
-    write_assembly("\tipop\n");
+    node* import_node = in_import_table(FUNCALL_FUNDEF(arg_node), INFO_IMP(arg_info));
+
+    if (import_node) {
+      write_assembly(STRcatn(3,"\tjsre ", STRitoa(EXTERN_INDEXLEVEL(import_node)), "\n"));
+    } else {
+      write_assembly(STRcatn(5, "\tjsr ", STRitoa(arg_amount), " ", FUNDEF_NAME(FUNCALL_FUNDEF(arg_node)), "\n"));
+    }
     //printf("\tjsr %d %s\n", arg_amount, FUNCALL_NAME(arg_node));
     //printf("\tipop\n");
 
@@ -226,7 +238,15 @@ extern node *CGcast(node *arg_node, info *arg_info) {
 
   type old_type = CAST_TYPE_RIGHT(arg_node);
   type new_type = CAST_TYPE_LEFT(arg_node);
-  write_assembly(STRcatn(5, "\t", type_to_char(old_type), "2", type_to_char(new_type), "\n"));
+  
+
+  if (old_type != T_bool && new_type != T_bool) {
+    write_assembly(STRcatn(5, "\t", type_to_char(old_type), "2", type_to_char(new_type), "\n"));
+  } else {
+    write_assembly("\tbloadc_t\n");
+  } 
+  
+  
   //printf("\t%s2%s\n", type_to_char(old_type), type_to_char(new_type));
 
   DBUG_RETURN(arg_node);
@@ -238,14 +258,23 @@ extern node *CGdowhile(node *arg_node, info *arg_info) {
   int label = INFO_SUM_L(arg_info) + 1;
   INFO_SUM_L(arg_info) = INFO_SUM_L(arg_info) + 1;
 
-  write_assembly(STRcatn(3, "L", STRitoa(label), "\n"));
-  //printf("L%d\n", label);
+  int whileamount = INFO_SUM_WHILE(arg_info);
 
+  //write_assembly(STRcatn(3, "L", STRitoa(label), "\n"));
+  write_assembly(STRcat(STRitoa(whileamount),"_while:\n"));
+  //printf("L%d\n", label);
+  DOWHILE_COND(arg_node) = TRAVdo(DOWHILE_COND(arg_node), arg_info);
+  write_assembly(STRcatn(3, "\tbranch_f ", STRitoa(whileamount + 1), "_end\n"));
   DOWHILE_BLOCK(arg_node) = TRAVopt(DOWHILE_BLOCK(arg_node), arg_info);
 
-  DOWHILE_COND(arg_node) = TRAVdo(DOWHILE_COND(arg_node), arg_info);
 
-  write_assembly(STRcatn(3, "\tbranch_f L", STRitoa(label), "\n"));
+  write_assembly(STRcatn(3,"\tjump ", STRitoa(whileamount), "_while\n"));
+  whileamount++;
+  write_assembly(STRcat(STRitoa(whileamount), "_end:\n"));
+  whileamount++;
+  INFO_SUM_WHILE(arg_info) = whileamount;
+
+  //write_assembly(STRcatn(3, "\tbranch_f L", STRitoa(label), "\n"));
   //printf("\tbranch_f L%d\n", label);
 
   DBUG_RETURN(arg_node);
@@ -263,12 +292,12 @@ extern node *CGassign (node *arg_node, info *arg_info) {
     if (ASSIGN_LET(arg_node)) {
 
       if (get_entry_node(VARLET_DECL(ASSIGN_LET(arg_node)), INFO_GST(arg_info), FALSE)) {
-        
-        int fun_amount = functions_amount(INFO_GST(arg_info));
-        char *type_char = type_to_char(ASSIGN_TYPE(arg_node));
-        int index = SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))) - fun_amount;
 
-        write_assembly(STRcatn(5, "\t", type_char, "storeg ", STRitoa(index), "\n"));
+        char *type_char = type_to_char(ASSIGN_TYPE(arg_node));
+        int index = SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node)));
+        int funamount = functions_amount(INFO_GST(arg_info));
+
+        write_assembly(STRcatn(5, "\t", type_char, "storeg ", STRitoa(index - funamount), "\n"));
         //printf("\t%sstoreg %d\n", type_to_char(ASSIGN_TYPE(arg_node)), 
         //  SYMBOLTABLEENTRY_INDEXLEVEL(VARLET_DECL(ASSIGN_LET(arg_node))) - fun_amount);
 
@@ -356,16 +385,17 @@ node *CGvar(node* arg_node, info* arg_info) {
     node* st_entry = get_entry_node(VAR_DECL(arg_node), INFO_CST(arg_info), FALSE);
 
     if (get_entry_node(VAR_DECL(arg_node), INFO_GST(arg_info), FALSE)) {
+      int funamount = functions_amount(INFO_GST(arg_info));
       char *type_char = type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node)));
       int index = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node));
-      write_assembly(STRcatn(5, "\t", type_char, "loadg ", STRitoa(index), "\t"));
+      write_assembly(STRcatn(5, "\t", type_char, "loadg ", STRitoa(index - funamount), "\n"));
       //printf("\t%sloadg %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
       //  SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 
     } else if (st_entry == VAR_DECL(arg_node) && SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)) > 3) {
       char *type_char = type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node)));
       int index = SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node));
-      write_assembly(STRcatn(5, "\t", type_char, "load ", STRitoa(index), "\t"));
+      write_assembly(STRcatn(5, "\t", type_char, "load ", STRitoa(index), "\n"));
       //printf("\t%sload %d\n", type_to_char(SYMBOLTABLEENTRY_TYPE(VAR_DECL(arg_node))), 
       //  SYMBOLTABLEENTRY_INDEXLEVEL(VAR_DECL(arg_node)));
 

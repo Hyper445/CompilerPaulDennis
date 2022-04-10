@@ -52,15 +52,15 @@ SUBPHASE( mt,
           ALWAYS,
           pet)
 
-SUBPHASE( al, 
-          "Adding links",
-          ALdoAddLinks, 
-          ALWAYS,
-          pet)
-
 SUBPHASE( pt,
           "Printing Symboltable",
           PTdoPrintTable,
+          ALWAYS,
+          pet)
+
+SUBPHASE( al, 
+          "Adding links",
+          ALdoAddLinks, 
           ALWAYS,
           pet)
 
@@ -100,6 +100,12 @@ SUBPHASE( tw,
 SUBPHASE( mct,
           "Making Constant Table",
           MCTdoMakeConstantTable,
+          ALWAYS,
+          pet)
+
+SUBPHASE( met,
+          "Making Export Table",
+          METdoMakeExportTable,
           ALWAYS,
           pet)
 
