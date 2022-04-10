@@ -30,6 +30,7 @@
  * Traversal functions
  */
 
+// Transforms a cast into a conditional expression.
 node *BCcast(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("BCcast");
