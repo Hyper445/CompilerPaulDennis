@@ -79,23 +79,10 @@ node* ALfundef(node *arg_node, info *arg_info) {
   INFO_ST(arg_info) = FUNDEF_SYMBOLTABLE(arg_node);
   FUNDEF_FUNBODY(arg_node) = TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
-//   if (INFO_ST(arg_info)) {
-
-//     if (strcmp(SYMBOLTABLE_NAME(SYMBOLTABLE_PARENT(INFO_ST(arg_info))), "Global")) {
-//       char* name = STRcat("__", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
-//       char* functionName = STRcat("_", FUNDEF_NAME(arg_node));
-//       FUNDEF_NAME(arg_node) = STRcat(name, functionName);
-
-//     } else {
-
-//       FUNDEF_NAME(arg_node) = STRcat(SYMBOLTABLE_NAME(INFO_ST(arg_info)), STRcat("_", FUNDEF_NAME(arg_node)));
-//     }
-//   }
-
   DBUG_RETURN(arg_node);
-
 }
 
+// Adds a link to globdecl the correct symboltableEntry.
 node *ALglobdecl(node* arg_node, info* arg_info) {
 
     DBUG_ENTER("ALglobdecl");
@@ -114,106 +101,107 @@ node *ALglobdecl(node* arg_node, info* arg_info) {
   
 }
 
+// Adds a link to globdef to the correct symboltableEntry.
 node *ALglobdef(node* arg_node, info* arg_info) {
 
-    DBUG_ENTER("ALglobdef");
+  DBUG_ENTER("ALglobdef");
 
-    char* name = STRcpy(GLOBDEF_NAME(arg_node));
-    node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
+  char* name = STRcpy(GLOBDEF_NAME(arg_node));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
-    if(ST_entry != NULL) {
-        GLOBDEF_DECL(arg_node) = ST_entry;
-    }
-    else {
-        // If decleration was not found, an error is thrown.
-        CTIerror("varlet %s is not in scope\n", name);
-    }
+  if(ST_entry != NULL) {
+    GLOBDEF_DECL(arg_node) = ST_entry;
+  }
+  else {
+    // If decleration was not found, an error is thrown.
+    CTIerror("varlet %s is not in scope\n", name);
+  }
 
-    DBUG_RETURN(arg_node); 
+  DBUG_RETURN(arg_node); 
 }
 
+// Adds a link to vardecl to the correct symboltableEntry.
 node *ALvardecl(node* arg_node, info* arg_info) {
 
-    DBUG_ENTER("ALvardecl");
+  DBUG_ENTER("ALvardecl");
 
-    VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
-    
-    char* name = STRcpy(VARDECL_NAME(arg_node));
-    node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
-
-    if(ST_entry != NULL) {
-        VARDECL_DECL(arg_node) = ST_entry;
-    }
-    else {
-        // If decleration was not found, an error is thrown.
-        CTIerror("varlet %s is not in scope\n", name);
-    }
-
-    VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
-
-    DBUG_RETURN(arg_node);
+  VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
   
+  char* name = STRcpy(VARDECL_NAME(arg_node));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
+
+  if(ST_entry != NULL) {
+    VARDECL_DECL(arg_node) = ST_entry;
+  }
+  else {
+    // If decleration was not found, an error is thrown.
+    CTIerror("varlet %s is not in scope\n", name);
+  }
+
+  VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
+
+  DBUG_RETURN(arg_node);
 }
 
+// Adds a link to funcall to the correct symboltableEntry.
 node *ALfuncall(node* arg_node, info* arg_info) {
 
-    DBUG_ENTER("ALfuncall");
+  DBUG_ENTER("ALfuncall");
 
-    char* name = STRcpy(FUNCALL_NAME(arg_node));
-    node* ST_entry = get_entry(name, INFO_ST(arg_info), TRUE);
-    
-    if(ST_entry != NULL) {
-        FUNCALL_DECL(arg_node) = ST_entry;
-    }
-    else {
-        // If decleration was not found, an error is thrown.
-        CTIerror("funcall %s is not in scope\n", name);
-    }
-
-    // Traverse through the arguments of the function.
-    FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
-
-    DBUG_RETURN(arg_node);
+  char* name = STRcpy(FUNCALL_NAME(arg_node));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), TRUE);
   
+  if(ST_entry != NULL) {
+    FUNCALL_DECL(arg_node) = ST_entry;
+  }
+  else {
+    // If decleration was not found, an error is thrown.
+    CTIerror("funcall %s is not in scope\n", name);
+  }
+
+  // Traverse through the arguments of the function.
+  FUNCALL_ARGS(arg_node) = TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
+
+  DBUG_RETURN(arg_node);
 }
 
+// Adds a link to varlet to the correct symboltableEntry.
 node *ALvarlet(node* arg_node, info* arg_info) {
 
-    DBUG_ENTER("ALvarlet");
+  DBUG_ENTER("ALvarlet");
 
-    char* name = STRcpy(VARLET_NAME(arg_node));
-    node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
+  char* name = STRcpy(VARLET_NAME(arg_node));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
-    if(ST_entry != NULL) {
-        VARLET_DECL(arg_node) = ST_entry;
-    }
-    else {
-        // If decleration was not found, an error is thrown.
-        CTIerror("varlet %s is not in scope\n", name);
-    }
+  if(ST_entry != NULL) {
+    VARLET_DECL(arg_node) = ST_entry;
+  }
+  else {
+    // If decleration was not found, an error is thrown.
+    CTIerror("varlet %s is not in scope\n", name);
+  }
 
-    DBUG_RETURN(arg_node);
+  DBUG_RETURN(arg_node);
   
 }
 
-
+// Adds a link to var to the correct symboltableEntry
 node *ALvar(node* arg_node, info* arg_info) {
 
-    DBUG_ENTER("ALvar");
-    
-    char* name = STRcpy(VAR_NAME(arg_node));
-    node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
+  DBUG_ENTER("ALvar");
 
-    if(ST_entry != NULL) {
-        VAR_DECL(arg_node) = ST_entry;
-    }
-    else {
-        // If decleration was not found, an error is thrown.
-        CTIerror("var %s is not in scope\n", name);
-    }
+  char* name = STRcpy(VAR_NAME(arg_node));
+  node* ST_entry = get_entry(name, INFO_ST(arg_info), FALSE);
 
-    DBUG_RETURN(arg_node);
-  
+  if(ST_entry != NULL) {
+      VAR_DECL(arg_node) = ST_entry;
+  }
+  else {
+      // If decleration was not found, an error is thrown.
+      CTIerror("var %s is not in scope\n", name);
+  }
+
+  DBUG_RETURN(arg_node);
 }
 
 
