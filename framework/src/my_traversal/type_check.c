@@ -235,7 +235,6 @@ node *TCfuncall (node *arg_node, info *arg_info) {
     }
   }
 
-
   if (!fun_params && funcall_params) { 
     CTIerror("Too many arguments!\n");
   }
@@ -259,22 +258,8 @@ node* TCreturn (node* arg_node, info* arg_info) {
 
   RETURN_EXPR(arg_node) = TRAVopt(RETURN_EXPR(arg_node), arg_info);
   type returnType = INFO_TYPE(arg_info);
-  printf("%s\n", SYMBOLTABLE_NAME(INFO_ST(arg_info)));
 
   node* test = TBmakeReturn(NULL);
-  
-  if (RETURN_EXPR(test)) {
-    printf("test\n");
-    if (NODE_TYPE(RETURN_EXPR(test)) == N_num) {
-      printf("%d\n", RETURN_EXPR(test) == NULL);
-    }
-  }
-  if (RETURN_EXPR(arg_node)) {
-    if (NODE_TYPE(RETURN_EXPR(arg_node)) == N_num) {
-      printf("%d\n", RETURN_EXPR(arg_node) == NULL);
-    }
-
-  }
 
   // Check if the expr type matches the fundef type
   node* fundefEntry = get_entry(SYMBOLTABLE_NAME(INFO_ST(arg_info)), INFO_ST(arg_info), TRUE);
@@ -295,9 +280,6 @@ node* TCreturn (node* arg_node, info* arg_info) {
   RETURN_TYPE(arg_node) = returnType;
 
   DBUG_RETURN(arg_node);
-
-
-
 }
 
 node *TCassign (node *arg_node, info *arg_info) {

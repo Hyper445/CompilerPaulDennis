@@ -1,8 +1,8 @@
 /*****************************************************************************
  *
- * Module: enter_symbol_table
+ * Module: var_to_assign
  *
- * Prefix: EST
+ * Prefix: VA
  *
  * Description:
  *
