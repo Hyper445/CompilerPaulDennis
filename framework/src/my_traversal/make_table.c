@@ -1,13 +1,12 @@
 /*****************************************************************************
  *
- * Module: enter_symbol_table
+ * Module: make_table
  *
  * Prefix: EST
  *
  * Description:
  *
- * This module implements a demo traversal of the abstract syntax tree that 
- * sums up all integer constants and prints the result at the end of the traversal.
+ * This module implements the creation of a symbolTable.
  *
  *****************************************************************************/
 

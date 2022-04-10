@@ -6,8 +6,8 @@
  *
  * Description:
  *
- * This module implements a demo traversal of the abstract syntax tree that 
- * sums up all integer constants and prints the result at the end of the traversal.
+ * This module is an optimalisation that folds multiple constants into a single
+ * constant.
  *
  *****************************************************************************/
 
@@ -24,7 +24,6 @@
 #include "memory.h"
 #include "ctinfo.h"
 
-
 /*
  * INFO structure
  */
@@ -35,8 +34,6 @@ struct INFO {
   float float_result;
 };
 
-
-
 /*
  * INFO macros
  */
@@ -45,11 +42,9 @@ struct INFO {
 #define INFO_INT(n) ((n)->int_result)
 #define INFO_FLOAT(n) ((n)->float_result)
 
-
 /*
  * INFO functions
  */
-
 
 static info *MakeInfo(void)
 {
@@ -73,21 +68,10 @@ static info *FreeInfo( info *info)
   DBUG_RETURN( info);
 }
 
-
 /*
  * Traversal functions
  */
 
-
-// node *CFglobdef (node *arg_node, info *arg_info) {
-  
-//   DBUG_ENTER("MCTglobdef");
-
-//   GLOBDEF_INIT(arg_node) = TRAVopt(GLOBDEF_INIT(arg_node), arg_info);
-
-//   DBUG_RETURN(arg_node);
-
-// }
 
 node *CFbinop (node* arg_node, info* arg_info) {
 
@@ -158,18 +142,6 @@ node *CFbinop (node* arg_node, info* arg_info) {
   DBUG_RETURN(arg_node);
 
 }
-
-// node *CFvardecl (node *arg_node, info *arg_info) {
-  
-//   DBUG_ENTER("MCTvardecl");
-
-//   VARDECL_INIT(arg_node) = TRAVopt(VARDECL_INIT(arg_node), arg_info);
-//   VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
-
-//   DBUG_RETURN(arg_node);
-  
-// }
-
 
 /*
  * Traversal start function

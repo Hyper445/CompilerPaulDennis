@@ -6,8 +6,7 @@
  *
  * Description:
  *
- * This module implements a demo traversal of the abstract syntax tree that 
- * sums up all integer constants and prints the result at the end of the traversal.
+ * This module prints a symbolTable.
  *
  *****************************************************************************/
 

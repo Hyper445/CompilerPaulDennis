@@ -107,7 +107,7 @@ codegen     = gen_byte_code.o
 demo        = rename_identifiers.o opt_sub.o sum_ints.o
 
 
-my_traversal= reduce_strength.o store_operators.o identifiers_storer.o make_table.o \
+my_traversal= store_operators.o make_table.o \
               var_to_assign.o boolean_junction.o boolean_cast.o code_generation.o \
               make_table_helper.o type_check.o print_table.o transform_while.o \
               make_constant_table.o add_links.o code_generation_helper.o constant_folding.o \

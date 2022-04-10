@@ -1,13 +1,12 @@
 /*****************************************************************************
  *
- * Module: make_constant_table
+ * Module: make_export_table
  *
- * Prefix: MCT
+ * Prefix: MET
  *
  * Description:
  *
- * This module implements a demo traversal of the abstract syntax tree that 
- * sums up all integer constants and prints the result at the end of the traversal.
+ * This module implements creates an export table
  *
  *****************************************************************************/
 
@@ -93,7 +92,6 @@ void addExport(node* arg_node, info* arg_info) {
       current_export = EXPORT_NEXT(current_export);
       
     }
-    printf("export toegevoegd\n");
 
     EXPORT_NEXT(previous_export) = TBmakeExport(index, arg_node, NULL);
 
@@ -115,7 +113,6 @@ void addExtern(node* arg_node, info* arg_info) {
       current_extern = EXTERN_NEXT(current_extern);
       
     }
-    printf("import toegevoegd\n");
     EXTERN_NEXT(previous_extern) = TBmakeExtern(index, arg_node, NULL);
 
   } else {
@@ -134,11 +131,7 @@ node* METprogram(node *arg_node, info *arg_info) {
   PROGRAM_EXPORTTABLE(arg_node) = INFO_E(arg_info);
   PROGRAM_EXTERNTABLE(arg_node) = INFO_EXT(arg_info);
 
-  //arg_node = addConstant(TBmakeFloat(INFO_FLOAT(arg_info)), arg_info);
-
-
   DBUG_RETURN(arg_node);
-
 }
 
 
@@ -148,16 +141,12 @@ node* METfundef (node* arg_node, info* arg_info) {
     DBUG_ENTER("METfundef");
 
     if (FUNDEF_ISEXPORT(arg_node)) {
-        printf("exportname = %s\n", FUNDEF_NAME(arg_node));
         addExport(arg_node, arg_info);
     } else if (FUNDEF_ISEXTERN(arg_node)) {
-        printf("importname = %s\n", FUNDEF_NAME(arg_node));
         addExtern(arg_node, arg_info);
     }
 
     DBUG_RETURN(arg_node);
-
-
 }
 
 

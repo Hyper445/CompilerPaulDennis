@@ -6,11 +6,9 @@
  *
  * Description:
  *
- * This module implements a demo traversal of the abstract syntax tree that 
- * sums up all integer constants and prints the result at the end of the traversal.
+ * This module creates a table that stores all constants.
  *
  *****************************************************************************/
-
 
 #include "make_constant_table.h"
 
@@ -24,7 +22,6 @@
 #include "memory.h"
 #include "ctinfo.h"
 
-
 /*
  * INFO structure
  */
@@ -35,8 +32,6 @@ struct INFO {
   float float_result;
 };
 
-
-
 /*
  * INFO macros
  */
@@ -44,7 +39,6 @@ struct INFO {
 #define INFO_C(n) ((n)->constant)
 #define INFO_INT(n) ((n)->int_result)
 #define INFO_FLOAT(n) ((n)->float_result)
-
 
 /*
  * INFO functions
@@ -72,7 +66,6 @@ static info *FreeInfo( info *info)
 
   DBUG_RETURN( info);
 }
-
 
 /*
  * Traversal functions
@@ -125,8 +118,6 @@ void addConstant(node* arg_node, info* arg_info) {
     INFO_C(arg_info) = TBmakeConstant(NODE_TYPE(arg_node), arg_node, index, NULL);
 
   }
-
-
 }
 
 
@@ -137,11 +128,7 @@ node* MCTprogram(node *arg_node, info *arg_info) {
   PROGRAM_DECLS(arg_node) = TRAVopt(PROGRAM_DECLS(arg_node), arg_info);
   PROGRAM_CONSTANTTABLE(arg_node) = INFO_C(arg_info);
 
-  //arg_node = addConstant(TBmakeFloat(INFO_FLOAT(arg_info)), arg_info);
-
-
   DBUG_RETURN(arg_node);
-
 }
 
 node *MCTglobdef (node *arg_node, info *arg_info) {
@@ -151,7 +138,6 @@ node *MCTglobdef (node *arg_node, info *arg_info) {
   GLOBDEF_INIT(arg_node) = TRAVopt(GLOBDEF_INIT(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
-
 }
 
 node *MCTvardecl (node *arg_node, info *arg_info) {
@@ -162,7 +148,6 @@ node *MCTvardecl (node *arg_node, info *arg_info) {
   VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
 
   DBUG_RETURN(arg_node);
-  
 }
 
 node* MCTnum(node* arg_node, info* arg_info) {
@@ -175,7 +160,6 @@ node* MCTnum(node* arg_node, info* arg_info) {
   }
 
   DBUG_RETURN(arg_node);
-
 }
 
 node* MCTfloat(node* arg_node, info* arg_info) {
@@ -190,7 +174,6 @@ node* MCTfloat(node* arg_node, info* arg_info) {
   }
 
   DBUG_RETURN(arg_node);
-
 }
 
 
